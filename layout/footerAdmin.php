@@ -1,26 +1,10 @@
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SCRIPT TEMA -->
-<script>
-  const themeToggleBtn = document.getElementById("themeToggle");
-  function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute("data-bs-theme");
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-bs-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    themeToggleBtn.textContent =
-      newTheme === "dark" ? "☀️" : "🌙";
-  }
-  themeToggleBtn.addEventListener("click", toggleTheme);
-  // Cargar tema guardado
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.setAttribute("data-bs-theme", savedTheme);
-    themeToggleBtn.textContent =
-      savedTheme === "dark" ? "☀️" : "🌙";
-  });
-</script>
+<!-- Close main for admin pages -->
+<!-- Fin del contenido principal (admin) -->
+</main>
+<!-- Script local para comportamientos generales en admin -->
+<script src="/CatInk_Proyecto/CSS/scripts.js"></script>
+<!-- Pie de página de administración: misma estructura que el footer público -->
 <footer class="site-footer mt-5">
   <div class="container py-5">
     <div class="row gy-4">

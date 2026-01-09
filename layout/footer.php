@@ -1,55 +1,9 @@
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SCRIPT TEMA -->
-<script>
-  const themeToggleBtn = document.getElementById("themeToggle");
-  function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute("data-bs-theme");
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-bs-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    themeToggleBtn.textContent =
-      newTheme === "dark" ? "☀️" : "🌙";
-  }
-  themeToggleBtn.addEventListener("click", toggleTheme);
-  // Cargar tema guardado
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.setAttribute("data-bs-theme", savedTheme);
-    themeToggleBtn.textContent =
-      savedTheme === "dark" ? "☀️" : "🌙";
-  });
-</script>
-<script>
-  const carousel = document.getElementById('carouselExampleCaptions');
-  const indicators = document.querySelectorAll('.indicator-avatar circle');
-  const duration = 5000; // MISMO que data-bs-interval
-  function startProgress(index) {
-    indicators.forEach(circle => {
-      circle.style.transition = 'none';
-      circle.style.strokeDashoffset = '100';
-    });
-    void indicators[index].offsetWidth; // force reflow
-    indicators[index].style.transition = `stroke-dashoffset ${duration}ms linear`;
-    indicators[index].style.strokeDashoffset = '0';
-  }
-  // Inicial
-  window.addEventListener('DOMContentLoaded', () => {
-    startProgress(0);
-  });
-  // Cambio automático
-  carousel.addEventListener('slide.bs.carousel', e => {
-    startProgress(e.to);
-  });
-  // Click manual
-  document.querySelectorAll('.custom-indicators button')
-    .forEach((btn, index) => {
-      btn.addEventListener('click', () => {
-        startProgress(index);
-      });
-    });
-</script>
+<!-- Fin del contenido principal -->
+</main>
+<!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
+<script src="/CatInk_Proyecto/CSS/scripts.js"></script>
+<!-- Pie de página: columnas, enlaces y barra inferior -->
 <footer class="site-footer mt-5">
   <div class="container py-5">
     <div class="row gy-4">
