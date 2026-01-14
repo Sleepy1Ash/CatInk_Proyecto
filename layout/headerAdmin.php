@@ -6,50 +6,49 @@
     }
     $usuario = $_SESSION['usuario'];
     include("./../data/conexion.php");
-    $sql="select * from usuarios where usuario='$usuario'";
-    $result=mysqli_query($con,$sql);
-    $fila=$result->fetch_assoc();
+    $stmt = $con->prepare("SELECT * FROM usuarios WHERE usuario = ?");
+    $stmt->bind_param("s", $usuario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $fila = $result->fetch_assoc();
 ?>
 <!doctype html>
-<html lang="en" data-bs-theme="light">
+<html lang="es" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CatInk News</title>
-
   <!-- Local CSS (replacement for Bootstrap) -->
   <link rel="stylesheet" href="/CatInk_Proyecto/CSS/styles.css">
+  <link rel="stylesheet" href="/CatInk_Proyecto/CSS/admin.css">
   <!-- Iconos: Bootstrap Icons (se usan las clases .bi en el HTML) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css">
+  <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>
 </head>
-<body>
-<nav class="navbar">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img id="logo" src="./../../CatInk_Proyecto/img/logo_alt.jpg" alt="CatInk Logo">
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-      data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav nav-left">
-        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">News</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
-      </ul>
-      <div class="row">
-        <div class="col">
-          <!-- BOTÓN MODO OSCURO -->
-          <button id="themeToggle" class="btn btn-outline-secondary">🌙</button>
-        </div>
-        <div class="col">
-          <a href="#" class="btn btn-outline-secondary"><?php echo $fila['usuario'] ?></a>
-        </div>
-      </div>
+<body class="has-sidebar">
+<div class="sidebar">
+    <div class="logotipo">
+        <a href="./../../CatInk_Proyecto/views/admin.php"><img id="icon" src="./../../CatInk_Proyecto/img/logo_alt.jpg" alt="Logo"></a>
     </div>
-  </div>
-<!-- Cabecera panel admin: navegación y acciones del usuario -->
-</nav>
+    <div id="user">
+        <h4><?php echo $fila['usuario'] ?></h4>
+    </div>
+    <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+            <a href="./../../CatInk_Proyecto/views/admin.php" class="sidebar-menu-link"><i class="bi bi-house"></i> Inicio</a>
+        </li>
+        <hr>
+        <li class="sidebar-menu-item">
+            <a href="./../../CatInk_Proyecto/views/crear.php" class="sidebar-menu-link">Crear +</a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="./../../CatInk_Proyecto/views/stats.php" class="sidebar-menu-link">Administrar</a>
+    </ul>
+    <div class="sidebar-footer">
+      <button id="themeToggle" class="btn btn-icon" title="Cambiar tema">🌙</button>
+      <a href="./../../CatInk_Proyecto/controllers/logoutcontroller.php" class="sidebar-menu-link"><i class="bi bi-box-arrow-right"></i> Salir</a>
+    </div>
+</div>
 <!-- Inicio del contenido principal para zonas de administración -->
 <main class="site-main">

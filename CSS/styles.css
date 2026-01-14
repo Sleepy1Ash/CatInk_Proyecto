@@ -9,25 +9,8 @@
 html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: #111; }
 
 :root {
+  --sidebar-width: 220px;
   /* Variables de tema: ajustar colores para modo claro */
-  --bg: #ffffff;
-  --text: #111827;
-  --muted: rgba(0,0,0,0.65);
-  --card-bg: #ffffff;
-  --border: rgba(0,0,0,0.06);
-  --accent: #EF3363;
-}
-
-/* Variables para modo oscuro (aplicadas cuando [data-bs-theme="dark"]) */
-[data-bs-theme="dark"] {
-  --bg: #0b1220;
-  --text: #e6eef8;
-  --muted: rgba(255,255,255,0.7);
-  --card-bg: #07101a;
-  --border: rgba(255,255,255,0.06);
-  --accent: #FF6B98;
-}
-:root {
   --bg: #ffffff;
   --text: #111827;
   --muted: rgba(0,0,0,0.65);
@@ -38,6 +21,7 @@ html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Rob
   --footer-bottom-bg: rgba(0,0,0,0.03);
 }
 
+/* Variables para modo oscuro (aplicadas cuando [data-bs-theme="dark"]) */
 [data-bs-theme="dark"] {
   --bg: #0b1220;
   --text: #e6eef8;
@@ -50,8 +34,17 @@ html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Rob
 }
 
 /* Layout general: cuerpo como columna flex para sticky footer */
-body { display:flex; flex-direction:column; min-height:100vh; background: var(--bg); color: var(--text); }
-.site-main { flex: 1 0 auto; }
+body { display:flex; flex-direction:column; min-height:100vh; background: var(--bg); color: var(--text); overflow-x: hidden; }
+.site-main {
+  padding: 16px;
+  flex: 1;
+}
+/* anular padding lateral en carrusel para que ocupe todo el ancho */
+.site-main .carousel {
+  margin-left: -16px;
+  margin-right: -16px;
+  width: calc(100% + 32px);
+}
 
 /* Basic container utilities */
 .container { width: 100%; max-width: 1140px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
@@ -61,13 +54,14 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   - Contenedor flexible con marca, enlaces y acciones (tema, login)
   - Clases: .navbar .navbar-brand .navbar-nav .nav-link
 */
-.navbar { display: flex; align-items: center; background: transparent; padding: 8px 0; }
+.navbar { display: flex; align-items: center; background: var(--bg); padding: 8px 0; border-bottom: 1px solid var(--border);}
 .navbar .container-fluid { display:flex; align-items:center; gap:12px; }
-.navbar-brand { display:flex; align-items:center; text-decoration:none; color:inherit; font-weight:700; }
+.navbar-brand { display:flex; align-items:center; text-decoration:none; color:var(--text); font-weight:700; }
 #logo { border-radius:50%; max-height:64px; width:auto; height:auto; object-fit:contain; }
-.navbar-nav { list-style:none; display:flex; gap:10px; align-items:center; margin-left: 12px; }
-.nav-link { text-decoration:none; color:inherit; padding:6px 10px; border-radius:4px; }
-.nav-link.active { font-weight:700; }
+.navbar-nav { list-style:none; display:flex; gap:8px; align-items:center; margin-left: 12px; }
+.nav-link { text-decoration:none; color:var(--text); padding:6px 10px; border-radius:6px; }
+.nav-link:hover,
+.nav-link.active { font-weight:700; background:rgba(0,0,0,0.04);}
 
 /* Grid simple
   - .row y .col para maquetar bloques sencillos
@@ -79,16 +73,29 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 /* Botones
   - .btn con variante .btn-outline-secondary
 */
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:6px 10px; border-radius:6px; cursor:pointer; border:1px solid transparent; background:transparent; }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:6px 12px; border-radius:6px; cursor:pointer; border:1px solid transparent; background:transparent; color: var(--text);}
 .btn:focus { outline:2px solid rgba(0,0,0,0.08); }
-.btn-outline-secondary { border-color: rgba(0,0,0,0.12); }
+.btn-outline-secondary { border-color: var(--border); }
+.btn-outline-secondary:hover {
+  background: rgba(0,0,0,0.04);
+}
+.btn-accent {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-accent:hover {
+  opacity: 0.9;
+}
 
 /* nav utilities */
 .nav-left { margin-right: auto; }
 
 /* form input replacement for .form-control */
 .input { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; background:transparent; color:var(--text); margin-bottom:10px; }
-
+.input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
 /* card header/footer neutral styles */
 .card-header { padding:12px 16px; background: transparent; }
 .card-footer { padding: 12px 16px; background: transparent; }
@@ -120,8 +127,16 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .collapse { display:none; }
 .collapse.show { display:block; }
 @media (min-width: 768px) {
-  .collapse { display:flex !important; align-items:center; }
+  .navbar,
+  .collapse { display:flex; align-items:center; }
   .navbar-toggler { display: none; }
+  .sidebar {
+    display: none;
+  }
+  .site-main,
+  .site-footer {
+    margin-left: 0;
+  }
 }
 
 /* spacing helpers */
@@ -157,7 +172,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .carousel-caption p { font-size:1.1rem; max-width:600px; margin-top:15px; opacity:0.9; }
 .carousel-tag { text-transform:uppercase; font-size:.85rem; font-weight:600; opacity:.8; margin-bottom:10px; margin-top: 10px; color:#EF3363; }
 
-.custom-indicators { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); display:flex; gap:12px; z-index:10; justify-content:flex-start; padding-left:6%; }
+.custom-indicators { position:absolute; bottom:40px; left:70%; transform:translateX(-50%); display:flex; gap:12px; z-index:10; justify-content:flex-start; padding-left:6%; }
 .custom-indicators button { background:none; border:none; padding:0; cursor:pointer; }
 .indicator-avatar { position:relative; width:72px; height:72px; }
 .indicator-avatar img { width:100%; height:100%; border-radius:50%; object-fit:cover; }
@@ -228,3 +243,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   /* Alinear la fila principal y asegurar que no haya saltos inesperados */
   .row { align-items: stretch; }
 }
+/* Titulares */
+.img-titular { width:100%; height:auto; object-fit:cover; display:block; margin-bottom:12px; }
+/* Contenidos */
+.img-adicional { width:100%; height:auto; object-fit:cover; display:block; margin-top:12px; margin-bottom:12px; }

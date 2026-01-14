@@ -3,7 +3,7 @@
 <!-- Fin del contenido principal (admin) -->
 </main>
 <!-- Script local para comportamientos generales en admin -->
-<script src="/CatInk_Proyecto/CSS/scripts.js"></script>
+<script src="/CatInk_Proyecto/CSS/admin.js"></script>
 <!-- Pie de página de administración: misma estructura que el footer público -->
 <footer class="site-footer mt-5">
   <div class="container py-5">

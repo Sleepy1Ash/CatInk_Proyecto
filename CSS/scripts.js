@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const items = Array.from(carousel.querySelectorAll('.carousel-item'));
     let current = items.findIndex(i => i.classList.contains('active'));
     if (current < 0) current = 0;
-    const interval = parseInt(carousel.getAttribute('data-bs-interval')) || 5000;
+    const interval = parseInt(carousel.getAttribute('data-bs-interval')) || 10000;
     let timer = null;
 
     // Muestra la slide indicada y dispara un evento compatible con Bootstrap
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Animación de progreso de indicadores: dibuja stroke-dashoffset en los círculos SVG
   const indicators = document.querySelectorAll('.indicator-avatar circle');
-  const duration = 5000;
+  const duration = 10000;
   function startProgress(index) {
     indicators.forEach(circle => {
       circle.style.transition = 'none';

@@ -2,7 +2,7 @@
     include("./layout/header.php");
 ?>
 <!-- CONTENIDO -->
-<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000">
   <div class="carousel-indicators custom-indicators">
     <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active">
       <div class="indicator-avatar">
@@ -28,13 +28,21 @@
         </svg>
       </div>
     </button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3">
+      <div class="indicator-avatar">
+        <img src="img/copiacortad.jpg" alt="">
+        <svg viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="16"></circle>
+        </svg>
+      </div>
+    </button>
   </div>
   <div class="carousel-inner">
     <div class="carousel-item active">
       <img src="img/maxresdefault.jpg" class="carousel-img" alt="...">
       <div class="carousel-caption caption-md">
         <span class="carousel-tag">Noticias</span>
-        <h5>First slide label</h5>
+        <h5><a href="./../CatInk_Proyecto/views/news.php" class="carousel-link">First slide label</a></h5>
         <p>Some representative placeholder content for the first slide.</p>
       </div>
     </div>
@@ -42,7 +50,7 @@
       <img src="img/drx-skin-ashe-caitlyn-akali-maokai-kindred-aatrox-hd-wallpaper-uhdpaper.com-636@1@k.jpg" class="carousel-img" alt="...">
       <div class="carousel-caption caption-md">
         <span class="carousel-tag">Noticias</span>
-        <h5>Second slide label</h5>
+        <h5><a href="./../CatInk_Proyecto/views/news.php" class="carousel-link">Second slide label</a></h5>
         <p>Some representative placeholder content for the second slide.</p>
       </div>
     </div>
@@ -50,7 +58,15 @@
       <img src="img/heartsteel-ezreal-yone-kayn-aphelios-sett-ksante-skin-lol-splash-art-hd-wallpaper-uhdpaper.com-402@1@m.jpg" class="carousel-img" alt="...">
       <div class="carousel-caption caption-md">
         <span class="carousel-tag">Noticias</span>
-        <h5>Third slide label</h5>
+        <h5><a href="./../CatInk_Proyecto/views/news.php" class="carousel-link">Third slide label</a></h5>
+        <p>Some representative placeholder content for the third slide.</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="img/copiacortad.jpg" class="carousel-img" alt="...">
+      <div class="carousel-caption caption-md">
+        <span class="carousel-tag">Noticias</span>
+        <h5><a href="./../CatInk_Proyecto/views/news.php" class="carousel-link">Third slide label</a></h5>
         <p>Some representative placeholder content for the third slide.</p>
       </div>
     </div>
