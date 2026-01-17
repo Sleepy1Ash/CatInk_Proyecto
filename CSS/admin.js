@@ -131,13 +131,13 @@
   let crops = [];
   const maxCrops = 3;
 
-  const imageInput = document.getElementById("imageInput");
+  const imageInputMain = document.getElementById("imageInputMain");
   const image = document.getElementById("cropperImage");
   const previewGrid = document.getElementById("previewGrid");
 
-  if (!imageInput || !image || !previewGrid) return;
+  if (!imageInputMain || !image || !previewGrid) return;
 
-  imageInput.addEventListener("change", e => {
+  imageInputMain.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -199,43 +199,112 @@
 /* ===============================
    EDITOR QUILL
 ================================ */
-(() => {
-  const editor = document.getElementById('editorContent');
-  const form = document.getElementById('formPublicacion');
-  if (!editor) return;
+// ====== REGISTROS NECESARIOS ======
+const Font = Quill.import('formats/font');
+Font.whitelist = ['arial', 'times', 'roboto', 'courier'];
+Quill.register(Font, true);
 
-  const quill = new Quill('#editorContent', {
-    theme: 'snow',
-    modules: { toolbar: '#editorToolbar' }
-  });
-
-  if (form) {
-    form.addEventListener("submit", () => {
-      document.getElementById("contenido").value = quill.root.innerHTML;
-    });
+const Size = Quill.import('formats/size');
+Size.whitelist = ['small', false, 'large', 'huge'];
+Quill.register(Size, true);
+Quill.register('modules/imageResize', ImageResize);
+// ====== INICIALIZACIÓN ======
+const quill = new Quill('#editor', {
+  theme: 'snow',
+  placeholder: 'Escribe aquí...',
+  modules: {
+    toolbar: {
+      container: '.editor-toolbar',
+      handlers: {
+        image: imageHandler
+      }
+    },
+    imageResize: {
+      modules: ['Resize', 'DisplaySize']
+    }
   }
+});
+/* ===============================
+   CROP IMAGEN — EDITOR QUILL
+================================ */
+let editorCropper = null;
 
-  const toolbar = quill.getModule('toolbar');
-  toolbar.addHandler('image', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
+const inputEditor = document.getElementById('imageInputEditor');
+const cropModal = document.getElementById('cropModal');
+const cropImg = document.getElementById('cropImageEditor');
+const aspectSelect = document.getElementById('cropAspectEditor');
 
-    input.onchange = () => {
-      const file = input.files[0];
-      if (!file) return;
+if (inputEditor && cropModal && cropImg && aspectSelect) {
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const range = quill.getSelection(true);
-        quill.insertEmbed(range.index, 'image', reader.result);
-      };
-      reader.readAsDataURL(file);
+  inputEditor.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      cropImg.src = reader.result;
+      cropModal.style.display = 'flex'; // ✅ CLAVE
+
+      editorCropper?.destroy();
+      editorCropper = new Cropper(cropImg, {
+        viewMode: 1,
+        autoCropArea: 1
+      });
     };
+    reader.readAsDataURL(file);
 
-    input.click();
+    this.value = '';
   });
-})();
+
+  aspectSelect.addEventListener('change', () => {
+    if (!editorCropper) return;
+
+    const val = aspectSelect.value;
+    if (val === 'free') {
+      editorCropper.setAspectRatio(NaN);
+    } else {
+      const [w, h] = val.split('/').map(Number);
+      editorCropper.setAspectRatio(w / h);
+    }
+  });
+
+  document.getElementById('cropConfirmEditor')?.addEventListener('click', () => {
+    if (!editorCropper) return;
+
+    const canvas = editorCropper.getCroppedCanvas({
+      imageSmoothingQuality: 'high'
+    });
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    const range = quill.getSelection(true);
+
+    quill.insertEmbed(range.index, 'image', dataUrl);
+    quill.setSelection(range.index + 1);
+
+    editorCropper.destroy();
+    editorCropper = null;
+    cropModal.style.display = 'none';
+  });
+
+  document.getElementById('cropCancelEditor')?.addEventListener('click', () => {
+    editorCropper?.destroy();
+    editorCropper = null;
+    cropModal.style.display = 'none';
+  });
+
+} else {
+  console.error('Elementos del crop del editor NO encontrados');
+}
+
+// ====== HANDLER DE IMÁGENES (PREPARADO PARA CROP) ======
+function imageHandler() {
+  const input = document.getElementById('imageInputEditor');
+  if (!input) {
+    console.error('imageInputEditor NO existe');
+    return;
+  }
+  input.click();
+}
 
 /* ===============================
    PROGRAMACIÓN DE PUBLICACIÓN
@@ -257,3 +326,12 @@
     }
   });
 })();
+/* verifica el contenido del editor antes de enviar el formulario */
+const form = document.getElementById('formPublicacion');
+const contenidoInput = document.getElementById('contenido');
+
+if (form && contenidoInput) {
+  form.addEventListener('submit', () => {
+    contenidoInput.value = quill.root.innerHTML;
+  });
+}

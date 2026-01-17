@@ -166,12 +166,13 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .carousel-item { position: absolute; inset: 0; opacity: 0; transform: translateX(6%); transition: opacity .6s ease, transform .6s ease; }
 .carousel-item img { height:60vh; object-fit:cover; width:100%; display:block; }
 .carousel-item.active { opacity:1; transform: translateX(0); position: relative; }
-.carousel-item::before { content: ""; position:absolute; inset:0; z-index:1; background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.05) 80%, rgba(0,0,0,0) 100%); }
+.carousel-item::before { content: ""; position:absolute; inset:0; z-index:1; background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.05) 80%, rgba(0,0,0,0) 100%); pointer-events: none;}
 .carousel-caption { z-index:2; position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:6%; padding-right:50%; text-align:left; color:#fff; }
 .carousel-caption h5 { font-size:3rem; font-weight:800; line-height:1.2; }
 .carousel-caption p { font-size:1.1rem; max-width:600px; margin-top:15px; opacity:0.9; }
 .carousel-tag { text-transform:uppercase; font-size:.85rem; font-weight:600; opacity:.8; margin-bottom:10px; margin-top: 10px; color:#EF3363; }
-
+.carousel-link {display:inline-block; text-decoration:none; color: #fff; position: relative; z-index: 3;}
+.carousel-link:hover { text-decoration: underline; color:#EF3363; }
 .custom-indicators { position:absolute; bottom:40px; left:70%; transform:translateX(-50%); display:flex; gap:12px; z-index:10; justify-content:flex-start; padding-left:6%; }
 .custom-indicators button { background:none; border:none; padding:0; cursor:pointer; }
 .indicator-avatar { position:relative; width:72px; height:72px; }

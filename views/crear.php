@@ -3,7 +3,7 @@
 include("./../layout/headerAdmin.php");
 ?>
 <div class="admin-container">
-    <title>Alta de noticia | CatInk News</title>
+    <h1>Alta de noticia | CatInk News</h1>
     <form id="formPublicacion" action="./../../CatInk_Proyecto/controllers/noticiascontroller.php" method="POST" enctype="multipart/form-data">
         <div class="form-card card">
             <!-- TÍTULO -->
@@ -26,15 +26,8 @@ include("./../layout/headerAdmin.php");
                 <label>Imagen principal</label>
 
                 <!-- Subida -->
-                <input type="file" id="imageInput" accept="image/*">
-
-                <!-- Selector de formato -->
-                <div class="aspect-ratio-controls">
-                    <button type="button" class="btn btn-outline-secondary" data-ratio="16/9">16:9</button>
-                    <button type="button" class="btn btn-outline-secondary" data-ratio="21/6">21:6</button>
-                    <button type="button" class="btn btn-outline-secondary" data-ratio="1">1:1</button>
-                    <button type="button" class="btn btn-outline-secondary" data-ratio="4/5">4:5</button>
-                </div>
+                <input type="file" id="imageInputMain" accept="image/*">
+                <br>
 
                 <!-- Zona cropper -->
                 <div class="cropper-container">
@@ -63,23 +56,60 @@ include("./../layout/headerAdmin.php");
            <div class="form-group">
                 <label>Contenido</label>
 
-                <!-- Toolbar personalizada -->
-                <div id="editorToolbar">
-                    <select class="ql-font"></select>
-                    <select class="ql-size"></select>
+                <!-- TOOLBAR -->
+                <div class="editor-toolbar ql-toolbar ql-snow">
+                    <!-- Fuente -->
+                    <select class="ql-font">
+                        <option value="arial" selected>Arial</option>
+                        <option value="times">Times New Roman</option>
+                        <option value="roboto">Roboto</option>
+                        <option value="courier">Courier</option>
+                    </select>
 
+                    <!-- Tamaño -->
+                    <select class="ql-size">
+                        <option value="small">Pequeño</option>
+                        <option selected>Normal</option>
+                        <option value="large">Grande</option>
+                        <option value="huge">Muy grande</option>
+                    </select>
+
+                    <!-- Estilos -->
                     <button class="ql-bold"></button>
                     <button class="ql-italic"></button>
                     <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
 
-                    <button class="ql-link"></button>
-                    <button class="ql-image"></button>
+                    <!-- Color -->
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
 
+                    <!-- Alineación -->
+                    <select class="ql-align"></select>
+
+                    <!-- Listas -->
                     <button class="ql-list" value="ordered"></button>
                     <button class="ql-list" value="bullet"></button>
 
+                    <!-- Sangría -->
+                    <button class="ql-indent" value="-1"></button>
+                    <button class="ql-indent" value="+1"></button>
+
+                    <!-- Enlaces / multimedia -->
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                    <button class="ql-video"></button>
+
+                    <!-- Limpiar formato -->
                     <button class="ql-clean"></button>
                 </div>
+
+                <!-- EDITOR -->
+                <div id="editor" class="editor-content"></div>
+
+                <!-- INPUT OCULTO PARA IMÁGENES -->
+                <input type="file" id="imageInputEditor" accept="image/*" hidden>
+
 
                 <div id="editorContent"></div>
                 <!-- Campo oculto para PHP -->
@@ -88,12 +118,8 @@ include("./../layout/headerAdmin.php");
 
             <!-- PROGRAMACIÓN (placeholder para Parte 4) -->
             <div class="form-group">
-                <label>Estado de publicación</label>
-                <select name="estado" id="estadoPublicacion" required>
-                    <option value="borrador">Borrador</option>
-                    <option value="publicado">Publicar ahora</option>
-                    <option value="programado">Programar publicación</option>
-                </select>
+                <label>Programar publicación</label>
+                <input type="Date" name="fecha" class="btn-calendar">
             </div>
 
             <div class="form-group" id="programacionBox" style="display:none;">

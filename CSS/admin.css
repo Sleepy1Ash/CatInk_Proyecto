@@ -26,7 +26,12 @@ body.has-sidebar .container {
 body.has-sidebar .site-footer {
   margin-left: var(--sidebar-width);
 }
-
+h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    align-items: center;
+}
 /* Diseño de la Siderbar de noticias */
 .sidebar {
   position: fixed;
@@ -227,8 +232,17 @@ input:focus, textarea:focus {
     padding: 8px 14px;
     border-radius: 5px;
     border: none;
-    background: #6c757d;
+    background: #30383f;
     color: white;
+    cursor: pointer;
+}
+.btn-calendar {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid #000000;
+    background: #161530;
+    color: #ffffff;
     cursor: pointer;
 }
 
@@ -387,7 +401,7 @@ body.has-sidebar .cropper-container {
   height: 360px !important;
 }
 
-.cropper-container {
+.form-group .cropper-container {
   width: 100% !important;
   height: 100% !important;
   max-height: 400px;
@@ -396,7 +410,10 @@ body.has-sidebar .cropper-container {
 .cropper-container img {
     max-width: 100%;
 }
-
+.cropper-container-editor img {
+  max-width: 100%;
+  display: block;
+}
 .aspect-ratio-controls {
     display: flex;
     gap: 10px;
@@ -435,24 +452,44 @@ body.has-sidebar .cropper-container {
 /* ===============================
    EDITOR DE CONTENIDO
    =============================== */
+/* FUENTES */
+.ql-font-arial { font-family: Arial, sans-serif; }
+.ql-font-times { font-family: "Times New Roman", serif; }
+.ql-font-roboto { font-family: Roboto, sans-serif; }
+.ql-font-courier { font-family: "Courier New", monospace; }
 
-#editorContent {
-    min-height: 300px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+/* EDITOR */
+.editor-content {
+  min-height: 300px;
+  background: var(--bg, #fff);
+  color: var(--text, #000);
+  font-size: 14px;
 }
 
-#editorToolbar {
-    border: 1px solid var(--border);
-    border-radius: 8px 8px 0 0;
-    background: var(--card-bg);
+/* TOOLBAR */
+.editor-toolbar {
+  border-radius: 6px 6px 0 0;
+  overflow: visible !important;
+  position: relative !important;
+}
+.editor-toolbar select,
+.editor-toolbar button {
+  min-height: 32px;
+  cursor: pointer;
 }
 
-.ql-toolbar button,
-.ql-toolbar select {
-    color: var(--text);
+/* IMÁGENES */
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
 }
+
+/* VIDEO */
+.ql-editor iframe {
+  width: 100%;
+  min-height: 300px;
+}
+
 /* ===============================
    PROGRAMACIÓN DE PUBLICACIÓN
    =============================== */
@@ -481,6 +518,13 @@ select, input[type="datetime-local"] {
     align-items: center;
     justify-content: center;
     z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+.crop-modal[style*="flex"] {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .crop-modal-content {
