@@ -49,6 +49,7 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 /* Basic container utilities */
 .container { width: 100%; max-width: 1140px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
 .container-fluid { width: 100%; padding-left: 16px; padding-right: 16px; }
+.container-noticia { width: 100%; max-width: 800px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
 
 /* Navbar
   - Contenedor flexible con marca, enlaces y acciones (tema, login)
@@ -244,7 +245,28 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   /* Alinear la fila principal y asegurar que no haya saltos inesperados */
   .row { align-items: stretch; }
 }
+/* Noticias */
 /* Titulares */
 .img-titular { width:100%; height:auto; object-fit:cover; display:block; margin-bottom:12px; }
 /* Contenidos */
 .img-adicional { width:100%; height:auto; object-fit:cover; display:block; margin-top:12px; margin-bottom:12px; }
+.ql-editor {
+  padding: 0;
+  font-family: inherit;
+}
+
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+}
+.ql-editor p {
+  margin-bottom: 1em;
+}
+.ql-editor iframe {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  margin: 24px auto;
+}

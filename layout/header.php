@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="/CatInk_Proyecto/CSS/styles.css">
   <!-- Iconos: Bootstrap Icons (se usan las clases .bi en el HTML) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
 </head>
 <body>
 <!-- Cabecera principal: navegación, logo y acciones (tema, login) -->

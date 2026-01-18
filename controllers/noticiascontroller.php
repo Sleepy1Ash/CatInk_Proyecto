@@ -1,30 +1,75 @@
 <?php
+// Convertidor de imagenes a base64 y guardado en BD
+function guardarImagenBase64WebpConId($base64, $noticiaId, $crop, $calidad = 80) {
+  if (empty($base64)) return null;
+
+  if (!preg_match('/^data:image\/(jpeg|jpg|png);base64,/', $base64)) {
+    return null;
+  }
+
+  $base64 = preg_replace('/^data:image\/\w+;base64,/', '', $base64);
+  $binario = base64_decode($base64);
+  if ($binario === false) return null;
+
+  $imagen = imagecreatefromstring($binario);
+  if (!$imagen) return null;
+
+  $timestamp = time();
+  $nombre = "noticia_{$noticiaId}_{$crop}_{$timestamp}.webp";
+  $rutaFisica = __DIR__ . "/../img/noticias/" . $nombre;
+
+  imagewebp($imagen, $rutaFisica, $calidad);
+  imagedestroy($imagen);
+
+  return "img/noticias/" . $nombre;
+}
+
 // Controlador para gestionar las noticias
 include("../data/conexion.php");
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Recoger datos del formulario
-    $titulo = $_POST['titulo'];
-    $autor_id = $_POST['autor_id'];
-    $imagen_destacada = $_POST['imagen_destacada_recortada'];
-    $videos = $_POST['videos'];
-    $imagenes = $_POST['imagenes'];// Array de imágenes subidas
-    
-    $parrafos = [];
-    for ($i = 1; $i <= 5; $i++) {
-        if (isset($_POST["parrafo_$i"]) && !empty(trim($_POST["parrafo_$i"]))) {
-            $parrafos[] = trim($_POST["parrafo_$i"]);
-        }
-    }
-    $contenido = implode("\n\n", $parrafos);
-    // Insertar noticia en la base de datos
-    $stmt = $con->prepare("INSERT INTO noticias (titulo, autor_id, imagen_destacada, videos, contenido) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sisss", $titulo, $autor_id, $imagen_destacada, $videos, $contenido);
-    if ($stmt->execute()) {
-        header("Location: ./../views/admin.php?mensaje=noticia_creada");
-        exit();
-    } else {
-        echo "Error al crear la noticia: " . $stmt->error;
-    }
-    $stmt->close();
+// Obtencion de informacion del formulario
+$titulo = $_POST['titulo'];
+$descripcion = $_POST['descripcion'];
+$autor = $_POST['autor'];
+$contenido = $_POST['contenido'];
+$fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
+// Validacion basica
+if (
+  empty($titulo) ||
+  empty($descripcion) ||
+  empty($contenido)
+) {
+  die("Datos incompletos");
 }
+// Insercion en la base de datos con preparacion
+$sql = "INSERT INTO noticias
+(titulo, descripcion, autor, contenido, fecha_publicacion)
+VALUES (?, ?, ?, ?, ?)";
+
+$stmt = $con->prepare($sql);
+$stmt->bind_param(
+  "sssss",
+  $titulo,
+  $descripcion,
+  $autor,
+  $contenido,
+  $fecha_publicacion
+);
+$stmt->execute();
+
+$noticiaId = $con->insert_id;
+$crop1 = guardarImagenBase64WebpConId($_POST['crop1'] ?? null, $noticiaId, 'crop1');
+$crop2 = guardarImagenBase64WebpConId($_POST['crop2'] ?? null, $noticiaId, 'crop2');
+$crop3 = guardarImagenBase64WebpConId($_POST['crop3'] ?? null, $noticiaId, 'crop3');
+
+// Actualizacion de rutas
+$update = $con->prepare("
+  UPDATE noticias
+  SET crop1 = ?, crop2 = ?, crop3 = ?
+  WHERE id = ?
+");
+$update->bind_param("sssi", $crop1, $crop2, $crop3, $noticiaId);
+$update->execute();
+// Redireccionamiento
+header("Location: ./../views/admin.php");
+exit;
 ?>

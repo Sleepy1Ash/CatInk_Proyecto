@@ -6,6 +6,8 @@ include("./../layout/headerAdmin.php");
     <h1>Alta de noticia | CatInk News</h1>
     <form id="formPublicacion" action="./../../CatInk_Proyecto/controllers/noticiascontroller.php" method="POST" enctype="multipart/form-data">
         <div class="form-card card">
+            <!-- Autor oculto -->
+            <input type="hidden" name="autor" value="<?php echo $fila['id_u']; ?>">
             <!-- TÍTULO -->
             <div class="form-group">
                 <label for="titulo">Título</label>
@@ -13,7 +15,7 @@ include("./../layout/headerAdmin.php");
             </div>
             <!-- DESCRIPCIÓN -->
             <div class="form-group">
-                <label for="descripcion">Descripción corta</label>
+                <label for="descripcion">Descripción corta </label>
                 <textarea 
                     id="descripcion" 
                     name="descripcion" 
@@ -119,15 +121,7 @@ include("./../layout/headerAdmin.php");
             <!-- PROGRAMACIÓN (placeholder para Parte 4) -->
             <div class="form-group">
                 <label>Programar publicación</label>
-                <input type="Date" name="fecha" class="btn-calendar">
-            </div>
-
-            <div class="form-group" id="programacionBox" style="display:none;">
-                <label>Fecha y hora de publicación</label>
-                <input 
-                    type="datetime-local" 
-                    name="fecha_publicacion" 
-                    id="fechaPublicacion">
+                <input type="datetime-local" name="fecha_publicacion" class="btn-calendar">
             </div>
             <!-- ACCIONES -->
             <div class="form-actions">

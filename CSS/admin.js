@@ -170,7 +170,7 @@
     if (!galleryCropper || crops.length >= maxCrops) return;
 
     const canvas = galleryCropper.getCroppedCanvas({ imageSmoothingQuality: "high" });
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
     crops.push(dataUrl);
     updatePreviews();
   });
@@ -207,7 +207,8 @@ Quill.register(Font, true);
 const Size = Quill.import('formats/size');
 Size.whitelist = ['small', false, 'large', 'huge'];
 Quill.register(Size, true);
-Quill.register('modules/imageResize', ImageResize);
+const ImageResize = Quill.import('modules/imageResize');
+Quill.register(ImageResize, true);
 // ====== INICIALIZACIÓN ======
 const quill = new Quill('#editor', {
   theme: 'snow',
@@ -220,112 +221,31 @@ const quill = new Quill('#editor', {
       }
     },
     imageResize: {
-      modules: ['Resize', 'DisplaySize']
+      modules: [ 'Resize', 'DisplaySize']
     }
   }
 });
-/* ===============================
-   CROP IMAGEN — EDITOR QUILL
-================================ */
-let editorCropper = null;
 
-const inputEditor = document.getElementById('imageInputEditor');
-const cropModal = document.getElementById('cropModal');
-const cropImg = document.getElementById('cropImageEditor');
-const aspectSelect = document.getElementById('cropAspectEditor');
+// ====== HANDLER DE IMÁGENES (PREPARADO PARA CROP) ======
+function imageHandler() {
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
+  input.click();
 
-if (inputEditor && cropModal && cropImg && aspectSelect) {
-
-  inputEditor.addEventListener('change', function () {
-    const file = this.files[0];
+  input.onchange = () => {
+    const file = input.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = () => {
-      cropImg.src = reader.result;
-      cropModal.style.display = 'flex'; // ✅ CLAVE
-
-      editorCropper?.destroy();
-      editorCropper = new Cropper(cropImg, {
-        viewMode: 1,
-        autoCropArea: 1
-      });
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'image', reader.result);
+      quill.setSelection(range.index + 1);
     };
     reader.readAsDataURL(file);
-
-    this.value = '';
-  });
-
-  aspectSelect.addEventListener('change', () => {
-    if (!editorCropper) return;
-
-    const val = aspectSelect.value;
-    if (val === 'free') {
-      editorCropper.setAspectRatio(NaN);
-    } else {
-      const [w, h] = val.split('/').map(Number);
-      editorCropper.setAspectRatio(w / h);
-    }
-  });
-
-  document.getElementById('cropConfirmEditor')?.addEventListener('click', () => {
-    if (!editorCropper) return;
-
-    const canvas = editorCropper.getCroppedCanvas({
-      imageSmoothingQuality: 'high'
-    });
-
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    const range = quill.getSelection(true);
-
-    quill.insertEmbed(range.index, 'image', dataUrl);
-    quill.setSelection(range.index + 1);
-
-    editorCropper.destroy();
-    editorCropper = null;
-    cropModal.style.display = 'none';
-  });
-
-  document.getElementById('cropCancelEditor')?.addEventListener('click', () => {
-    editorCropper?.destroy();
-    editorCropper = null;
-    cropModal.style.display = 'none';
-  });
-
-} else {
-  console.error('Elementos del crop del editor NO encontrados');
+  };
 }
-
-// ====== HANDLER DE IMÁGENES (PREPARADO PARA CROP) ======
-function imageHandler() {
-  const input = document.getElementById('imageInputEditor');
-  if (!input) {
-    console.error('imageInputEditor NO existe');
-    return;
-  }
-  input.click();
-}
-
-/* ===============================
-   PROGRAMACIÓN DE PUBLICACIÓN
-================================ */
-(() => {
-  const estadoSelect = document.getElementById('estadoPublicacion');
-  const programacionBox = document.getElementById('programacionBox');
-  const fechaInput = document.getElementById('fechaPublicacion');
-  if (!estadoSelect || !programacionBox || !fechaInput) return;
-
-  estadoSelect.addEventListener('change', () => {
-    if (estadoSelect.value === 'programado') {
-      programacionBox.style.display = 'block';
-      fechaInput.required = true;
-    } else {
-      programacionBox.style.display = 'none';
-      fechaInput.required = false;
-      fechaInput.value = '';
-    }
-  });
-})();
 /* verifica el contenido del editor antes de enviar el formulario */
 const form = document.getElementById('formPublicacion');
 const contenidoInput = document.getElementById('contenido');
