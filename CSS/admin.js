@@ -147,7 +147,19 @@
       galleryCropper?.destroy();
       galleryCropper = new Cropper(image, {
         viewMode: 1,
-        autoCropArea: 1
+        autoCropArea: 1,
+        // Restricciones de tamaño 
+        aspectRatio: 16 / 9,     // ratio inicial
+        cropBoxResizable: false,
+        cropBoxMovable: true,
+        dragMode: 'move',
+        //ux
+        responsive: true,
+        guides: true,
+        center: true,
+        highlight: false,
+        background: false,
+        zoomOnWheel: true
       });
     };
     reader.readAsDataURL(file);
@@ -155,10 +167,13 @@
 
   document.querySelectorAll(".aspect-ratio-controls button").forEach(btn => {
     btn.addEventListener("click", () => {
+      document.querySelectorAll(".aspect-ratio-controls button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
       if (!galleryCropper) return;
       const ratio = btn.dataset.ratio;
       if (ratio === 'free') {
-        galleryCropper.setAspectRatio(NaN);
+        return;
       } else {
         const [w, h] = ratio.split('/').map(Number);
         galleryCropper.setAspectRatio(w / h);
@@ -255,3 +270,41 @@ if (form && contenidoInput) {
     contenidoInput.value = quill.root.innerHTML;
   });
 }
+// modal
+document.addEventListener("DOMContentLoaded", () => {
+    // Abrir modal
+    const deleteButtons = document.querySelectorAll(".btn-delete");
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalForm = document.getElementById("modalForm");
+    const modalIdInput = document.getElementById("modalId");
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const noticiaId = button.dataset.id;
+            const noticiaTitulo = button.dataset.titulo;
+
+            modalTitle.textContent = `¿Eliminar la noticia "${noticiaTitulo}"?`;
+            modalIdInput.value = noticiaId;
+
+            modalOverlay.style.display = "flex";
+        });
+    });
+
+    // Cerrar modal
+    const closeModalButtons = document.querySelectorAll(".btn-cancel, .modal-overlay");
+    closeModalButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            // Evitar cerrar si hace click dentro del modal
+            if (e.target === modalOverlay || btn.classList.contains("btn-cancel")) {
+                modalOverlay.style.display = "none";
+            }
+        });
+    });
+
+    // Evitar cerrar modal al hacer click dentro del contenido
+    const modalContent = document.querySelector(".crop-modal-content");
+    if (modalContent) {
+        modalContent.addEventListener("click", e => e.stopPropagation());
+    }
+});

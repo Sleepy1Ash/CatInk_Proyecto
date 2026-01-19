@@ -8,15 +8,9 @@
         session_start();
         $fila = $result->fetch_assoc();
         $_SESSION['usuario'] = $usuario;
-        $_SESSION['id'] = $fila['id'];
-        $rol = $fila['rol'];
-        if ($rol === 'Admin') {
-            header('Location: ../views/admin.php');
-            exit();
-        } elseif ($rol === 'user') {
-            header('Location: ../views/users/home.php');
-            exit();
-        }
+        $_SESSION['id_u'] = $fila['id_u'];
+        header('Location: ../views/admin.php');
+        exit();
     } else {
         header('Location: ../index.php?error=1');
         exit();

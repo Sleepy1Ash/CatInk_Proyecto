@@ -29,6 +29,7 @@ include("../data/conexion.php");
 // Obtencion de informacion del formulario
 $titulo = $_POST['titulo'];
 $descripcion = $_POST['descripcion'];
+$categoria = $_POST['categoria'];
 $autor = $_POST['autor'];
 $contenido = $_POST['contenido'];
 $fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
@@ -42,14 +43,15 @@ if (
 }
 // Insercion en la base de datos con preparacion
 $sql = "INSERT INTO noticias
-(titulo, descripcion, autor, contenido, fecha_publicacion)
-VALUES (?, ?, ?, ?, ?)";
+(titulo, descripcion, categoria, autor, contenido, fecha_publicacion)
+VALUES (?, ?, ?, ?, ?, ?)";
 
 $stmt = $con->prepare($sql);
 $stmt->bind_param(
-  "sssss",
+  "ssssss",
   $titulo,
   $descripcion,
+  $categoria, 
   $autor,
   $contenido,
   $fecha_publicacion
