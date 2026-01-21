@@ -45,5 +45,23 @@
     </div>
   </div>
 </footer>
+<!-- Modal de confirmación -->
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header" id="modalTitle">
+            <!-- Título dinámico -->
+        </div>
+        <div class="modal-body">
+            <span class="text-danger small">Esta acción no se puede deshacer.</span>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary btn-cancel">Cancelar</button>
+            <form action="../controllers/eliminar_noticia.php" method="POST" id="modalForm">
+                <input type="hidden" name="id" id="modalId">
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>
