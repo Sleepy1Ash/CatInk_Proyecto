@@ -2,7 +2,7 @@
 include("./../layout/header.php");
 include("./../data/conexion.php");
 
-$id = intval($_GET['id'] ?? 2);
+$id = intval($_GET['id'] ?? 1);
 
 $sql = "SELECT * FROM noticias WHERE id = ? AND fecha_publicacion <= NOW()";
 $stmt = $con->prepare($sql);
@@ -37,7 +37,7 @@ if (!$noticia) {
     </div>
 </div>
 <script>
-  fetch("/controllers/sumarvistas.php", {
+  fetch("./../controllers/sumarvistas.php", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "noticia_id=<?= $id ?>"
@@ -57,7 +57,7 @@ if (!$noticia) {
     let tiempo = Math.floor((Date.now() - inicio) / 1000);
 
     navigator.sendBeacon(
-      "/controllers/guardartiempo.php",
+      "./../controllers/guardartiempo.php",
       new URLSearchParams({
         noticia_id: "<?= $id ?>",
         tiempo: tiempo

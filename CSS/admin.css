@@ -32,6 +32,19 @@ h1 {
     margin-bottom: 24px;
     align-items: center;
 }
+hr {
+  border: none;
+  border-radius: 100%;
+  height: 4px;
+  background-color: var(--accent);
+}
+.titulos {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  margin-top: 18px;
+  align-items: center;
+}
 /* Diseño de la Siderbar de noticias */
 .sidebar {
   position: fixed;
@@ -721,8 +734,17 @@ select, input[type="datetime-local"] {
     object-fit: cover;
     border-radius: 8px;
 }
+.card-img-top {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 .card {
     margin-bottom: 8px;
+}
+.news-card {
+  width: 12rem;
 }
 /* ===============================
    ESTILOS TABLA DE NOTICIAS

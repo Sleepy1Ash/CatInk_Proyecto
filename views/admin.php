@@ -1,129 +1,226 @@
 <?php 
 // Página de administración (contenido principal de administración)
 include("./../layout/headerAdmin.php");
+include("./../data/conexion.php");
 ?>
 <h1>Panel de Administración - Estadísticas</h1>
 <div class="container-fluid">
 <?php
-    // Obtener todas las noticias
-    $sqlNoticias = $con->prepare("SELECT * FROM noticias ORDER BY fecha_publicacion DESC");
+    // Obtener todas las noticias con sus estadísticas agregadas
+    // Usamos LEFT JOIN para obtener el tiempo total desde noticias_stats
+    // Asumimos que n.vistas es el contador global de vistas
+    $sqlNoticias = $con->prepare("
+        SELECT 
+            n.id,
+            n.titulo,
+            n.descripcion,
+            n.crop3,
+            n.vistas,
+            n.fecha_publicacion,
+            COALESCE(SUM(ns.tiempo_segundos), 0) AS tiempo_total_stats
+        FROM noticias n
+        LEFT JOIN noticias_stats ns ON n.id = ns.noticia_id
+        GROUP BY 
+            n.id, n.titulo, n.descripcion, n.crop3, n.vistas, n.fecha_publicacion
+        ORDER BY n.fecha_publicacion DESC
+    ");
     $sqlNoticias->execute();
     $resultNoticias = $sqlNoticias->get_result();
 
-    // Iteramos por cada noticia
+    $noticiasData = [];
+
     while ($noticia = $resultNoticias->fetch_assoc()) {
-        $noticiaId = $noticia['id'];
-        $cardId = "news-card-" . $noticiaId;
+        $noticiasData[] = $noticia;
+    }
+    $desc = $noticia['descripcion'] ?? '';
+    $descCorta = function_exists('mb_strimwidth')
+    ? mb_strimwidth($desc, 0, 80, "...")
+    : substr($desc, 0, 80) . '...';
+
 ?>
-<div class="card mb-5 shadow-sm" id="<?= $cardId ?>">
-    <div class="row g-0">
-        <!-- Imagen y Datos Básicos -->
-        <div class="col-md-7">
-            <div class="row">
-                <div class="col">
-                    <img src="./../<?= htmlspecialchars($noticia['crop3'] ?? 'img/placeholder.jpg') ?>" class="img-fluid rounded-start" alt="..." style="width: 100%; height: 250px; object-fit: cover;">
+
+    <!-- SECCIÓN DE GRÁFICAS GLOBALES -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Filtros de Estadísticas</h5>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="filterFechaInicio" class="form-label">Fecha Inicio</label>
+                    <input type="date" class="form-control" id="filterFechaInicio" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
                 </div>
-                <div class="col">
-                    <h5 class="card-title"><?= htmlspecialchars($noticia['titulo']) ?></h5>
-                    <span class="badge bg-primary">Vistas Totales (Global): <?= $noticia['vistas'] ?></span>
-                    <p class="card-text text-muted mt-2"><small><?= htmlspecialchars(substr($noticia['descripcion'], 0, 100)) ?>...</small></p>
+                <div class="col-md-3">
+                    <label for="filterFechaFin" class="form-label">Fecha Fin</label>
+                    <input type="date" class="form-control" id="filterFechaFin" value="<?= date('Y-m-d') ?>">
+                </div>
+                <div class="col-md-3">
+                    <label for="filterCategoria" class="form-label">Categoría</label>
+                    <select class="form-select" id="filterCategoria">
+                        <option value="">Todas</option>
+                        <option value="Pelicualas">Películas</option>
+                        <option value="Series">Series</option>
+                        <option value="Cultura Pop">Cultura Pop</option>
+                        <option value="Anime">Anime</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" onclick="loadGlobalStats()">
+                        <i class="bi bi-funnel"></i> Aplicar Filtros
+                    </button>
                 </div>
             </div>
         </div>
-        
-        <!-- Sección de Gráficas -->
-        <div class="col-md-5">
-            <div class="card-body">
-                <!-- Controles de Filtro -->
-                <div class="d-flex justify-content-end mb-3">
-                    <div class="btn-group" role="group" aria-label="Rango de tiempo">
-                        <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="updateCharts(<?= $noticiaId ?>, 'diario', this)">Diario</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateCharts(<?= $noticiaId ?>, 'semanal', this)">Semanal</button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateCharts(<?= $noticiaId ?>, 'mensual', this)">Mensual</button>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Comparativa de Vistas</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="globalChartVistas"></canvas>
                     </div>
                 </div>
-
-                <div class="row">
-                    <!-- Gráfica 1: Lecturas (Vistas) -->
-                    <div class="col-md-6">
-                        <h6>Lecturas (Vistas)</h6>
-                        <div style="height: 200px;">
-                            <canvas id="chartVistas_<?= $noticiaId ?>"></canvas>
-                        </div>
-                    </div>
-                    <!-- Gráfica 2: Tiempo de Visualización -->
-                    <div class="col-md-6">
-                        <h6>Tiempo de Visualización (Segundos)</h6>
-                        <div style="height: 200px;">
-                            <canvas id="chartTiempo_<?= $noticiaId ?>"></canvas>
-                        </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Comparativa de Tiempo (Segundos)</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="globalChartTiempo"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<?php
-    }
-?>
+
+    <!-- SECCIÓN DE NOTICIAS (CARDS) -->
+    <center>
+        <br>
+        <hr>
+        <h3 class="titulos mb-4">Listado de Noticias</h3>
+        <hr>
+        <br>
+    </center>
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        <?php foreach ($noticiasData as $noticia): ?>
+            <div class="col">
+                <div class="card news-card">
+                    <!-- Imagen (crop3) -->
+                    <img src="./../<?= htmlspecialchars($noticia['crop3'] ?? 'img/placeholder.jpg') ?>" 
+                         class="card-img-top" 
+                         alt="<?= htmlspecialchars($noticia['titulo']) ?>">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate" title="<?= htmlspecialchars($noticia['titulo']) ?>">
+                            <?= htmlspecialchars($noticia['titulo']) ?>
+                        </h5>
+                        <p class="card-text small text-muted">
+                            <?= htmlspecialchars($descCorta) ?>
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer bg-white border-top-0">
+                        <div class="d-flex justify-content-between align-items-center small text-muted">
+                            <span title="Vistas Totales">
+                                <i class="bi bi-eye me-1"></i> <?= $noticia['vistas'] ?>
+                            </span>
+                            <span title="Tiempo Total de Visualización">
+                                <i class="bi bi-clock me-1"></i> <?= number_format($noticia['tiempo_total_stats'], 0) ?>s
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
 </div>
 
 <script>
-// Almacén global para las instancias de gráficos para poder destruirlos antes de actualizar
-const chartInstances = {};
+let globalChartVistasInstance = null;
+let globalChartTiempoInstance = null;
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Cargar datos iniciales (diario) para todas las tarjetas
-    <?php 
-    // Reiniciamos el puntero para volver a iterar o simplemente usamos un selector JS
-    // Lo más limpio es buscar todos los botones "active" y disparar su evento, 
-    // o llamar a la función para cada ID que generamos.
-    $sqlNoticias->data_seek(0); 
-    while ($n = $resultNoticias->fetch_assoc()) {
-        echo "updateCharts({$n['id']}, 'diario');\n";
-    }
-    ?>
+    // Cargar estadísticas globales al inicio
+    loadGlobalStats();
 });
 
-function updateCharts(noticiaId, rango, btnElement = null) {
-    // Actualizar estado de botones si se hizo click
-    if (btnElement) {
-        const group = btnElement.parentElement;
-        group.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-        btnElement.classList.add('active');
-    }
+function loadGlobalStats() {
+    const fechaInicio = document.getElementById('filterFechaInicio').value;
+    const fechaFin = document.getElementById('filterFechaFin').value;
+    const categoria = document.getElementById('filterCategoria').value;
 
-    // Llamada API
-    fetch(`../controllers/obtener_estadisticas.php?noticia_id=${noticiaId}&rango=${rango}`)
-        .then(response => response.json())
-        .then(data => {
-            renderVistasChart(noticiaId, data.labels, data.vistas);
-            renderTiempoChart(noticiaId, data.labels, data.tiempoPromedio, data.tiempoTotal);
+    const params = new URLSearchParams({
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin,
+        categoria: categoria
+    });
+
+    fetch(`./../controllers/obtener_estadisticas_globales.php?${params.toString()}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Error en la respuesta del servidor");
+            return response.json();
         })
-        .catch(err => console.error("Error cargando estadísticas:", err));
+        .then(data => {
+            if (data.error) throw new Error(data.error);
+            renderGlobalCharts(data.labels, data.vistas, data.tiempo);
+        })
+        .catch(err => {
+            console.error("Error cargando estadísticas globales:", err);
+            // alert("Error al cargar estadísticas: " + err.message); // Descomentar para debug visual
+        });
 }
 
-function renderVistasChart(id, labels, dataVistas) {
-    const ctx = document.getElementById(`chartVistas_${id}`).getContext('2d');
-    const chartId = `vistas_${id}`;
-
-    // Destruir si existe
-    if (chartInstances[chartId]) {
-        chartInstances[chartId].destroy();
+function renderGlobalCharts(labels, dataVistas, dataTiempo) {
+    // Gráfica de Vistas
+    const ctxVistas = document.getElementById('globalChartVistas').getContext('2d');
+    
+    if (globalChartVistasInstance) {
+        globalChartVistasInstance.destroy();
     }
 
-    chartInstances[chartId] = new Chart(ctx, {
+    globalChartVistasInstance = new Chart(ctxVistas, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Cantidad de Lecturas',
+                label: 'Vistas en Periodo',
                 data: dataVistas,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
                 borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                tension: 0.3,
-                fill: true
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Gráfica de Tiempo
+    const ctxTiempo = document.getElementById('globalChartTiempo').getContext('2d');
+
+    if (globalChartTiempoInstance) {
+        globalChartTiempoInstance.destroy();
+    }
+
+    globalChartTiempoInstance = new Chart(ctxTiempo, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tiempo Total (s)',
+                data: dataTiempo,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
             }]
         },
         options: {
@@ -135,67 +232,8 @@ function renderVistasChart(id, labels, dataVistas) {
         }
     });
 }
-
-function renderTiempoChart(id, labels, dataPromedio, dataTotal) {
-    const ctx = document.getElementById(`chartTiempo_${id}`).getContext('2d');
-    const chartId = `tiempo_${id}`;
-
-    if (chartInstances[chartId]) {
-        chartInstances[chartId].destroy();
-    }
-
-    chartInstances[chartId] = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Promedio (s)',
-                    data: dataPromedio,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: 'y',
-                    tension: 0.3
-                },
-                {
-                    label: 'Acumulado Total (s)',
-                    data: dataTotal,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    yAxisID: 'y1',
-                    tension: 0.3,
-                    borderDash: [5, 5]
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            scales: {
-                y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    title: { display: true, text: 'Promedio' },
-                    beginAtZero: true
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: { display: true, text: 'Total Acumulado' },
-                    grid: { drawOnChartArea: false }, // para no ensuciar la grilla
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
 </script>
+
 <?php
 // Se incluye el footerAdmin que cierra el main y añade scripts
 include("./../layout/footerAdmin.php");

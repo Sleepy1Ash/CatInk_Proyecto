@@ -30,7 +30,7 @@ include("./../layout/headerAdmin.php");
                 <label for="categoria">Categoria</label>
                 <select id="categoria" name="categoria" class="btn-secondary" required>
                     <option value="">Seleccione una categoria</option>
-                    <option value="Pelicualas">Peliculas</option>
+                    <option value="Peliculas">Peliculas</option>
                     <option value="Series">Series</option>
                     <option value="Cultura Pop">Cultura Pop</option>
                     <option value="Anime">Anime</option>
