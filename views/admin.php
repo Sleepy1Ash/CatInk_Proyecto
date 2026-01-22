@@ -14,8 +14,9 @@ include("./../data/conexion.php");
             n.id,
             n.titulo,
             n.descripcion,
-            n.crop3,
+            n.crop2,
             n.vistas,
+            n.likes,
             n.fecha_publicacion,
             COALESCE(SUM(ns.tiempo_segundos), 0) AS tiempo_total_stats
         FROM noticias n
@@ -84,6 +85,32 @@ include("./../data/conexion.php");
             </div>
         </div>
     </div>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Comparativa de Likes</h5>
+                </div>
+                <div class="card-body">
+                <div style="height: 300px;">
+                    <canvas id="globalChartLikes"></canvas>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Comparativa de Likes por region</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="globalChartLikesRegion"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- SECCIÓN DE NOTICIAS (CARDS) -->
     <center>
@@ -102,8 +129,8 @@ include("./../data/conexion.php");
             ?>
             <div class="col">
                 <div class="card news-card">
-                    <!-- Imagen (crop3) -->
-                    <img src="./../<?= htmlspecialchars($noticia['crop3'] ?? 'img/placeholder.jpg') ?>" 
+                    <!-- Imagen (crop2) -->
+                    <img src="./../<?= htmlspecialchars($noticia['crop2'] ?? 'img/placeholder.jpg') ?>" 
                          class="card-img-top" 
                          alt="<?= htmlspecialchars($noticia['titulo']) ?>">
                     
@@ -125,6 +152,10 @@ include("./../data/conexion.php");
                             <p>Tiempo</p>
                             <i class="bi bi-clock me-1"></i> <?= number_format($noticia['tiempo_total_stats'], 0) ?>s
                         </span>
+                        <span title="Likes">
+                            <p>Likes</p>
+                            <i class="bi bi-heart me-1"></i> <?= $noticia['likes'] ?>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -133,131 +164,181 @@ include("./../data/conexion.php");
 </div>
 
 <script>
-let chartVistas = null;
-let chartTiempo = null;
+    // Almacena todas las instancias de Chart.js
+    const charts = {};
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadGlobalStats();
-});
-
-function loadGlobalStats() {
-    const fechaInicio = document.getElementById('filterFechaInicio').value;
-    const fechaFin = document.getElementById('filterFechaFin').value;
-
-    const params = new URLSearchParams({
-        fecha_inicio: fechaInicio,
-        fecha_fin: fechaFin
+    document.addEventListener("DOMContentLoaded", () => {
+        loadGlobalStats();
+        loadLikesStats();
     });
 
-    fetch(`./../controllers/obtener_estadisticas_globales.php?${params}`)
-        .then(res => res.json())
-        .then(data => {
-            renderAreaChart(
-                'globalChartVistas',
-                data,
-                'vistas',
-                'Vistas'
-            );
-            renderAreaChart(
-                'globalChartTiempo',
-                data,
-                'tiempo',
-                'Tiempo de visualización (s)'
-            );
-        })
-        .catch(console.error);
-}
+    function loadGlobalStats() {
+        const fechaInicio = document.getElementById('filterFechaInicio').value;
+        const fechaFin = document.getElementById('filterFechaFin').value;
 
-function renderAreaChart(canvasId, data, metric, labelText) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
+        const params = new URLSearchParams({
+            fecha_inicio: fechaInicio,
+            fecha_fin: fechaFin
+        });
 
-    let chartRef = canvasId === 'globalChartVistas' ? chartVistas : chartTiempo;
-    if (chartRef) chartRef.destroy();
+        fetch(`./../controllers/obtener_estadisticas_globales.php?${params}`)
+            .then(res => res.json())
+            .then(data => {
+                renderAreaChart(
+                    'globalChartVistas',
+                    data,
+                    'vistas',
+                    'Vistas'
+                );
+                renderAreaChart(
+                    'globalChartTiempo',
+                    data,
+                    'tiempo',
+                    'Tiempo de visualización (s)'
+                );
+            })
+            .catch(console.error);
+    }
 
-    const colors = [
-        'rgba(75, 192, 192, 0.35)',
-        'rgba(54, 162, 235, 0.35)',
-        'rgba(255, 99, 132, 0.35)',
-        'rgba(255, 159, 64, 0.35)',
-        'rgba(153, 102, 255, 0.35)'
-    ];
+    function loadLikesStats() {
+        const fechaInicio = document.getElementById('filterFechaInicio').value;
+        const fechaFin = document.getElementById('filterFechaFin').value;
 
-    const datasets = Object.entries(data.categorias).map(([cat, values], i) => ({
-        label: cat,
-        data: values[metric],
-        fill: true,
-        tension: 0.4,
-        borderWidth: 2,
-        backgroundColor: colors[i % colors.length],
-        borderColor: colors[i % colors.length].replace('0.35', '1')
-    }));
+        fetch(`./../controllers/obtener_estadisticas_likes.php?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`)
+            .then(r => r.json())
+            .then(data => {
+                renderAreaChart(
+                    'globalChartLikes',
+                    data,
+                    'likes',
+                    'Likes'
+                );
+                renderBarChart(
+                    'globalChartLikesRegion',
+                    data.geo.paises,
+                    'Likes por país'
+                );
+            })
+            .catch(console.error);
+    }
 
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: data.labels,
-            datasets
-        },
-        options: {
-            responsive: true,
-            interaction: {
-                intersect: false,
-                mode: 'index'
+    /**
+     * Renderiza un gráfico de área (líneas rellenas)
+     */
+    function renderAreaChart(canvasId, data, metric, labeltext) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        // Destruir gráfico previo si existe
+        if (charts[canvasId]) {
+            charts[canvasId].destroy();
+        }
+
+        const colors = [
+            'rgba(75, 192, 192, 0.35)',
+            'rgba(54, 162, 235, 0.35)',
+            'rgba(255, 99, 132, 0.35)',
+            'rgba(255, 159, 64, 0.35)',
+            'rgba(153, 102, 255, 0.35)'
+        ];
+
+        const datasets = Object.entries(data.categorias).map(([cat, values], i) => ({
+            label: cat,
+            data: values[metric],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            backgroundColor: colors[i % colors.length],
+            borderColor: colors[i % colors.length].replace('0.35', '1')
+        }));
+
+        charts[canvasId] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets
             },
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'rectRounded',
-                        pointStyleWidth: 20,        // Ancho del icono (por defecto ~10)
-                        pointStyleHeight: 20,       // Alto del icono (opcional, por defecto igual que width)
-                        font: {
-                            size: 16,       // Tamaño de la letra en píxeles (por defecto es 12)
-                            weight: 'italic', // Opcional: 'normal', 'bold', etc.   
-                        },
-                    },
-                    onHover: (event, legendItem, legend) => {
-                        // Cambia el cursor a "pointer" solo para la leyenda
-                        event.native ? event.native.target.style.cursor = 'pointer' : null;
-                    },
-                    onLeave: (event, legendItem, legend) => {
-                        event.native ? event.native.target.style.cursor = 'default' : null;
-                    },
-                    onClick: (e, legendItem, legend) => {
-                        // Usar el método interno toggleDataVisibility
-                        const index = legendItem.datasetIndex;
-                        const chart = legend.chart;
-                        // Este es el correcto:
-                        chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
-                        chart.update();
-                    }
+            options: {
+                responsive: true,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
                 },
-                tooltip: {
-                    callbacks: {
-                        footer: (items) => {
-                            let total = 0;
-                            items.forEach(i => total += i.parsed.y);
-                            return `Total: ${total}`;
+                plugins: {
+                    title: {
+                        display: true,
+                        text: labeltext
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            pointStyleWidth: 20,
+                            pointStyleHeight: 20,
+                            font: {
+                                size: 16,
+                                weight: 'italic'
+                            }
+                        },
+                        onHover: e => e.native && (e.native.target.style.cursor = 'pointer'),
+                        onLeave: e => e.native && (e.native.target.style.cursor = 'default'),
+                        onClick: (e, legendItem, legend) => {
+                            const index = legendItem.datasetIndex;
+                            const chart = legend.chart;
+
+                            // Mostrar / ocultar dataset
+                            chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
+                            chart.update();
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            footer: items =>
+                                `Total: ${items.reduce((a, i) => a + i.parsed.y, 0)}`
                         }
                     }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
+                },
+                scales: {
+                    y: { beginAtZero: true }
                 }
             }
+        });
+    }
+    /**
+     * Renderiza un gráfico de barras
+     */
+    function renderBarChart(canvasId, geoData, title) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        if (charts[canvasId]) {
+            charts[canvasId].destroy();
         }
-    });
 
-    if (canvasId === 'globalChartVistas') chartVistas = chart;
-    else chartTiempo = chart;
-}
+        charts[canvasId] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: geoData.labels,
+                datasets: [{
+                    label: title,
+                    data: geoData.values,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                    display: true,
+                    text: title
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 </script>
-
-
-
 <?php
 // Se incluye el footerAdmin que cierra el main y añade scripts
 include("./../layout/footerAdmin.php");

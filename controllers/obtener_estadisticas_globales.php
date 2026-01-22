@@ -57,11 +57,7 @@ try {
         }
 
         $cat = $row['categoria'];
-
-        if (!isset($dataCategorias[$cat])) {
-            $dataCategorias[$cat] = [];
-        }
-
+        
         if (!isset($dataCategorias[$cat])) {
             $dataCategorias[$cat] = [
                 'vistas' => [],

@@ -31,6 +31,10 @@ if (!$noticia) {
     Por <strong><?= htmlspecialchars($autor_nombre) ?></strong> —
     <?= date("d/m/Y H:i", strtotime($noticia['fecha_publicacion'])) ?>
     </p>
+    <button id="likeBtn" data-id="<?= $id ?>">
+      ❤️ Like <span id="likeCount"><?= $noticia['likes'] ?></span>
+    </button>
+
     <img src="./../<?= htmlspecialchars($noticia['crop1']) ?>" alt="" class="img-titular">
     <div class="ql-editor">
         <?= $noticia['contenido'] ?>
@@ -72,6 +76,29 @@ if (!$noticia) {
       enviarTiempo();
     }
   });
+</script>
+<script>
+  document.getElementById('likeBtn').addEventListener('click', async function () {
+    const id = this.dataset.id;
+
+    const res = await fetch('./../controllers/like.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `noticia_id=${id}`
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+        const count = document.getElementById('likeCount');
+        count.textContent = parseInt(count.textContent) + 1;
+        this.disabled = true;
+    } else {
+        alert(data.msg);
+        this.disabled = true;
+    }
+});
+
 </script>
 <?php
 include("./../layout/footer.php");
