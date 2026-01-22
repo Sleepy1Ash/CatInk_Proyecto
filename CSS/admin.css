@@ -743,8 +743,20 @@ select, input[type="datetime-local"] {
 .card {
     margin-bottom: 8px;
 }
+.card-footer span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .news-card {
-  width: 12rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0b1220;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 18rem;
 }
 /* ===============================
    ESTILOS TABLA DE NOTICIAS

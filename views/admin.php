@@ -32,10 +32,6 @@ include("./../data/conexion.php");
     while ($noticia = $resultNoticias->fetch_assoc()) {
         $noticiasData[] = $noticia;
     }
-    $desc = $noticia['descripcion'] ?? '';
-    $descCorta = function_exists('mb_strimwidth')
-    ? mb_strimwidth($desc, 0, 80, "...")
-    : substr($desc, 0, 80) . '...';
 
 ?>
 
@@ -53,18 +49,9 @@ include("./../data/conexion.php");
                     <input type="date" class="form-control" id="filterFechaFin" value="<?= date('Y-m-d') ?>">
                 </div>
                 <div class="col-md-3">
-                    <label for="filterCategoria" class="form-label">Categoría</label>
-                    <select class="form-select" id="filterCategoria">
-                        <option value="">Todas</option>
-                        <option value="Pelicualas">Películas</option>
-                        <option value="Series">Series</option>
-                        <option value="Cultura Pop">Cultura Pop</option>
-                        <option value="Anime">Anime</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-primary w-100" onclick="loadGlobalStats()">
-                        <i class="bi bi-funnel"></i> Aplicar Filtros
+                    <label for="filterApply">Aplicar Filtros</label>
+                    <button class="btn btn-secondary w-100" onclick="loadGlobalStats()">
+                        <i class="bi bi-funnel"></i>
                     </button>
                 </div>
             </div>
@@ -72,7 +59,7 @@ include("./../data/conexion.php");
     </div>
 
     <div class="row mb-5">
-        <div class="col-md-6">
+        <div class="col">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Comparativa de Vistas</h5>
@@ -84,7 +71,7 @@ include("./../data/conexion.php");
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">Comparativa de Tiempo (Segundos)</h5>
@@ -107,7 +94,12 @@ include("./../data/conexion.php");
         <br>
     </center>
     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-        <?php foreach ($noticiasData as $noticia): ?>
+        <?php foreach ($noticiasData as $noticia):
+            $desc = $noticia['descripcion'] ?? '';
+            $descCorta = function_exists('mb_strimwidth')
+            ? mb_strimwidth($desc, 0, 80, "...")
+            : substr($desc, 0, 80) . '...';
+            ?>
             <div class="col">
                 <div class="card news-card">
                     <!-- Imagen (crop3) -->
@@ -124,15 +116,15 @@ include("./../data/conexion.php");
                         </p>
                     </div>
                     
-                    <div class="card-footer bg-white border-top-0">
-                        <div class="d-flex justify-content-between align-items-center small text-muted">
-                            <span title="Vistas Totales">
-                                <i class="bi bi-eye me-1"></i> <?= $noticia['vistas'] ?>
-                            </span>
-                            <span title="Tiempo Total de Visualización">
-                                <i class="bi bi-clock me-1"></i> <?= number_format($noticia['tiempo_total_stats'], 0) ?>s
-                            </span>
-                        </div>
+                    <div class="card-footer">
+                        <span title="Vistas Totales">
+                            <p>Vistas</p>
+                            <i class="bi bi-eye me-1"></i> <?= $noticia['vistas'] ?>
+                        </span>
+                        <span title="Tiempo Total de Visualización">
+                            <p>Tiempo</p>
+                            <i class="bi bi-clock me-1"></i> <?= number_format($noticia['tiempo_total_stats'], 0) ?>s
+                        </span>
                     </div>
                 </div>
             </div>
@@ -141,98 +133,130 @@ include("./../data/conexion.php");
 </div>
 
 <script>
-let globalChartVistasInstance = null;
-let globalChartTiempoInstance = null;
+let chartVistas = null;
+let chartTiempo = null;
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Cargar estadísticas globales al inicio
+document.addEventListener("DOMContentLoaded", () => {
     loadGlobalStats();
 });
 
 function loadGlobalStats() {
     const fechaInicio = document.getElementById('filterFechaInicio').value;
     const fechaFin = document.getElementById('filterFechaFin').value;
-    const categoria = document.getElementById('filterCategoria').value;
 
     const params = new URLSearchParams({
         fecha_inicio: fechaInicio,
-        fecha_fin: fechaFin,
-        categoria: categoria
+        fecha_fin: fechaFin
     });
 
-    fetch(`./../controllers/obtener_estadisticas_globales.php?${params.toString()}`)
-        .then(response => {
-            if (!response.ok) throw new Error("Error en la respuesta del servidor");
-            return response.json();
-        })
+    fetch(`./../controllers/obtener_estadisticas_globales.php?${params}`)
+        .then(res => res.json())
         .then(data => {
-            if (data.error) throw new Error(data.error);
-            renderGlobalCharts(data.labels, data.vistas, data.tiempo);
+            renderAreaChart(
+                'globalChartVistas',
+                data,
+                'vistas',
+                'Vistas'
+            );
+            renderAreaChart(
+                'globalChartTiempo',
+                data,
+                'tiempo',
+                'Tiempo de visualización (s)'
+            );
         })
-        .catch(err => {
-            console.error("Error cargando estadísticas globales:", err);
-            // alert("Error al cargar estadísticas: " + err.message); // Descomentar para debug visual
-        });
+        .catch(console.error);
 }
 
-function renderGlobalCharts(labels, dataVistas, dataTiempo) {
-    // Gráfica de Vistas
-    const ctxVistas = document.getElementById('globalChartVistas').getContext('2d');
-    
-    if (globalChartVistasInstance) {
-        globalChartVistasInstance.destroy();
-    }
+function renderAreaChart(canvasId, data, metric, labelText) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
 
-    globalChartVistasInstance = new Chart(ctxVistas, {
+    let chartRef = canvasId === 'globalChartVistas' ? chartVistas : chartTiempo;
+    if (chartRef) chartRef.destroy();
+
+    const colors = [
+        'rgba(75, 192, 192, 0.35)',
+        'rgba(54, 162, 235, 0.35)',
+        'rgba(255, 99, 132, 0.35)',
+        'rgba(255, 159, 64, 0.35)',
+        'rgba(153, 102, 255, 0.35)'
+    ];
+
+    const datasets = Object.entries(data.categorias).map(([cat, values], i) => ({
+        label: cat,
+        data: values[metric],
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        backgroundColor: colors[i % colors.length],
+        borderColor: colors[i % colors.length].replace('0.35', '1')
+    }));
+
+    const chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
-            datasets: [{
-                label: 'Vistas en Periodo',
-                data: dataVistas,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
+            labels: data.labels,
+            datasets
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'rectRounded',
+                        pointStyleWidth: 20,        // Ancho del icono (por defecto ~10)
+                        pointStyleHeight: 20,       // Alto del icono (opcional, por defecto igual que width)
+                        font: {
+                            size: 16,       // Tamaño de la letra en píxeles (por defecto es 12)
+                            weight: 'italic', // Opcional: 'normal', 'bold', etc.   
+                        },
+                    },
+                    onHover: (event, legendItem, legend) => {
+                        // Cambia el cursor a "pointer" solo para la leyenda
+                        event.native ? event.native.target.style.cursor = 'pointer' : null;
+                    },
+                    onLeave: (event, legendItem, legend) => {
+                        event.native ? event.native.target.style.cursor = 'default' : null;
+                    },
+                    onClick: (e, legendItem, legend) => {
+                        // Usar el método interno toggleDataVisibility
+                        const index = legendItem.datasetIndex;
+                        const chart = legend.chart;
+                        // Este es el correcto:
+                        chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
+                        chart.update();
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        footer: (items) => {
+                            let total = 0;
+                            items.forEach(i => total += i.parsed.y);
+                            return `Total: ${total}`;
+                        }
+                    }
+                }
+            },
             scales: {
-                y: { beginAtZero: true }
+                y: {
+                    beginAtZero: true
+                }
             }
         }
     });
 
-    // Gráfica de Tiempo
-    const ctxTiempo = document.getElementById('globalChartTiempo').getContext('2d');
-
-    if (globalChartTiempoInstance) {
-        globalChartTiempoInstance.destroy();
-    }
-
-    globalChartTiempoInstance = new Chart(ctxTiempo, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Tiempo Total (s)',
-                data: dataTiempo,
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
-    });
+    if (canvasId === 'globalChartVistas') chartVistas = chart;
+    else chartTiempo = chart;
 }
 </script>
+
+
 
 <?php
 // Se incluye el footerAdmin que cierra el main y añade scripts
