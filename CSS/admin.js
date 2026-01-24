@@ -129,87 +129,119 @@
 (() => {
   let galleryCropper = null;
   let crops = [];
-  const maxCrops = 3;
+  let currentStep = 0;
+
+  const cropSteps = [
+    { name: 'Original', ratio: NaN },
+    { name: 'Banner', ratio: 21 / 6 },
+    { name: 'Miniatura', ratio: 16 / 9 }
+  ];
 
   const imageInputMain = document.getElementById("imageInputMain");
   const image = document.getElementById("cropperImage");
   const previewGrid = document.getElementById("previewGrid");
 
+  const btnAdd = document.getElementById("cropAdd");
+  const btnReset = document.getElementById("cropReset");
+  const btnDelete = document.getElementById("cropDelete");
+
   if (!imageInputMain || !image || !previewGrid) return;
 
+  /* ===== CARGA IMAGEN ===== */
   imageInputMain.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
 
+    resetAll();
+
     const reader = new FileReader();
     reader.onload = () => {
       image.src = reader.result;
+
       galleryCropper?.destroy();
       galleryCropper = new Cropper(image, {
         viewMode: 1,
         autoCropArea: 1,
-        // Restricciones de tamaño 
-        aspectRatio: 16 / 9,     // ratio inicial
+        aspectRatio: cropSteps[0].ratio,
         cropBoxResizable: false,
-        cropBoxMovable: true,
         dragMode: 'move',
-        //ux
         responsive: true,
         guides: true,
-        center: true,
-        highlight: false,
-        background: false,
-        zoomOnWheel: true
+        background: false
       });
     };
     reader.readAsDataURL(file);
   });
 
-  document.querySelectorAll(".aspect-ratio-controls button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".aspect-ratio-controls button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+  /* ===== AÑADIR RECORTE ===== */
+  btnAdd?.addEventListener("click", () => {
+    if (!galleryCropper || currentStep >= cropSteps.length) return;
 
-      if (!galleryCropper) return;
-      const ratio = btn.dataset.ratio;
-      if (ratio === 'free') {
-        return;
-      } else {
-        const [w, h] = ratio.split('/').map(Number);
-        galleryCropper.setAspectRatio(w / h);
-      }
+    const canvas = galleryCropper.getCroppedCanvas({
+      imageSmoothingQuality: "high"
     });
-  });
 
-  document.getElementById("cropAdd")?.addEventListener("click", () => {
-    if (!galleryCropper || crops.length >= maxCrops) return;
-
-    const canvas = galleryCropper.getCroppedCanvas({ imageSmoothingQuality: "high" });
     const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
     crops.push(dataUrl);
     updatePreviews();
-  });
 
-  document.getElementById("cropReset")?.addEventListener("click", () => {
-    crops = [];
-    previewGrid.innerHTML = "";
-    for (let i = 1; i <= 3; i++) {
-      const input = document.getElementById(`crop${i}`);
-      if (input) input.value = "";
+    currentStep++;
+
+    if (currentStep < cropSteps.length) {
+      galleryCropper.setAspectRatio(cropSteps[currentStep].ratio);
     }
   });
 
+  /* ===== RESET TOTAL ===== */
+  btnReset?.addEventListener("click", resetAll);
+
+  /* ===== DESHACER ÚLTIMO ===== */
+  btnDelete?.addEventListener("click", () => {
+    if (crops.length === 0) return;
+
+    crops.pop();
+    currentStep = Math.max(0, currentStep - 1);
+
+    galleryCropper.setAspectRatio(cropSteps[currentStep].ratio);
+    updatePreviews();
+  });
+
+  /* ===== HELPERS ===== */
   function updatePreviews() {
     previewGrid.innerHTML = "";
+
+    for (let i = 0; i < 3; i++) {
+      const input = document.getElementById(`crop${i + 1}`);
+      if (input) input.value = "";
+    }
+
     crops.forEach((crop, i) => {
       const img = document.createElement("img");
       img.src = crop;
       previewGrid.appendChild(img);
+
       const input = document.getElementById(`crop${i + 1}`);
       if (input) input.value = crop;
     });
   }
+
+  function resetAll() {
+    crops = [];
+    currentStep = 0;
+    previewGrid.innerHTML = "";
+
+    for (let i = 1; i <= 3; i++) {
+      const input = document.getElementById(`crop${i}`);
+      if (input) input.value = "";
+    }
+
+    if (galleryCropper) {
+      galleryCropper.setAspectRatio(cropSteps[0].ratio);
+      galleryCropper.reset();
+    }
+  }
 })();
+
 
 /* ===============================
    EDITOR QUILL
@@ -240,6 +272,12 @@ const quill = new Quill('#editor', {
     }
   }
 });
+// ====== CARGAR CONTENIDO EXISTENTE ======
+const editorContent = document.getElementById('editorContent');
+
+if (editorContent && editorContent.textContent.trim().length > 0) {
+  quill.clipboard.dangerouslyPasteHTML(editorContent.innerHTML);
+}
 
 // ====== HANDLER DE IMÁGENES (PREPARADO PARA CROP) ======
 function imageHandler() {
@@ -262,7 +300,10 @@ function imageHandler() {
   };
 }
 /* verifica el contenido del editor antes de enviar el formulario */
-const form = document.getElementById('formPublicacion');
+const form = 
+            document.getElementById('formPublicacion')
+            ? document.getElementById('formPublicacion')
+            : document.getElementById('formEdicion');
 const contenidoInput = document.getElementById('contenido');
 
 if (form && contenidoInput) {

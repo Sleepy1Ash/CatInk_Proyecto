@@ -1,45 +1,54 @@
-<?php 
-// Página de creacion (añadir noticias)
+<?php
 include("./../layout/headerAdmin.php");
+if (!isset($_GET['id'])) { header("Location: contenidos.php"); exit; }
+$id = intval($_GET['id']);
+$stmt = $con->prepare("SELECT id, titulo, descripcion, categoria, contenido, fecha_publicacion, crop1, crop2, crop3 FROM noticias WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$noticia = $result->fetch_assoc();
+if (!$noticia) { header("Location: contenidos.php"); exit; }
 ?>
 <div class="admin-container">
-    <h1>Alta de noticia | CatInk News</h1>
-    <form id="formPublicacion" action="./../../CatInk_Proyecto/controllers/noticiascontroller.php" method="POST" enctype="multipart/form-data">
+    <h1>Editar noticia | CatInk News</h1>
+    <form id="formEdicion" action="./../../CatInk_Proyecto/controllers/actualizar_noticia.php" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="<?= $noticia['id'] ?>">
         <div class="form-card card">
-            <!-- Autor oculto -->
-            <input type="hidden" name="autor" value="<?php echo $fila['id_u']; ?>">
             <!-- TÍTULO -->
             <div class="form-group">
                 <label for="titulo">Título</label>
                 <span>Maximo 50 caracteres</span>
-                <input type="text" id="titulo" name="titulo" required>
+                <input type="text" id="titulo" name="titulo" required value="<?= htmlspecialchars($noticia['titulo']) ?>">
             </div>
             <!-- DESCRIPCIÓN -->
             <div class="form-group">
                 <label for="descripcion">Descripción corta </label>
                 <span>Maximo 150 caracteres</span>
-                <textarea 
-                    id="descripcion" 
-                    name="descripcion" 
-                    rows="3"
-                    placeholder="Resumen breve de la noticia"
-                    required></textarea>
+                <textarea id="descripcion" name="descripcion" rows="3" required><?= htmlspecialchars($noticia['descripcion']) ?></textarea>
             </div>
             <!-- Categoria -->
-             <div class="form-group">
+            <div class="form-group">
                 <label for="categoria">Categoria</label>
                 <select id="categoria" name="categoria" class="btn-secondary" required>
                     <option value="">Seleccione una categoria</option>
-                    <option value="Peliculas">Peliculas</option>
-                    <option value="Series">Series</option>
-                    <option value="Cultura Pop">Cultura Pop</option>
-                    <option value="Anime">Anime</option>
+                    <option value="Peliculas" <?= $noticia['categoria']==='Peliculas'?'selected':'' ?>>Peliculas</option>
+                    <option value="Series" <?= $noticia['categoria']==='Series'?'selected':'' ?>>Series</option>
+                    <option value="Cultura Pop" <?= $noticia['categoria']==='Cultura Pop'?'selected':'' ?>>Cultura Pop</option>
+                    <option value="Anime" <?= $noticia['categoria']==='Anime'?'selected':'' ?>>Anime</option>
                 </select>
-             </div>
+            </div>
             <!-- IMAGEN PRINCIPAL -->
             <div class="form-group">
                 <label>Imagen principal</label>
-                <span>El orden de los botones muestra las capturas necesarias y como deben ser guardadas</span>
+                <span>Si agregas nuevos recortes, se reemplazarán los existentes</span>
+                <!-- IMAGEN PRINCIPAL (ya existentes) -->
+                <div class="mb-2">
+                        <div class="row">
+                            <div class="col"><img src="./../<?= htmlspecialchars($noticia['crop1']) ?>" alt="Actual" style="width: 100%; max-height: 120px; object-fit: cover;"></div>
+                            <div class="col"><img src="./../<?= htmlspecialchars($noticia['crop2']) ?>" alt="Actual" style="width: 100%; max-height: 120px; object-fit: cover;"></div>
+                            <div class="col"><img src="./../<?= htmlspecialchars($noticia['crop3']) ?>" alt="Actual" style="width: 100%; max-height: 120px; object-fit: cover;"></div>
+                        </div>
+                </div>
                 <!-- Subida -->
                 <input type="file" id="imageInputMain" accept="image/*">
                 <br>
@@ -47,30 +56,25 @@ include("./../layout/headerAdmin.php");
                 <div class="cropper-container">
                     <img id="cropperImage">
                 </div>
-
                 <!-- Acciones -->
                 <div class="crop-actions">
                     <button type="button" class="btn btn-outline-secondary" id="cropAdd"><i class="bi bi-plus"></i>Añadir recorte</button>
                     <button type="button" class="btn btn-outline-secondary" id="cropDelete"><i class="bi bi-arrow-counterclockwise"></i>Deshacer último recorte</button>
                     <button type="button" class="btn btn-outline-secondary" id="cropReset"><i class="bi bi-recycle"></i>Reset</button>
                 </div>
-
                 <!-- Recortes finales -->
                 <div class="cropped-preview">
                     <h4>Vista previa</h4>
                     <div class="preview-grid" id="previewGrid"></div>
                 </div>
-
                 <!-- Inputs ocultos -->
                 <input type="hidden" name="crop1" id="crop1">
                 <input type="hidden" name="crop2" id="crop2">
                 <input type="hidden" name="crop3" id="crop3">
             </div>
-
             <!-- CONTENIDO -->
-           <div class="form-group">
+            <div class="form-group">
                 <label>Contenido</label>
-
                 <!-- TOOLBAR -->
                 <div class="editor-toolbar ql-toolbar ql-snow">
                     <!-- Fuente -->
@@ -117,34 +121,30 @@ include("./../layout/headerAdmin.php");
                     <!-- Limpiar formato -->
                     <button class="ql-clean" title="Limpiar formato"></button>
                 </div>
-
                 <!-- EDITOR -->
                 <div id="editor" class="editor-content"></div>
-
                 <!-- INPUT OCULTO PARA IMÁGENES -->
                 <input type="file" id="imageInputEditor" accept="image/*" hidden>
-
-
-                <div id="editorContent"></div>
+                <div id="editorContent" style="display:none;">
+                    <?= $noticia['contenido'] ?>
+                </div>
                 <!-- Campo oculto para PHP -->
                 <input type="hidden" name="contenido" id="contenido">
             </div>
-
             <!-- PROGRAMACIÓN -->
             <div class="form-group">
                 <label>Programar publicación</label>
-                <input type="datetime-local" name="fecha_publicacion" class="btn-calendar">
+                <input type="datetime-local" name="fecha_publicacion" class="btn-calendar" value="<?= date('Y-m-d\TH:i', strtotime($noticia['fecha_publicacion'])) ?>">
             </div>
             <!-- ACCIONES -->
             <div class="form-actions">
                 <button type="submit" class="btn-success">
-                    Guardar noticia
+                    Guardar cambios
                 </button>
             </div>
         </div>
     </form>
-</div>
-<?php
-// Se incluye el footerAdmin que cierra el main y añade scripts
-include("./../layout/footerAdmin.php");
-?>
+    <div class="mt-3">
+        <a href="./../views/contenidos.php" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i>Volver</a>
+    </div>
+<?php include("./../layout/footerAdmin.php"); ?>

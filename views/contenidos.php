@@ -2,6 +2,18 @@
 // Página de administración (estadisticas)
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
+$weekOffset = isset($_GET['week']) ? (int)$_GET['week'] : 0;
+
+$startOfWeek = new DateTime();
+$startOfWeek->modify(($weekOffset * 7) . ' days');
+$startOfWeek->modify('monday this week');
+
+$endOfWeek = clone $startOfWeek;
+$endOfWeek->modify('sunday this week');
+
+$fechaInicio = $startOfWeek->format('Y-m-d');
+$fechaFin = $endOfWeek->format('Y-m-d');
+
 ?>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -18,65 +30,74 @@ include("./../data/conexion.php");
     <br>
     <div class="card shadow-sm">
         <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col" style="width: 50px;">ID</th>
-                            <th scope="col" style="width: 80px;">Imagen</th>
-                            <th scope="col">Título</th>
-                            <th scope="col">Descripción</th>
-                            <th scope="col" style="width: 150px;">Fecha</th>
-                            <th scope="col" style="width: 100px;" class="text-center">Vistas</th>
-                            <th scope="col" style="width: 150px;" class="text-end">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Consulta para obtener noticias ordenadas por fecha descendente
-                        $sql = "SELECT id, titulo, descripcion, fecha_publicacion, vistas, crop3 FROM noticias ORDER BY fecha_publicacion DESC";
-                        $result = $con->query($sql);
+            <?php
+                // Consulta para obtener noticias ordenadas por fecha descendente
+                $sql = "SELECT id, titulo, descripcion, fecha_publicacion, vistas, crop3 
+                        FROM noticias 
+                        WHERE fecha_publicacion BETWEEN '$fechaInicio' AND '$fechaFin'
+                        ORDER BY fecha_publicacion ASC ";  
+                $result = $con->query($sql);
+            ?>
+            <?php if ($result->num_rows > 0): ?>
+                <?php 
+                $newsByDate = [];
+                while ($row = $result->fetch_assoc()){
+                    $dateKey = date('Y-m-d', strtotime($row['fecha_publicacion']));
+                    $newsByDate[$dateKey][] = $row;
+                }
+                ?>
+                <div class="calendar-day">
+                    <?php foreach ($newsByDate as $date => $newsList): ?>
+                        <div class="day-column">
+                            <div class="day-header">
+                                <?= date("d/m/Y", strtotime($date)) ?>
+                            </div>
+                            <div class="day-news">
+                                <?php foreach ($newsList as $row): 
+                                    $img = !empty($row['crop3']) ? "./../".$row['crop3'] : "https://via.placeholder.com/300x200";
+                                ?>
+                                    <div class="noticias-card">
+                                        <img src="<?= htmlspecialchars($img) ?>" alt="">
+                                        
+                                        <h6><?= htmlspecialchars($row['titulo']) ?></h6>
 
-                        if ($result->num_rows > 0) {
-                            while($row = $result->fetch_assoc()) {
-                                $cropImg = !empty($row['crop3']) ? "./../" . $row['crop3'] : "https://via.placeholder.com/60";
-                        ?>
-                        <tr>
-                            <td><?= $row['id'] ?></td>
-                            <td>
-                                <img src="<?= htmlspecialchars($cropImg) ?>" alt="Thumb" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
-                            </td>
-                            <td class="fw-bold"><?= htmlspecialchars($row['titulo']) ?></td>
-                            <td><?= htmlspecialchars(substr($row['descripcion'], 0, 60)) . (strlen($row['descripcion']) > 60 ? '...' : '') ?></td>
-                            <td><?= date("d/m/Y", strtotime($row['fecha_publicacion'])) ?></td>
-                            <td class="text-center">
-                                <span class="badge bg-info text-dark rounded-pill"><?= number_format($row['vistas']) ?></span>
-                            </td>
-                            <td class="text-end">
-                                <div class="btn-group" role="group">
-                                    <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary" title="Editar">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <!-- Botón para abrir modal de eliminación -->
-                                    <button class="btn btn-danger btn-delete" 
-                                            data-id="<?= $row['id'] ?>" 
-                                            data-titulo="<?= htmlspecialchars($row['titulo']) ?>">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                        <small class="text-muted">
+                                            👁 <?= number_format($row['vistas']) ?>
+                                        </small>
 
-                                </div>
-                            </td>
-                        </tr>
-                        <?php 
-                            }
-                        } else {
-                        ?>
-                        <tr>
-                            <td colspan="7" class="text-center py-4">No hay noticias registradas.</td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
+                                        <div class="noticias-actions">
+                                            <a href="editar.php?id=<?= $row['id'] ?>">
+                                                ✏️
+                                            </a>
+                                            <button class="btn-delete"
+                                                data-id="<?= $row['id'] ?>"
+                                                data-titulo="<?= htmlspecialchars($row['titulo']) ?>">
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="col-12 text-center text-muted py-5">
+                    No hay noticias esta semana.
+                </div>
+            <?php endif; ?>
+            <div class="botonesSemana">
+                <a href="?week=<?= $weekOffset - 1 ?>" class="btn btn-outline-secondary">
+                    ← Semana anterior
+                </a>
+
+                <h4>
+                    Semana del <?= $startOfWeek->format('d/m') ?> al <?= $endOfWeek->format('d/m/Y') ?>
+                </h4>
+
+                <a href="?week=<?= $weekOffset + 1 ?>" class="btn btn-outline-secondary">
+                    Semana siguiente →
+                </a>
             </div>
         </div>
     </div>
