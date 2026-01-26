@@ -247,15 +247,27 @@
    EDITOR QUILL
 ================================ */
 // ====== REGISTROS NECESARIOS ======
+// Importaciones de Quill
 const Font = Quill.import('formats/font');
+const Size = Quill.import('formats/size');
+const ImageResize = Quill.import('modules/imageResize');
+const Parchment = Quill.import('parchment');
+// Declaraciones
 Font.whitelist = ['arial', 'times', 'roboto', 'courier'];
 Quill.register(Font, true);
-
-const Size = Quill.import('formats/size');
 Size.whitelist = ['small', false, 'large', 'huge'];
 Quill.register(Size, true);
-const ImageResize = Quill.import('modules/imageResize');
 Quill.register(ImageResize, true);
+const LineHeightStyle = new Parchment.Attributor.Style(
+  'lineheight',
+  'line-height',
+  {
+    scope: Parchment.Scope.BLOCK,
+    whitelist: ['0', '0.85', '1', '1.5', '2', '2.5', '3']
+  }
+);
+Quill.register(LineHeightStyle, true);
+
 // ====== INICIALIZACIÓN ======
 const quill = new Quill('#editor', {
   theme: 'snow',

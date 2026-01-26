@@ -2,14 +2,23 @@
 // Página de administración (contenido principal de administración)
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
-?>
-<h1>Panel de Administración - Estadísticas</h1>
-<div class="container-fluid">
-<?php
-    // Obtener todas las noticias con sus estadísticas agregadas
-    // Usamos LEFT JOIN para obtener el tiempo total desde noticias_stats
-    // Asumimos que n.vistas es el contador global de vistas
-    $sqlNoticias = $con->prepare("
+    // KPIs
+    $kpis = $con->query("
+        SELECT
+            COUNT(*) AS total_noticias,
+            SUM(CASE WHEN fecha_publicacion <= NOW() THEN 1 ELSE 0 END) AS publicadas,
+            SUM(CASE WHEN fecha_publicacion > NOW() THEN 1 ELSE 0 END) AS programadas,
+            SUM(vistas) AS total_vistas,
+            SUM(likes) AS total_likes
+        FROM noticias
+    ")->fetch_assoc();
+
+    $tiempoTotal = $con->query("
+        SELECT COALESCE(SUM(tiempo_segundos),0) AS tiempo_total
+        FROM noticias_stats
+    ")->fetch_assoc()['tiempo_total'];
+    // Últimas noticias (top 5)
+    $resultNoticias = $con->query("
         SELECT 
             n.id,
             n.titulo,
@@ -24,42 +33,84 @@ include("./../data/conexion.php");
         GROUP BY 
             n.id, n.titulo, n.descripcion, n.crop3, n.vistas, n.fecha_publicacion
         ORDER BY n.fecha_publicacion DESC
+        LIMIT 5
     ");
-    $sqlNoticias->execute();
-    $resultNoticias = $sqlNoticias->get_result();
 
-    $noticiasData = [];
-
-    while ($noticia = $resultNoticias->fetch_assoc()) {
-        $noticiasData[] = $noticia;
+    $ultimasNoticias = [];
+    while($row = $resultNoticias->fetch_assoc()){
+        $ultimasNoticias[] = $row;
     }
-
 ?>
+<div class="container-fluid">
+    <!-- Saludo y título -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Bienvenido, <?= htmlspecialchars($fila['usuario']) ?></h1>
+        <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
+    </div>
+    <br>
+    <!-- KPIs Cards -->
+    <div class="row">
+        <div class="col-md-65">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">KPIs</h5>
+                    <div class="row g-3 mb-4">
+                        <?php 
+                        $cards = [
+                            ['titulo'=>'Noticias', 'valor'=>$kpis['total_noticias'], 'icon'=>'bi-newspaper', 'color'=>'bg-primary'],
+                            ['titulo'=>'Publicadas', 'valor'=>$kpis['publicadas'], 'icon'=>'bi-check-circle', 'color'=>'bg-success'],
+                            ['titulo'=>'Programadas', 'valor'=>$kpis['programadas'], 'icon'=>'bi-clock', 'color'=>'bg-warning'],
+                            ['titulo'=>'Vistas', 'valor'=>number_format($kpis['total_vistas']), 'icon'=>'bi-eye', 'color'=>'bg-info'],
+                            ['titulo'=>'Likes', 'valor'=>number_format($kpis['total_likes']), 'icon'=>'bi-heart', 'color'=>'bg-danger'],
+                            ['titulo'=>'Tiempo (min)', 'valor'=>number_format($tiempoTotal/60), 'icon'=>'bi-stopwatch', 'color'=>'bg-secondary'],
+                        ];
 
-    <!-- SECCIÓN DE GRÁFICAS GLOBALES -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title">Filtros de Estadísticas</h5>
-            <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label for="filterFechaInicio" class="form-label">Fecha Inicio</label>
-                    <input type="date" class="form-control" id="filterFechaInicio" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
+                        foreach($cards as $card): ?>
+                            <div class="col-md-2 col-6">
+                                <div class="card shadow-sm text-center h-100">
+                                    <div class="card-body">
+                                        <div class="mb-2"><i class="bi <?= $card['icon'] ?> fs-3 <?= $card['color'] ?>"></i></div>
+                                        <h4 class="mb-0"><?= $card['valor'] ?></h4>
+                                        <small class="text-muted"><?= $card['titulo'] ?></small>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label for="filterFechaFin" class="form-label">Fecha Fin</label>
-                    <input type="date" class="form-control" id="filterFechaFin" value="<?= date('Y-m-d') ?>">
-                </div>
-                <div class="col-md-3">
-                    <label for="filterApply">Aplicar Filtros</label>
-                    <button class="btn btn-secondary w-100" onclick="loadGlobalStats()">
-                        <i class="bi bi-funnel"></i>
-                    </button>
+            </div>
+        </div>
+        <div class="col-md-55">
+            <div class="card card-filter">
+                <div class="card-body">
+                    <h5 class="card-title">Filtros de Estadísticas</h5>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label for="filterFechaInicio" class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="filterFechaInicio" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterFechaFin" class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" id="filterFechaFin" value="<?= date('Y-m-d') ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterApply">Aplicar Filtros</label>
+                            <button class="btn btn-secondary w-100" onclick="loadGlobalStats()">
+                                <i class="bi bi-funnel"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+     
+    
 
-    <div class="row mb-5">
+    <!-- SECCIÓN DE GRÁFICAS GLOBALES -->
+    
+
+    <div class="row">
         <div class="col">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
@@ -85,7 +136,7 @@ include("./../data/conexion.php");
             </div>
         </div>
     </div>
-    <div class="row mb-5">
+    <div class="row">
         <div class="col">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-danger text-white">
@@ -111,55 +162,40 @@ include("./../data/conexion.php");
             </div>
         </div>
     </div>
-
-    <!-- SECCIÓN DE NOTICIAS (CARDS) -->
-    <center>
-        <br>
-        <hr>
-        <h3 class="titulos mb-4">Listado de Noticias</h3>
-        <hr>
-        <br>
-    </center>
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-        <?php foreach ($noticiasData as $noticia):
-            $desc = $noticia['descripcion'] ?? '';
-            $descCorta = function_exists('mb_strimwidth')
-            ? mb_strimwidth($desc, 0, 80, "...")
-            : substr($desc, 0, 80) . '...';
-            ?>
-            <div class="col">
-                <div class="card news-card">
-                    <!-- Imagen (crop2) -->
-                    <img src="./../<?= htmlspecialchars($noticia['crop2'] ?? 'img/placeholder.jpg') ?>" 
-                         class="card-img-top" 
-                         alt="<?= htmlspecialchars($noticia['titulo']) ?>">
-                    
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate" title="<?= htmlspecialchars($noticia['titulo']) ?>">
-                            <?= htmlspecialchars($noticia['titulo']) ?>
-                        </h5>
-                        <p class="card-text small text-muted">
-                            <?= htmlspecialchars($descCorta) ?>
-                        </p>
+    <!-- Últimas noticias -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Últimas Noticias</h5>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <?php foreach($ultimasNoticias as $noticia):
+                    $desc = $noticia['descripcion'] ?? '';
+                    $descCorta = mb_strimwidth($desc, 0, 80, '...');
+                    $img = !empty($noticia['crop2']) ? "./../".$noticia['crop2'] : "./../img/placeholder.jpg";
+                ?>
+                    <div class="col">
+                        <div class="card h-100 shadow-sm news-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <small><?= date('d/m/Y H:i', strtotime($noticia['fecha_publicacion'])) ?></small>
+                            </div>
+                            <img src="<?= htmlspecialchars($img) ?>" class="card-img-top" alt="<?= htmlspecialchars($noticia['titulo']) ?>">
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate" title="<?= htmlspecialchars($noticia['titulo']) ?>">
+                                    <?= htmlspecialchars($noticia['titulo']) ?>
+                                </h5>
+                                <p class="card-text small text-muted"><?= htmlspecialchars($descCorta) ?></p>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between small text-muted">
+                                <span>Vistas <i class="bi bi-eye me-1"></i> <?= $noticia['vistas'] ?></span>
+                                <span>Tiempo <i class="bi bi-clock me-1"></i> <?= number_format($noticia['tiempo_total_stats']/60, 0) ?>m</span>
+                                <span>Likes <i class="bi bi-heart me-1"></i> <?= $noticia['likes'] ?></span>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="card-footer">
-                        <span title="Vistas Totales">
-                            <p>Vistas</p>
-                            <i class="bi bi-eye me-1"></i> <?= $noticia['vistas'] ?>
-                        </span>
-                        <span title="Tiempo Total de Visualización">
-                            <p>Tiempo</p>
-                            <i class="bi bi-clock me-1"></i> <?= number_format($noticia['tiempo_total_stats'], 0) ?>s
-                        </span>
-                        <span title="Likes">
-                            <p>Likes</p>
-                            <i class="bi bi-heart me-1"></i> <?= $noticia['likes'] ?>
-                        </span>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
-        <?php endforeach; ?>
+        </div>
     </div>
 </div>
 
@@ -315,7 +351,7 @@ include("./../data/conexion.php");
         }
 
         charts[canvasId] = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: geoData.labels,
                 datasets: [{

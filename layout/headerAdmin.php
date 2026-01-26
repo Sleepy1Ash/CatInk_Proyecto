@@ -44,7 +44,7 @@
         </li>
         <hr>
         <li class="sidebar-menu-item">
-            <a href="./../../CatInk_Proyecto/views/contenidos.php" class="sidebar-menu-link">Administrar</a>
+            <a href="./../../CatInk_Proyecto/views/contenidos.php" class="sidebar-menu-link">Contenido</a>
     </ul>
     <div class="sidebar-footer">
       <button id="themeToggle" class="btn btn-icon" title="Cambiar tema">🌙</button>

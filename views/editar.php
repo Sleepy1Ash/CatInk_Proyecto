@@ -105,6 +105,16 @@ if (!$noticia) { header("Location: contenidos.php"); exit; }
 
                     <!-- Alineación -->
                     <select class="ql-align" title="Alineación"></select>
+                    <!-- Interlineado -->
+                    <select class="ql-lineheight" title="Interlineado">
+                        <option value="0">0</option>
+                        <option value="0.85">0.85</option>
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="2.5">2.5</option>
+                        <option value="3">3</option>
+                    </select>
                     <!-- Listas -->
                     <button class="ql-list" value="ordered" title="Lista ordenada"></button>
                     <button class="ql-list" value="bullet" title="Lista desordenada"></button>
