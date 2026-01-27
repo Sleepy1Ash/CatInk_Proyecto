@@ -92,7 +92,7 @@ foreach ($period as $day) {
 
                                                 } elseif ($fechaPub === $fechaHoy && $fechaPublicacion > $ahora) {
                                                     // Hoy, pero más tarde
-                                                    echo '<span><i class="bi bi-clock"></i> Por publicar</span>
+                                                    echo '<span><i class="bi bi-calendar-event-fill"></i></i> Por publicar</span>
                                                     <span><i class="bi bi-clock"></i> ' . $fechaPublicacion->format('H:i') . '</span>
                                                     ';
 

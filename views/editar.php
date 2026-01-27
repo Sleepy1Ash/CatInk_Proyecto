@@ -157,4 +157,23 @@ if (!$noticia) { header("Location: contenidos.php"); exit; }
     <div class="mt-3">
         <a href="./../views/contenidos.php" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i>Volver</a>
     </div>
+<!-- Modal de Confirmación Hora (Requerido por admin.js) -->
+<div id="timeModalOverlay" class="crop-modal" style="display: none;">
+    <div class="crop-modal-content">
+        <h3 id="modalTitle">Hora no valida</h3>
+        <p>
+            La fecha y hora seleccionadas es menor a la actual.
+            <br><br>
+            ¿Qué deseas hacer?
+        </p>
+        <div class="modal-actions">
+            <button class="btn-success" id="autoAdjustBtn" type="button">
+                Ajustar autimáticamente y guardar
+            </button>
+            <button class="btn-secondary" id="manualAdjustBtn" type="button">
+                Volver a ajustar la hora
+            </button>
+        </div>
+    </div>
+</div>
 <?php include("./../layout/footerAdmin.php"); ?>

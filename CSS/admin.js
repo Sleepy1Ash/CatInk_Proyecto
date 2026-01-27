@@ -329,7 +329,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteButtons = document.querySelectorAll(".btn-delete");
     const modalOverlay = document.getElementById("modalOverlay");
     const modalTitle = document.getElementById("modalTitle");
-    const modalForm = document.getElementById("modalForm");
     const modalIdInput = document.getElementById("modalId");
 
     deleteButtons.forEach(button => {
@@ -360,4 +359,47 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modalContent) {
         modalContent.addEventListener("click", e => e.stopPropagation());
     }
+});
+// modal validacion
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modalTime = document.getElementById("timeModalOverlay");
+    const autoAdjustBtn = document.getElementById("autoAdjustBtn");
+    const manualAdjustBtn = document.getElementById("manualAdjustBtn");
+    const fechaInput = document.getElementsByName("fecha_publicacion")[0];
+    const guardarNoticiaBtns = document.getElementsByName("guardarNoticia");
+    const modalForm = document.getElementById("formPublicacion");
+    
+    guardarNoticiaBtns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            const ahora = new Date();
+            const fechaSeleccionada = new Date(fechaInput.value);
+
+            if (fechaSeleccionada < ahora) {
+                modalTime.style.display = "flex";
+            } else {
+                modalForm.requestSubmit();
+            }
+        });
+    });
+
+    autoAdjustBtn.addEventListener("click", () => {
+        const ahora = new Date();
+
+        // datetime-local necesita formato YYYY-MM-DDTHH:mm
+        fechaInput.value = ahora.toISOString().slice(0, 16);
+
+        modalTime.style.display = "none";
+        modalForm.requestSubmit();
+    });
+
+    manualAdjustBtn.addEventListener("click", () => {
+        modalTime.style.display = "none";
+    });
+
+    // Evitar cerrar modal al hacer click dentro
+    const modalContent = document.querySelector(".crop-modal-content");
+    modalContent?.addEventListener("click", e => e.stopPropagation());
 });

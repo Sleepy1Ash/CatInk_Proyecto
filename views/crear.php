@@ -145,12 +145,31 @@ include("./../layout/headerAdmin.php");
             </div>
             <!-- ACCIONES -->
             <div class="form-actions">
-                <button type="submit" class="btn-success">
+                <button type="submit" class="btn-success" name="guardarNoticia">
                     Guardar noticia
                 </button>
             </div>
         </div>
     </form>
+</div>
+<!-- Modal de Confirmación Hora (Requerido por admin.js) -->
+<div id="timeModalOverlay" class="crop-modal" style="display: none;">
+    <div class="crop-modal-content">
+        <h3 id="modalTitle">Hora no valida</h3>
+        <p>
+            La fecha y hora seleccionadas es menor a la actual.
+            <br><br>
+            ¿Qué deseas hacer?
+        </p>
+        <div class="modal-actions">
+            <button class="btn-success" id="autoAdjustBtn" type="button">
+                Ajustar autimáticamente y guardar
+            </button>
+            <button class="btn-secondary" id="manualAdjustBtn" type="button">
+                Volver a ajustar la hora
+            </button>
+        </div>
+    </div>
 </div>
 <?php
 // Se incluye el footerAdmin que cierra el main y añade scripts

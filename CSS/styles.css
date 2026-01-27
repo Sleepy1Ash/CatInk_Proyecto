@@ -108,7 +108,7 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 .card-body { padding: 16px; }
 .card-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 8px; }
 .card-text { color: var(--text); font-size: 0.95rem; }
-.card-img-top { width:100%; height:100%; display:block; }
+.card-img-top { width:100%; height:auto; display:block; }
 
 /* Make anchor buttons look consistent */
 a.btn { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; color:inherit; }
