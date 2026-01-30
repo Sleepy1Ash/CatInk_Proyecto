@@ -839,6 +839,12 @@ select, input[type="datetime-local"] {
 }
 .card-filter {
   height: 124px;
+  background: var(--card-bg); 
+  border: 1px solid var(--border); 
+  border-radius: 8px; 
+  overflow: hidden; 
+  box-shadow: 0 6px 18px rgba(11,11,11,0.04);
+  margin-bottom: 15px;
 }
 .card-footer span {
   display: flex;

@@ -370,12 +370,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const guardarNoticiaBtns = document.getElementsByName("guardarNoticia");
     const modalForm = document.getElementById("formPublicacion");
     
+    function getLocalDatetimeString(date = new Date()) {
+      const offset = date.getTimezoneOffset();
+      const local = new Date(date.getTime() - offset * 60000);
+      return local.toISOString().slice(0,16);
+    } 
     guardarNoticiaBtns.forEach(btn => {
         btn.addEventListener("click", (e) => {
             e.preventDefault();
 
-            const ahora = new Date();
-            const fechaSeleccionada = new Date(fechaInput.value);
+            const ahora = getLocalDatetimeString();
+            const fechaSeleccionada = fechaInput.value;
 
             if (fechaSeleccionada < ahora) {
                 modalTime.style.display = "flex";
@@ -386,11 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     autoAdjustBtn.addEventListener("click", () => {
-        const ahora = new Date();
-
-        // datetime-local necesita formato YYYY-MM-DDTHH:mm
-        fechaInput.value = ahora.toISOString().slice(0, 16);
-
+        fechaInput.value = getLocalDatetimeString();
         modalTime.style.display = "none";
         modalForm.requestSubmit();
     });

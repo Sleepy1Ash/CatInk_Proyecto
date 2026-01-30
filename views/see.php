@@ -58,27 +58,80 @@
                 <!-- Sección de Gráficas -->
                 <div class="card-body">
                     <!-- Controles de Filtro -->
-                    <div class="d-flex justify-content-end mb-3">
-                        <div class="btn-group" role="group" aria-label="Rango de tiempo">
-                            <button type="button" class="btn btn-outline-secondary btn-sm active" onclick="updateCharts(<?= $noticiaId ?>, 'diario', this)">Diario</button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateCharts(<?= $noticiaId ?>, 'semanal', this)">Semanal</button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateCharts(<?= $noticiaId ?>, 'mensual', this)">Mensual</button>
+                    <div class="card-filter">
+                        <div class="card-body">
+                            <h5 class="card-title">Filtros de Estadísticas</h5>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="filterFechaInicio" class="form-label">Fecha Inicio</label>
+                                    <input type="date" class="form-control" id="filterFechaInicio" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
+                                </div>
+                                <div class="col">
+                                    <label for="filterFechaFin" class="form-label">Fecha Fin</label>
+                                    <input type="date" class="form-control" id="filterFechaFin" value="<?= date('Y-m-d') ?>">
+                                </div>
+                                <div class="col">
+                                    <label for="filterApply">Aplicar Filtros</label>
+                                    <button class="btn btn-secondary w-100" onclick="loadGlobalStats()">
+                                        <i class="bi bi-funnel"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span id="filterInfo"></span>
                         </div>
                     </div>
 
                     <div class="row">
-                        <!-- Gráfica 1: Lecturas (Vistas) -->
-                        <div class="col-md-6">
-                            <h6>Lecturas (Vistas)</h6>
-                            <div style="height: 200px;">
-                                <canvas id="chartVistas_<?= $noticiaId ?>"></canvas>
+                        <div class="col">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Comparativa de Vistas</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div style="height: 300px;">
+                                        <canvas id="globalChartVistas"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <!-- Gráfica 2: Tiempo de Visualización -->
-                        <div class="col-md-6">
-                            <h6>Tiempo de Visualización (Segundos)</h6>
-                            <div style="height: 200px;">
-                                <canvas id="chartTiempo_<?= $noticiaId ?>"></canvas>
+                        <div class="col">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Comparativa de Tiempo (Segundos)</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div style="height: 300px;">
+                                        <canvas id="globalChartTiempo"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">Comparativa de Likes</h5>
+                                </div>
+                                <div class="card-body">
+                                <div style="height: 300px;">
+                                    <canvas id="globalChartLikes"></canvas>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-warning text-white">
+                                    <h5 class="mb-0">Comparativa de Likes por region</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div style="height: 300px;">
+                                        <canvas id="globalChartLikesRegion"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -90,122 +143,184 @@
     
 </div>
 <script>
-// Almacén global para las instancias de gráficos para poder destruirlos antes de actualizar
-const chartInstances = {};
+    // Almacena todas las instancias de Chart.js
+    const charts = {};
 
-document.addEventListener("DOMContentLoaded", function () {
-    updateCharts(<?= $noticiaId ?>, 'diario');
-});
-function updateCharts(noticiaId, rango, btnElement = null) {
-    // Actualizar estado de botones si se hizo click
-    if (btnElement) {
-        const group = btnElement.parentElement;
-        group.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-        btnElement.classList.add('active');
-    }
-
-    // Llamada API
-    fetch(`../controllers/obtener_estadisticas.php?noticia_id=${noticiaId}&rango=${rango}`)
-        .then(response => response.json())
-        .then(data => {
-            renderVistasChart(noticiaId, data.labels, data.vistas);
-            renderTiempoChart(noticiaId, data.labels, data.tiempoPromedio, data.tiempoTotal);
-        })
-        .catch(err => console.error("Error cargando estadísticas:", err));
-}
-
-function renderVistasChart(id, labels, dataVistas) {
-    const ctx = document.getElementById(`chartVistas_${id}`).getContext('2d');
-    const chartId = `vistas_${id}`;
-
-    // Destruir si existe
-    if (chartInstances[chartId]) {
-        chartInstances[chartId].destroy();
-    }
-
-    chartInstances[chartId] = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Cantidad de Lecturas',
-                data: dataVistas,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                tension: 0.3,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
+    document.addEventListener("DOMContentLoaded", () => {
+        loadGlobalStats();
+        loadLikesStats();
     });
-}
 
-function renderTiempoChart(id, labels, dataPromedio, dataTotal) {
-    const ctx = document.getElementById(`chartTiempo_${id}`).getContext('2d');
-    const chartId = `tiempo_${id}`;
+    function loadGlobalStats() {
+        const fechaInicio = document.getElementById('filterFechaInicio').value;
+        const fechaFin = document.getElementById('filterFechaFin').value;
 
-    if (chartInstances[chartId]) {
-        chartInstances[chartId].destroy();
+        const params = new URLSearchParams({
+            fecha_inicio: fechaInicio,
+            fecha_fin: fechaFin
+        });
+
+        fetch(`./../controllers/obtener_estadisticas.php?noticia_id=${noticiaId}&${params}`)
+            .then(res => res.json())
+            .then(data => {
+                renderAreaChart(
+                    'globalChartVistas',
+                    data,
+                    'vistas',
+                    'Vistas'
+                );
+                renderAreaChart(
+                    'globalChartTiempo',
+                    data,
+                    'tiempoPromedio',
+                    'Tiempo de visualización (s)'
+                );
+            })
+            .catch(console.error);
     }
 
-    chartInstances[chartId] = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Promedio (s)',
-                    data: dataPromedio,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: 'y',
-                    tension: 0.3
-                },
-                {
-                    label: 'Acumulado Total (s)',
-                    data: dataTotal,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    yAxisID: 'y1',
-                    tension: 0.3,
-                    borderDash: [5, 5]
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false,
+    function loadLikesStats() {
+        const fechaInicio = document.getElementById('filterFechaInicio').value;
+        const fechaFin = document.getElementById('filterFechaFin').value;
+        const params = new URLSearchParams({
+            fecha_inicio: fechaInicio,
+            fecha_fin: fechaFin
+        });
+
+        fetch(`./../controllers/obtener_likes.php?noticia_id=${noticiaId}&${params}`)
+            .then(r => r.json())
+            .then(data => {
+                renderAreaChart(
+                    'globalChartLikes',
+                    data,
+                    'likes',
+                    'Likes'
+                );
+                renderBarChart(
+                    'globalChartLikesRegion',
+                    data.geo.paises,
+                    'Likes por país'
+                );
+            })
+            .catch(console.error);
+    }
+
+    /**
+     * Renderiza un gráfico de área (líneas rellenas)
+     */
+    function renderAreaChart(canvasId, data, metric, labeltext) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        // Destruir gráfico previo si existe
+        if (charts[canvasId]) {
+            charts[canvasId].destroy();
+        }
+
+        const colors = [
+            'rgba(75, 192, 192, 0.35)',
+            'rgba(54, 162, 235, 0.35)',
+            'rgba(255, 99, 132, 0.35)',
+            'rgba(255, 159, 64, 0.35)',
+            'rgba(153, 102, 255, 0.35)'
+        ];
+
+        const datasets = Object.entries(data.categorias).map(([cat, values], i) => ({
+            label: cat,
+            data: values[metric],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            backgroundColor: colors[i % colors.length],
+            borderColor: colors[i % colors.length].replace('0.35', '1')
+        }));
+
+        charts[canvasId] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets
             },
-            scales: {
-                y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    title: { display: true, text: 'Promedio' },
-                    beginAtZero: true
+            options: {
+                responsive: true,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
                 },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: { display: true, text: 'Total Acumulado' },
-                    grid: { drawOnChartArea: false }, // para no ensuciar la grilla
-                    beginAtZero: true
+                plugins: {
+                    title: {
+                        display: true,
+                        text: labeltext
+                    },
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            pointStyleWidth: 20,
+                            pointStyleHeight: 20,
+                            font: {
+                                size: 16,
+                                weight: 'italic'
+                            }
+                        },
+                        onHover: e => e.native && (e.native.target.style.cursor = 'pointer'),
+                        onLeave: e => e.native && (e.native.target.style.cursor = 'default'),
+                        onClick: (e, legendItem, legend) => {
+                            const index = legendItem.datasetIndex;
+                            const chart = legend.chart;
+
+                            // Mostrar / ocultar dataset
+                            chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
+                            chart.update();
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            footer: items =>
+                                `Total: ${items.reduce((a, i) => a + i.parsed.y, 0)}`
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true }
                 }
             }
+        });
+    }
+    /**
+     * Renderiza un gráfico de barras
+     */
+    function renderBarChart(canvasId, geoData, title) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+
+        if (charts[canvasId]) {
+            charts[canvasId].destroy();
         }
-    });
-}
+
+        charts[canvasId] = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: geoData.labels,
+                datasets: [{
+                    label: title,
+                    data: geoData.values,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                    display: true,
+                    text: title
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
 </script>
 <?php
 // Se incluye el footerAdmin que cierra el main y añade scripts

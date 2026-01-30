@@ -142,10 +142,10 @@ if (!$noticia) { header("Location: contenidos.php"); exit; }
                 <input type="hidden" name="contenido" id="contenido">
             </div>
             <!-- PROGRAMACIÓN -->
-            <div class="form-group">
+            <!--<div class="form-group">
                 <label>Programar publicación</label>
-                <input type="datetime-local" name="fecha_publicacion" class="btn-calendar" value="<?= date('Y-m-d\TH:i', strtotime($noticia['fecha_publicacion'])) ?>">
-            </div>
+                --><input hidden type="datetime-local" name="fecha_publicacion" class="btn-calendar" value="<?= date('Y-m-d\TH:i', strtotime($noticia['fecha_publicacion'])) ?>">
+            <!--</div>-->
             <!-- ACCIONES -->
             <div class="form-actions">
                 <button type="submit" class="btn-success">

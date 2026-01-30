@@ -54,7 +54,7 @@ include("./../data/conexion.php");
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">KPIs</h5>
-                    <div class="row g-3 mb-4">
+                    <div class="row">
                         <?php 
                         $cards = [
                             ['titulo'=>'Noticias', 'valor'=>$kpis['total_noticias'], 'icon'=>'bi-newspaper', 'color'=>'bg-primary'],
@@ -66,8 +66,8 @@ include("./../data/conexion.php");
                         ];
 
                         foreach($cards as $card): ?>
-                            <div class="col-md-2 col-6">
-                                <div class="card shadow-sm text-center h-100">
+                            <div class="col">
+                                <div class="card text-center">
                                     <div class="card-body">
                                         <div class="mb-2"><i class="bi <?= $card['icon'] ?> fs-3 <?= $card['color'] ?>"></i></div>
                                         <h4 class="mb-0"><?= $card['valor'] ?></h4>
@@ -81,25 +81,28 @@ include("./../data/conexion.php");
             </div>
         </div>
         <div class="col-md-55">
-            <div class="card card-filter">
+            <div class="card-filter">
                 <div class="card-body">
                     <h5 class="card-title">Filtros de Estadísticas</h5>
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-3">
+                    <div class="row">
+                        <div class="col">
                             <label for="filterFechaInicio" class="form-label">Fecha Inicio</label>
                             <input type="date" class="form-control" id="filterFechaInicio" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col">
                             <label for="filterFechaFin" class="form-label">Fecha Fin</label>
                             <input type="date" class="form-control" id="filterFechaFin" value="<?= date('Y-m-d') ?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col">
                             <label for="filterApply">Aplicar Filtros</label>
                             <button class="btn btn-secondary w-100" onclick="loadGlobalStats()">
                                 <i class="bi bi-funnel"></i>
                             </button>
                         </div>
                     </div>
+                </div>
+                <div class="card-footer">
+                    <span id="filterInfo"></span>
                 </div>
             </div>
         </div>
