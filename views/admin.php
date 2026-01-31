@@ -95,7 +95,7 @@ include("./../data/conexion.php");
                         </div>
                         <div class="col">
                             <label for="filterApply">Aplicar Filtros</label>
-                            <button class="btn btn-secondary w-100" onclick="loadGlobalStats()">
+                            <button class="btn btn-secondary w-100" onclick="loadGlobalStats()&loadLikesStats()">
                                 <i class="bi bi-funnel"></i>
                             </button>
                         </div>

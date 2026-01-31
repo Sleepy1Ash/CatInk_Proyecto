@@ -6,10 +6,17 @@
         header("Location: ./../views/contenidos.php");
         exit;
     }
-    $stmt = $con->prepare("SELECT * FROM noticias, noticias_stats, noticia_likes 
-    WHERE noticias.id = ? 
-    AND noticias.id = noticias_stats.noticia_id 
-    AND noticias.id = noticia_likes.noticia_id");
+    $stmt = $con->prepare("
+            SELECT n.*, 
+                SUM(ns.tiempo_segundos) AS tiempo_total,
+                COUNT(DISTINCT ns.id_s) AS vistas,
+                COUNT(DISTINCT nl.id_l) AS likes
+            FROM noticias n
+            LEFT JOIN noticias_stats ns ON n.id = ns.noticia_id
+            LEFT JOIN noticia_likes nl ON n.id = nl.noticia_id
+            WHERE n.id = ?
+            GROUP BY n.id
+            ");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -72,7 +79,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="filterApply">Aplicar Filtros</label>
-                                    <button class="btn btn-secondary w-100" onclick="loadGlobalStats()">
+                                    <button class="btn btn-secondary w-100" onclick="loadGlobalStats()&loadLikesStats()">
                                         <i class="bi bi-funnel"></i>
                                     </button>
                                 </div>
@@ -84,7 +91,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-6">
                             <div class="card shadow-sm h-100">
                                 <div class="card-header bg-primary text-white">
                                     <h5 class="mb-0">Comparativa de Vistas</h5>
@@ -96,7 +103,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-md-6">
                             <div class="card shadow-sm h-100">
                                 <div class="card-header bg-success text-white">
                                     <h5 class="mb-0">Comparativa de Tiempo (Segundos)</h5>
@@ -110,7 +117,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-6">
                             <div class="card shadow-sm h-100">
                                 <div class="card-header bg-danger text-white">
                                 <h5 class="mb-0">Comparativa de Likes</h5>
@@ -122,7 +129,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-md-6">
                             <div class="card shadow-sm h-100">
                                 <div class="card-header bg-warning text-white">
                                     <h5 class="mb-0">Comparativa de Likes por region</h5>
@@ -160,25 +167,29 @@
             fecha_fin: fechaFin
         });
 
-        fetch(`./../controllers/obtener_estadisticas.php?noticia_id=${noticiaId}&${params}`)
+        fetch(`./../controllers/obtener_estadisticas.php?noticia_id=$noticiaId&${params}`)
             .then(res => res.json())
             .then(data => {
+
+                console.log("GLOBAL STATS:", data); // DEBUG
+
                 renderAreaChart(
                     'globalChartVistas',
                     data,
                     'vistas',
                     'Vistas'
                 );
+
                 renderAreaChart(
                     'globalChartTiempo',
                     data,
                     'tiempoPromedio',
-                    'Tiempo de visualización (s)'
+                    'Tiempo promedio (s)'
                 );
-            })
-            .catch(console.error);
-    }
 
+            })
+            .catch(err => console.error("ERROR GLOBAL:", err));
+    }
     function loadLikesStats() {
         const fechaInicio = document.getElementById('filterFechaInicio').value;
         const fechaFin = document.getElementById('filterFechaFin').value;
@@ -187,99 +198,46 @@
             fecha_fin: fechaFin
         });
 
-        fetch(`./../controllers/obtener_likes.php?noticia_id=${noticiaId}&${params}`)
+        fetch(`./../controllers/obtener_likes.php?noticia_id=$noticiaId&${params}`)
             .then(r => r.json())
             .then(data => {
-                renderAreaChart(
-                    'globalChartLikes',
-                    data,
-                    'likes',
-                    'Likes'
-                );
-                renderBarChart(
-                    'globalChartLikesRegion',
-                    data.geo.paises,
-                    'Likes por país'
-                );
-            })
-            .catch(console.error);
-    }
 
+                console.log("LIKES:", data); // DEBUG
+
+                renderAreaChart('globalChartLikes', data, 'likes', 'Likes');
+
+                if (data.geo && data.geo.paises) {
+                    renderBarChart('globalChartLikesRegion', data.geo.paises, 'Likes por país');
+                }
+            })
+            .catch(err => console.error("ERROR LIKES:", err));
+    }
     /**
      * Renderiza un gráfico de área (líneas rellenas)
      */
     function renderAreaChart(canvasId, data, metric, labeltext) {
         const ctx = document.getElementById(canvasId).getContext('2d');
 
-        // Destruir gráfico previo si existe
-        if (charts[canvasId]) {
-            charts[canvasId].destroy();
-        }
-
-        const colors = [
-            'rgba(75, 192, 192, 0.35)',
-            'rgba(54, 162, 235, 0.35)',
-            'rgba(255, 99, 132, 0.35)',
-            'rgba(255, 159, 64, 0.35)',
-            'rgba(153, 102, 255, 0.35)'
-        ];
-
-        const datasets = Object.entries(data.categorias).map(([cat, values], i) => ({
-            label: cat,
-            data: values[metric],
-            fill: true,
-            tension: 0.4,
-            borderWidth: 2,
-            backgroundColor: colors[i % colors.length],
-            borderColor: colors[i % colors.length].replace('0.35', '1')
-        }));
+        if (charts[canvasId]) charts[canvasId].destroy();
 
         charts[canvasId] = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.labels,
-                datasets
+                datasets: [{
+                    label: labeltext,
+                    data: data[metric],
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                }]
             },
             options: {
                 responsive: true,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
                 plugins: {
-                    title: {
-                        display: true,
-                        text: labeltext
-                    },
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'rectRounded',
-                            pointStyleWidth: 20,
-                            pointStyleHeight: 20,
-                            font: {
-                                size: 16,
-                                weight: 'italic'
-                            }
-                        },
-                        onHover: e => e.native && (e.native.target.style.cursor = 'pointer'),
-                        onLeave: e => e.native && (e.native.target.style.cursor = 'default'),
-                        onClick: (e, legendItem, legend) => {
-                            const index = legendItem.datasetIndex;
-                            const chart = legend.chart;
-
-                            // Mostrar / ocultar dataset
-                            chart.setDatasetVisibility(index, !chart.isDatasetVisible(index));
-                            chart.update();
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            footer: items =>
-                                `Total: ${items.reduce((a, i) => a + i.parsed.y, 0)}`
-                        }
-                    }
+                    title: { display: true, text: labeltext }
                 },
                 scales: {
                     y: { beginAtZero: true }
@@ -287,6 +245,7 @@
             }
         });
     }
+
     /**
      * Renderiza un gráfico de barras
      */
@@ -304,7 +263,9 @@
                 datasets: [{
                     label: title,
                     data: geoData.values,
-                    borderWidth: 1
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
                 }]
             },
             options: {

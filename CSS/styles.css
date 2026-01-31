@@ -275,3 +275,25 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   height: auto;
   margin: 24px auto;
 }
+/* Posicion permanente */
+.sidebar-wrapper {
+  position: fixed;
+  top: 50%;
+  right: 4%;
+  transform: translateY(-50%);
+  width: 320px;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.sidebar-wrapper.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.sidebar-card {
+  width: 100%;
+}
+.main-content {
+  margin-right: 360px; /* ancho sidebar + espacio */
+}

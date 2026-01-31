@@ -91,6 +91,7 @@ try {
           AND fecha BETWEEN ? AND ?
         GROUP BY pais, estado
         ORDER BY total DESC
+        LIMIT 5
     ";
 
     $stmtGeo = $con->prepare($sqlGeo);

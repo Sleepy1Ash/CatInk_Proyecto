@@ -4,7 +4,7 @@
 <!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
 <script src="/CatInk_Proyecto/CSS/scripts.js"></script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
-<footer class="site-footer mt-5">
+<footerclass="site-footer mt-5">
   <div class="container py-5">
     <div class="row gy-4">
       <!-- Logo / descripción -->

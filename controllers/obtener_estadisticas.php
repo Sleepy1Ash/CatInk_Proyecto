@@ -24,17 +24,17 @@ if ($dias <= 15) {
     $modo = 'diario';
     $groupBy = "DATE(fecha)";
     $labelFormat = "DATE(fecha)";
-    $formatLabel = fn($row) => date('d/m', strtotime($row['label_fecha']));
+    $formatLabel = fn($row) => $row['label_fecha'];
 } elseif ($dias <= 60) {
     $modo = 'semanal';
     $groupBy = "YEARWEEK(fecha, 1)";
     $labelFormat = "MIN(DATE(fecha))";
-    $formatLabel = fn($row) => 'Semana ' . date('W', strtotime($row['label_fecha']));
+    $formatLabel = fn($row) => $row['label_fecha'];
 } else {
     $modo = 'quincenal';
     $groupBy = "CONCAT(YEAR(fecha), '-', CEIL(DAY(fecha)/15))";
     $labelFormat = "MIN(DATE(fecha))";
-    $formatLabel = fn($row) => date('d/m/Y', strtotime($row['label_fecha']));
+    $formatLabel = fn($row) => $row['label_fecha'];
 }
 
 // Consulta dinámica
