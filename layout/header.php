@@ -26,10 +26,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav nav-left">
-        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">News</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+        <li class="nav-item"><a class="nav-link active" href="./../../CatInk_Proyecto/index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Peliculas">Peliculas</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Series">Series</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Cultura Pop">Cultura Pop</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Anime">Anime</a></li>
       </ul>
       <div class="row">
         <div class="col">

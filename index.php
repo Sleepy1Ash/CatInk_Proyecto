@@ -2,10 +2,11 @@
     include("./layout/header.php");
     include("./data/conexion.php");
     // todas las noticias
-    $stmt = $con -> prepare("SELECT titulo, descripcion, categoria, crop1, crop2,
+    $stmt = $con -> prepare("SELECT id, titulo, descripcion, categoria, crop1, crop2,
     crop3, fecha_publicacion FROM noticias WHERE fecha_publicacion<=NOW() ORDER BY id DESC");
     $stmt -> execute();
     $result = $stmt -> get_result();
+    $noticias = $result->fetch_all(MYSQLI_ASSOC);
     // ultimas noticias
     $stmtUltimas = $con->prepare("
         SELECT id, titulo
@@ -29,162 +30,212 @@
 ?>
 <!-- CONTENIDO -->
 <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000">
+  <?php
+    $slider = array_slice($noticias, 0, 5);
+  ?>
   <div class="carousel-indicators custom-indicators">
-    <?php
-      $contador = 0;
-      $result->data_seek(0); // volver al inicio del result
+    <?php foreach($slider as $i => $row): ?>
+      <button type="button"
+        data-bs-target="#carouselExampleCaptions"
+        data-bs-slide-to="<?= $i ?>"
+        class="<?= $i==0?'active':'' ?>">
 
-      while ($row = $result->fetch_assoc()) {
-          if ($contador >= 5) break;
-    ?>
-        <button type="button"
-            data-bs-target="#carouselExampleCaptions"
-            data-bs-slide-to="<?= $contador ?>"
-            class="<?= $contador === 0 ? 'active' : '' ?>">
-            
-            <div class="indicator-avatar">
-                <img src="./<?= $row['crop1'] ?>" alt="<?= htmlspecialchars($row['titulo']) ?>">
-                <svg viewBox="0 0 36 36">
-                    <circle cx="18" cy="18" r="16"></circle>
-                </svg>
-            </div>
-        </button>
-    <?php
-          $contador++;
-      }
-    ?>
+        <div class="indicator-avatar">
+          <img src="./<?= $row['crop1'] ?>" alt="<?= htmlspecialchars($row['titulo']) ?>">
+          <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="16"></circle></svg>
+        </div>
+
+      </button>
+    <?php endforeach; ?>
   </div>
   <div class="carousel-inner">
-    <?php
-      $contador = 0;
-      $result->data_seek(0); // volver a empezar
+    <?php foreach($slider as $i => $row): ?>
+      <div class="carousel-item <?= $i==0?'active':'' ?>">
+        <img src="./<?= $row['crop2'] ?>" class="carousel-img">
 
-      while ($row = $result->fetch_assoc()) {
-          if ($contador >= 5) break;
-    ?>
-          <div class="carousel-item <?= $contador === 0 ? 'active' : '' ?>">
-              <img src="<?= $row['crop2'] ?>" class="carousel-img" alt="<?= htmlspecialchars($row['titulo']) ?>">
+        <div class="carousel-caption caption-md">
+          <span class="carousel-tag"><?= $row['categoria'] ?></span>
 
-              <div class="carousel-caption caption-md">
-                  <span class="carousel-tag"><?= htmlspecialchars($row['categoria']) ?></span>
+          <h5>
+            <a href="./views/news.php?id=<?= $row['id'] ?>" class="carousel-link">
+              <?= $row['titulo'] ?>
+            </a>
+          </h5>
 
-                  <h5>
-                      <a href="./views/news.php" class="carousel-link">
-                          <?= htmlspecialchars($row['titulo']) ?>
-                      </a>
-                  </h5>
-
-                  <p><?= htmlspecialchars($row['descripcion']) ?></p>
-              </div>
-          </div>
-    <?php
-          $contador++;
-      }
-    ?>
+          <p><?= $row['descripcion'] ?></p>
+        </div>
+      </div>
+    <?php endforeach; ?>
   </div>
 </div>
 <div class="container mt-5">
   <div class="container-fluid">
-    <div id="cards-start"></div>
+    <?php
+      $result->data_seek(0); // volver a empezar
+      $row = $result->fetch_all(MYSQLI_ASSOC);
+    ?>
     <div class="row">
-      <!-- Columna principal: ocupa 8/12 en pantallas md+ y 100% en móvil -->
-      <?php
-        $contador = 0;
-        $mostradas = 0;
-
-        $result->data_seek(0); // aseguramos inicio
-
-        while ($row = $result->fetch_assoc()) {
-
-            // Saltar las primeras 5 (carrusel)
-            if ($contador < 5) {
-                $contador++;
-                continue;
-            }
-
-            // Mostrar solo 5 cards
-            if ($mostradas >= 5) {
-                break;
-            }
-      ?>
-          <div class="col-md-8 main-content">
-              <div class="card mb-3">
-                  <div class="row row-no-gap">
-                      
-                      <div class="col-md-4">
-                          <img src="<?= $row['crop3'] ?>"
-                              class="card-img-left"
-                              alt="<?= htmlspecialchars($row['titulo']) ?>">
-                      </div>
-
-                      <div class="col-md-8">
-                          <div class="card-body">
-
-                              <span class="badge bg-secondary mb-2">
-                                  <?= htmlspecialchars($row['categoria']) ?>
-                              </span>
-
-                              <h5 class="card-title">
-                                  <a href="./views/news.php"
-                                    class="text-decoration-none">
-                                      <?= htmlspecialchars($row['titulo']) ?>
-                                  </a>
-                              </h5>
-
-                              <p class="card-text">
-                                  <?= htmlspecialchars($row['descripcion']) ?>
-                              </p>
-
-                              <p class="card-text">
-                                  <small class="text-muted">
-                                      <?= date('d M Y', strtotime($row['fecha_publicacion'])) ?>
-                                  </small>
-                              </p>
-
-                          </div>
-                      </div>
-
-                  </div>
-              </div>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="news-card">
+            <img src="<?= $row[0]['crop2'] ?>" alt="">
+            <div class="news-overlay">
+              <span class="news-tag"><?= htmlspecialchars($row[0]['categoria']) ?></span>
+              <a href="./views/news.php?id=<?= htmlspecialchars($row[0]['id']) ?>" class="news-link">
+                <h3><?= htmlspecialchars($row[0]['titulo']) ?></h3>
+              </a>
+              
+              <p><?= htmlspecialchars($row[0]['descripcion']) ?></p>
+            </div>
           </div>
-      <?php
-            $mostradas++;
-            $contador++;
-        }
-      ?>
-      <!-- Columna secundaria: ocupa 4/12 en pantallas md+ -->
+        </div>
+        <div class="col-md-4">
+          <div class="news-card">
+            <img src="<?= $row[1]['crop2'] ?>" alt="">
+            <div class="news-overlay">
+              <span class="news-tag"><?= htmlspecialchars($row[1]['categoria']) ?></span>
+              <a href="./views/news.php?id=<?= htmlspecialchars($row[1]['id']) ?>" class="news-link">
+                <h3><?= htmlspecialchars($row[1]['titulo']) ?></h3> 
+              </a> 
+              <p><?= htmlspecialchars($row[1]['descripcion']) ?></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="news-card">
+            <img src="<?= $row[2]['crop3'] ?>" alt="">
+            <div class="news-overlay">
+              <span class="news-tag"><?= htmlspecialchars($row[2]['categoria']) ?></span>
+              <a href="./views/news.php?id=<?= htmlspecialchars($row[2]['id']) ?>" class="news-link">
+                <h3><?= htmlspecialchars($row[2]['titulo']) ?></h3> 
+              </a> 
+              <p><?= htmlspecialchars($row[2]['descripcion']) ?></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="news-card">
+            <img src="<?= $row[3]['crop3'] ?>" alt="">
+            <div class="news-overlay">
+              <span class="news-tag"><?= htmlspecialchars($row[3]['categoria']) ?></span> 
+              <a href="./views/news.php?id=<?= htmlspecialchars($row[3]['id']) ?>" class="news-link">
+                <h3><?= htmlspecialchars($row[3]['titulo']) ?></h3> 
+              </a> 
+              <p><?= htmlspecialchars($row[3]['descripcion']) ?></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="news-card">
+            <img src="<?= $row[4]['crop3'] ?>" alt="">
+            <div class="news-overlay">
+              <span class="news-tag"><?= htmlspecialchars($row[4]['categoria']) ?></span>
+              <a href="./views/news.php?id=<?= htmlspecialchars($row[4]['id']) ?>" class="news-link">
+                <h3><?= htmlspecialchars($row[4]['titulo']) ?></h3> 
+              </a> 
+              <p><?= htmlspecialchars($row[4]['descripcion']) ?></p>  
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="news-card">
+            <img src="<?= $row[5]['crop3'] ?>" alt="">
+            <div class="news-overlay">
+              <span class="news-tag"><?= htmlspecialchars($row[5]['categoria']) ?></span>
+              <a href="./views/news.php?id=<?= htmlspecialchars($row[5]['id']) ?>" class="news-link">
+                <h3><?= htmlspecialchars($row[5]['titulo']) ?></h3> 
+              </a> 
+              <p><?= htmlspecialchars($row[5]['descripcion']) ?></p>  
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="news-card">
+            <img src="<?= $row[6]['crop2'] ?>" alt="">
+            <div class="news-overlay">
+              <span class="news-tag"><?= htmlspecialchars($row[6]['categoria']) ?></span>
+              <a href="./views/news.php?id=<?= htmlspecialchars($row[6]['id']) ?>" class="news-link">
+                <h3><?= htmlspecialchars($row[6]['titulo']) ?></h3> 
+              </a> 
+              <p><?= htmlspecialchars($row[6]['descripcion']) ?></p>  
+            </div> 
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <!-- COLUMNA PRINCIPAL -->
+      <div class="col-md-8">
+        <button style="margin: 10px;">
+          <img src="img/publicidad2.jpeg" alt="" class="banner">
+        </button>
+        <?php
+          $contador = 0;
+          $mostradas = 0;
+          $result->data_seek(0);
+
+          while ($row = $result->fetch_assoc()) {
+            if ($contador < 11) { $contador++; continue; }
+            if ($mostradas >= 5) break;
+        ?>
+          <div class="card mb-3">
+            <div class="row row-no-gap">
+
+              <div class="col-md-4">
+                <img src="<?= $row['crop3'] ?>" class="card-img-left">
+              </div>
+
+              <div class="col-md-8">
+                <div class="card-body">
+                  <span class="news-tag"><?= htmlspecialchars($row['categoria']) ?></span>
+
+                  <h5 class="card-title">
+                    <a href="./views/news.php?id=<?= htmlspecialchars($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                  </h5>
+
+                  <p><?= htmlspecialchars($row['descripcion']) ?></p> 
+                  <small class="text-muted"><?= date('d M Y', strtotime($row['fecha_publicacion'])) ?></small>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        <?php
+          $contador++;
+          $mostradas++;
+          }
+        ?>
+      </div>
+      <!-- SIDEBAR -->
       <div class="col-md-4">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">
-
-            <!-- Imagen destacada -->
-            <a href="./views/news.php">
-              <img src="img/destacada.jpg" class="card-img-top" alt="Destacado">
-            </a>
-
+            <button>
+              <img src="img/publicidad.jpeg" class="card-img-top">
+            </button>
             <div class="card-body">
-
-              <!-- Lo más nuevo -->
-              <h5 class="card-title mb-2">🆕 Lo más nuevo</h5>
+              <h5>🆕 Lo más nuevo</h5>
               <ul class="list-group list-group-flush mb-3">
                 <?php while ($row = $ultimas->fetch_assoc()) { ?>
-                  <li class="list-group-item px-0">
-                    <a href="./views/news.php?id=<?= $row['id'] ?>"
-                      class="text-decoration-none">
-                      <?= htmlspecialchars($row['titulo']) ?>
+                  <li class="list-group-item">
+                    <a href="./views/news.php?id=<?= $row['id'] ?>">
+                      <?= $row['titulo'] ?>
                     </a>
                   </li>
                 <?php } ?>
               </ul>
 
-              <!-- Lo más popular -->
-              <h5 class="card-title mb-2">🔥 Lo más popular</h5>
+              <h5>🔥 Lo más popular</h5>
               <ul class="list-group list-group-flush">
                 <?php while ($row = $populares->fetch_assoc()) { ?>
-                  <li class="list-group-item px-0">
-                    <a href="./views/news.php?id=<?= $row['id'] ?>"
-                      class="text-decoration-none">
-                      <?= htmlspecialchars($row['titulo']) ?>
+                  <li class="list-group-item">
+                    <a href="./views/news.php?id=<?= $row['id'] ?>">
+                      <?= $row['titulo'] ?>
                     </a>
                   </li>
                 <?php } ?>
@@ -197,46 +248,6 @@
     </div>
   </div>
 </div>
-<div id="site-footer"></div>
-<script>
-  const sidebar = document.querySelector('.sidebar-wrapper');
-  const cardsStart = document.querySelector('#cards-start');
-  const footer = document.querySelector('#site-footer');
-
-  let inCardsZone = false;
-  let footerVisible = false;
-
-  const updateSidebar = () => {
-    if (inCardsZone && !footerVisible) {
-      sidebar.classList.add('is-visible');
-    } else {
-      sidebar.classList.remove('is-visible');
-    }
-  };
-
-  // Observer: inicio de cards
-  const cardsObserver = new IntersectionObserver(
-    ([entry]) => {
-      inCardsZone = !entry.isIntersecting;
-      updateSidebar();
-    },
-    { rootMargin: '-100px 0px 0px 0px' }
-  );
-
-  // Observer: footer
-  const footerObserver = new IntersectionObserver(
-    ([entry]) => {
-      footerVisible = entry.isIntersecting;
-      updateSidebar();
-    },
-    { rootMargin: '0px' }
-  );
-
-  cardsObserver.observe(cardsStart);
-  footerObserver.observe(footer);
-</script>
-
-
 <?php
   // Incluye el pie de página público y scripts
   include("./layout/footer.php");

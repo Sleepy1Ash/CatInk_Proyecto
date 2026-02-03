@@ -19,27 +19,87 @@ $autor_nombre = $result2->fetch_assoc()['nombre'];
 if (!$noticia) {
   die("Noticia no encontrada");
 }
+// ultimas noticias
+$stmtUltimas = $con->prepare("
+    SELECT id, titulo
+    FROM noticias
+    WHERE fecha_publicacion <= NOW()
+    ORDER BY fecha_publicacion DESC
+    LIMIT 3
+");
+$stmtUltimas->execute();
+$ultimas = $stmtUltimas->get_result();
+// noticias populares
+$stmtPopulares = $con->prepare("
+    SELECT id, titulo
+    FROM noticias
+    ORDER BY likes DESC
+    LIMIT 3
+");
+$stmtPopulares->execute();
+$populares = $stmtPopulares->get_result();
 ?>
-<!-- Contenido de noticias aquí -->
-<div class="container-noticia">
-    <span><?= htmlspecialchars($noticia['categoria']) ?></span>
-    <h1><?= htmlspecialchars($noticia['titulo']) ?></h1>
-
-    <p class="descripcion"><?= nl2br(htmlspecialchars($noticia['descripcion'])) ?></p>
-
-    <p class="meta">
-    Por <strong><?= htmlspecialchars($autor_nombre) ?></strong> —
-    <?= date("d/m/Y H:i", strtotime($noticia['fecha_publicacion'])) ?>
-    </p>
-    <button id="likeBtn" data-id="<?= $id ?>">
-      ❤️ Like <span id="likeCount"><?= $noticia['likes'] ?></span>
-    </button>
-
-    <img src="./../<?= htmlspecialchars($noticia['crop1']) ?>" alt="" class="img-titular">
-    <div class="ql-editor">
-        <?= $noticia['contenido'] ?>
+<div class="row">
+  <div class="col-md-8">
+    <div class="container-noticia">
+      <span class="news-tag"><?= htmlspecialchars($noticia['categoria']) ?></span>
+      <h1><?= htmlspecialchars($noticia['titulo']) ?></h1>
+      <p class="descripcion"><?= nl2br(htmlspecialchars($noticia['descripcion'])) ?></p>
+      <p class="meta">
+      Por <strong><?= htmlspecialchars($autor_nombre) ?></strong> —
+      <?= date("d/m/Y H:i", strtotime($noticia['fecha_publicacion'])) ?>
+      </p>
+      <button id="likeBtn" class="like-btn" data-id="<?= $id ?>">
+        ❤️ Like <span id="likeCount"><?= $noticia['likes'] ?></span>
+      </button>
+      <img src="./../<?= htmlspecialchars($noticia['crop1']) ?>" alt="" class="img-titular">
+      <div class="ql-editor">
+          <?= $noticia['contenido'] ?>
+      </div>
     </div>
+  </div>
+  <!-- SIDEBAR -->
+  <div class="col-md-4">
+    <div class="sidebar-wrapper">
+      <div class="card sidebar-card">
+        <button>
+          <img src="./../img/publicidad.jpeg" class="card-img-top">
+        </button>
+        <div class="card-body">
+          <h5>🆕 Lo más nuevo</h5>
+          <ul class="list-group list-group-flush mb-3">
+            <?php while ($row = $ultimas->fetch_assoc()) { ?>
+              <li class="list-group-item">
+                <a href="./views/news.php?id=<?= $row['id'] ?>">
+                  <?= $row['titulo'] ?>
+                </a>
+              </li>
+            <?php } ?>
+          </ul>
+
+          <h5>🔥 Lo más popular</h5>
+          <ul class="list-group list-group-flush">
+            <?php while ($row = $populares->fetch_assoc()) { ?>
+              <li class="list-group-item">
+                <a href="./views/news.php?id=<?= $row['id'] ?>">
+                  <?= $row['titulo'] ?>
+                </a>
+              </li>
+            <?php } ?>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+<div class="row">
+  <button style="margin: 10px;">
+    <img src="./../img/publicidad2.jpeg" alt="" class="banner">
+  </button>
+</div>
+
+
 <script>
   fetch("./../controllers/sumarvistas.php", {
     method: "POST",
