@@ -56,6 +56,11 @@ $populares = $stmtPopulares->get_result();
       <div class="ql-editor">
           <?= $noticia['contenido'] ?>
       </div>
+      <button style="margin: 10px;">
+        <a href="https://www.instagram.com/catink_/" target="_blank">
+          <img src="./../img/publicidad2.jpeg" alt="" class="banner">
+        </a>
+      </button>
     </div>
   </div>
   <!-- SIDEBAR -->
@@ -76,7 +81,6 @@ $populares = $stmtPopulares->get_result();
               </li>
             <?php } ?>
           </ul>
-
           <h5>🔥 Lo más popular</h5>
           <ul class="list-group list-group-flush">
             <?php while ($row = $populares->fetch_assoc()) { ?>
@@ -87,19 +91,11 @@ $populares = $stmtPopulares->get_result();
               </li>
             <?php } ?>
           </ul>
-
         </div>
       </div>
     </div>
   </div>
 </div>
-<div class="row">
-  <button style="margin: 10px;">
-    <img src="./../img/publicidad2.jpeg" alt="" class="banner">
-  </button>
-</div>
-
-
 <script>
   fetch("./../controllers/sumarvistas.php", {
     method: "POST",

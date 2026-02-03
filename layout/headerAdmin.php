@@ -53,3 +53,6 @@
 </div>
 <!-- Inicio del contenido principal para zonas de administración -->
 <main class="site-main">
+  <button id="sidebarToggle" class="btn btn-outline-secondary d-md-none mb-3">
+    <i class="bi bi-list"></i> Menú
+  </button>

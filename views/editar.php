@@ -28,14 +28,25 @@ if (!$noticia) { header("Location: contenidos.php"); exit; }
             </div>
             <!-- Categoria -->
             <div class="form-group">
-                <label for="categoria">Categoria</label>
-                <select id="categoria" name="categoria" class="btn-secondary" required>
-                    <option value="">Seleccione una categoria</option>
-                    <option value="Peliculas" <?= $noticia['categoria']==='Peliculas'?'selected':'' ?>>Peliculas</option>
-                    <option value="Series" <?= $noticia['categoria']==='Series'?'selected':'' ?>>Series</option>
-                    <option value="Cultura Pop" <?= $noticia['categoria']==='Cultura Pop'?'selected':'' ?>>Cultura Pop</option>
-                    <option value="Anime" <?= $noticia['categoria']==='Anime'?'selected':'' ?>>Anime</option>
-                </select>
+                <label for="categorias">Categorías</label>
+                <div class="checkbox-group">
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" <?= in_array('Peliculas', explode(',', $noticia['categoria'])) ? 'checked' : '' ?> value="Peliculas">
+                        Películas
+                    </label>
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" <?= in_array('Series', explode(',', $noticia['categoria'])) ? 'checked' : '' ?> value="Series">  
+                        Series
+                    </label>
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" <?= in_array('Cultura Pop', explode(',', $noticia['categoria'])) ? 'checked' : '' ?> value="Cultura Pop">
+                        Cultura Pop
+                    </label>
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" <?= in_array('Anime', explode(',', $noticia['categoria'])) ? 'checked' : '' ?> value="Anime">
+                        Anime
+                    </label>
+                </div>
             </div>
             <!-- IMAGEN PRINCIPAL -->
             <div class="form-group">

@@ -26,16 +26,27 @@ include("./../layout/headerAdmin.php");
                     required></textarea>
             </div>
             <!-- Categoria -->
-             <div class="form-group">
-                <label for="categoria">Categoria</label>
-                <select id="categoria" name="categoria" class="btn-secondary" required>
-                    <option value="">Seleccione una categoria</option>
-                    <option value="Peliculas">Peliculas</option>
-                    <option value="Series">Series</option>
-                    <option value="Cultura Pop">Cultura Pop</option>
-                    <option value="Anime">Anime</option>
-                </select>
-             </div>
+            <div class="form-group">
+                <label for="categorias">Categorías</label>
+                <div class="checkbox-group">
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" value="Peliculas">
+                        Películas
+                    </label>
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" value="Series">
+                        Series
+                    </label>
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" value="Cultura Pop">
+                        Cultura Pop
+                    </label>
+                    <label class="check">
+                        <input type="checkbox" name="categoria[]" value="Anime">
+                        Anime
+                    </label>
+                </div>
+            </div>
             <!-- IMAGEN PRINCIPAL -->
             <div class="form-group">
                 <label>Imagen principal</label>

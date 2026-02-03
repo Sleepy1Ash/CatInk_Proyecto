@@ -54,7 +54,12 @@
         <img src="./<?= $row['crop2'] ?>" class="carousel-img">
 
         <div class="carousel-caption caption-md">
-          <span class="carousel-tag"><?= $row['categoria'] ?></span>
+          <?php
+            $cats = explode(",", $row['categoria']);
+            foreach($cats as $cat):
+          ?>
+            <span class="carousel-tag"><?= $cat ?></span>
+          <?php endforeach; ?>
 
           <h5>
             <a href="./views/news.php?id=<?= $row['id'] ?>" class="carousel-link">
@@ -80,12 +85,17 @@
           <div class="news-card">
             <img src="<?= $row[0]['crop2'] ?>" alt="">
             <div class="news-overlay">
-              <span class="news-tag"><?= htmlspecialchars($row[0]['categoria']) ?></span>
+              <?php
+                $cats = explode(",", $row[0]['categoria']);
+                foreach($cats as $cat):
+              ?>
+                <span class="news-tag"><?= $cat ?></span>
+              <?php endforeach; ?>
               <a href="./views/news.php?id=<?= htmlspecialchars($row[0]['id']) ?>" class="news-link">
                 <h3><?= htmlspecialchars($row[0]['titulo']) ?></h3>
               </a>
               
-              <p><?= htmlspecialchars($row[0]['descripcion']) ?></p>
+              <!--<p><?= htmlspecialchars($row[0]['descripcion']) ?></p>-->
             </div>
           </div>
         </div>
@@ -93,11 +103,16 @@
           <div class="news-card">
             <img src="<?= $row[1]['crop2'] ?>" alt="">
             <div class="news-overlay">
-              <span class="news-tag"><?= htmlspecialchars($row[1]['categoria']) ?></span>
+              <?php
+                $cats = explode(",", $row[1]['categoria']);
+                foreach($cats as $cat):
+              ?>
+                <span class="news-tag"><?= $cat ?></span>
+              <?php endforeach; ?>
               <a href="./views/news.php?id=<?= htmlspecialchars($row[1]['id']) ?>" class="news-link">
                 <h3><?= htmlspecialchars($row[1]['titulo']) ?></h3> 
               </a> 
-              <p><?= htmlspecialchars($row[1]['descripcion']) ?></p>
+              <!--<p><?= htmlspecialchars($row[1]['descripcion']) ?></p>-->
             </div>
           </div>
         </div>
@@ -107,7 +122,12 @@
           <div class="news-card">
             <img src="<?= $row[2]['crop3'] ?>" alt="">
             <div class="news-overlay">
-              <span class="news-tag"><?= htmlspecialchars($row[2]['categoria']) ?></span>
+              <?php
+                $cats = explode(",", $row[2]['categoria']);
+                foreach($cats as $cat):
+              ?>
+                <span class="news-tag"><?= $cat ?></span>
+              <?php endforeach; ?>
               <a href="./views/news.php?id=<?= htmlspecialchars($row[2]['id']) ?>" class="news-link">
                 <h3><?= htmlspecialchars($row[2]['titulo']) ?></h3> 
               </a> 
@@ -119,7 +139,12 @@
           <div class="news-card">
             <img src="<?= $row[3]['crop3'] ?>" alt="">
             <div class="news-overlay">
-              <span class="news-tag"><?= htmlspecialchars($row[3]['categoria']) ?></span> 
+              <?php
+                $cats = explode(",", $row[3]['categoria']);
+                foreach($cats as $cat):
+              ?>
+                <span class="news-tag"><?= $cat ?></span>
+              <?php endforeach; ?>
               <a href="./views/news.php?id=<?= htmlspecialchars($row[3]['id']) ?>" class="news-link">
                 <h3><?= htmlspecialchars($row[3]['titulo']) ?></h3> 
               </a> 
@@ -131,7 +156,12 @@
           <div class="news-card">
             <img src="<?= $row[4]['crop3'] ?>" alt="">
             <div class="news-overlay">
-              <span class="news-tag"><?= htmlspecialchars($row[4]['categoria']) ?></span>
+              <?php
+                $cats = explode(",", $row[4]['categoria']);
+                foreach($cats as $cat):
+              ?>
+                <span class="news-tag"><?= $cat ?></span>
+              <?php endforeach; ?>
               <a href="./views/news.php?id=<?= htmlspecialchars($row[4]['id']) ?>" class="news-link">
                 <h3><?= htmlspecialchars($row[4]['titulo']) ?></h3> 
               </a> 
@@ -145,7 +175,12 @@
           <div class="news-card">
             <img src="<?= $row[5]['crop3'] ?>" alt="">
             <div class="news-overlay">
-              <span class="news-tag"><?= htmlspecialchars($row[5]['categoria']) ?></span>
+              <?php
+                $cats = explode(",", $row[5]['categoria']);
+                foreach($cats as $cat):
+              ?>
+                <span class="news-tag"><?= $cat ?></span>
+              <?php endforeach; ?>
               <a href="./views/news.php?id=<?= htmlspecialchars($row[5]['id']) ?>" class="news-link">
                 <h3><?= htmlspecialchars($row[5]['titulo']) ?></h3> 
               </a> 
@@ -157,7 +192,12 @@
           <div class="news-card">
             <img src="<?= $row[6]['crop2'] ?>" alt="">
             <div class="news-overlay">
-              <span class="news-tag"><?= htmlspecialchars($row[6]['categoria']) ?></span>
+              <?php
+                $cats = explode(",", $row[6]['categoria']);
+                foreach($cats as $cat):
+              ?>
+                <span class="news-tag"><?= $cat ?></span>
+              <?php endforeach; ?>
               <a href="./views/news.php?id=<?= htmlspecialchars($row[6]['id']) ?>" class="news-link">
                 <h3><?= htmlspecialchars($row[6]['titulo']) ?></h3> 
               </a> 
@@ -171,8 +211,10 @@
     <div class="row">
       <!-- COLUMNA PRINCIPAL -->
       <div class="col-md-8">
-        <button style="margin: 10px;">
-          <img src="img/publicidad2.jpeg" alt="" class="banner">
+        <button style="margin: 10px; border-radius: 10px;">
+          <a href="./views/news.php?id=<?= htmlspecialchars($row[6]['id']) ?>" class="news-link">
+            <img src="img/publicidad2.jpeg" alt="" class="banner">
+          </a>
         </button>
         <?php
           $contador = 0;
@@ -180,7 +222,7 @@
           $result->data_seek(0);
 
           while ($row = $result->fetch_assoc()) {
-            if ($contador < 11) { $contador++; continue; }
+            if ($contador < 7) { $contador++; continue; }
             if ($mostradas >= 5) break;
         ?>
           <div class="card mb-3">
@@ -192,7 +234,88 @@
 
               <div class="col-md-8">
                 <div class="card-body">
-                  <span class="news-tag"><?= htmlspecialchars($row['categoria']) ?></span>
+                  <?php
+                    $cats = explode(",", $row['categoria']);
+                    foreach($cats as $cat):
+                  ?>
+                    <span class="news-tag"><?= $cat ?></span>
+                  <?php endforeach; ?>
+
+                  <h5 class="card-title">
+                    <a href="./views/news.php?id=<?= htmlspecialchars($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                  </h5>
+
+                  <p><?= htmlspecialchars($row['descripcion']) ?></p> 
+                  <small class="text-muted"><?= date('d M Y', strtotime($row['fecha_publicacion'])) ?></small>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        <?php
+          $contador++;
+          $mostradas++;
+          }
+        ?>
+        <div class="row scrollable-cards-row">
+          <?php
+            $contador = 0;
+            $mostradas = 0;
+            $result->data_seek(0);
+
+            while ($row = $result->fetch_assoc()) {
+              if ($contador < 12) { $contador++; continue; }
+              if ($mostradas >= 3) break;
+          ?>
+            <div class="col">
+              <div class="card">
+                <img src="<?= $row['crop3'] ?>" class="card-img-top" alt="">
+                <div class="card-body">
+                  <?php
+                    $cats = explode(",", $row['categoria']);
+                    foreach($cats as $cat):
+                  ?>
+                    <span class="news-tag"><?= $cat ?></span>
+                  <?php endforeach; ?>
+                  <h5 class="card-title">
+                    <a href="./views/news.php?id=<?= htmlspecialchars($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                  </h5>
+                  <p><?= htmlspecialchars($row['descripcion']) ?></p> 
+                  <small class="text-muted"><?= date('d M Y', strtotime($row['fecha_publicacion'])) ?></small>
+                </div>
+              </div>
+            </div>
+          <?php
+            $contador++;
+            $mostradas++;
+            }
+          ?>
+        </div>
+        <br>
+        <?php
+          $contador = 0;
+          $mostradas = 0;
+          $result->data_seek(0);
+
+          while ($row = $result->fetch_assoc()) {
+            if ($contador < 15) { $contador++; continue; }
+            if ($mostradas >= 5) break;
+        ?>
+          <div class="card mb-3">
+            <div class="row row-no-gap">
+
+              <div class="col-md-4">
+                <img src="<?= $row['crop3'] ?>" class="card-img-left">
+              </div>
+
+              <div class="col-md-8">
+                <div class="card-body">
+                  <?php
+                    $cats = explode(",", $row['categoria']);
+                    foreach($cats as $cat):
+                  ?>
+                    <span class="news-tag"><?= $cat ?></span>
+                  <?php endforeach; ?>
 
                   <h5 class="card-title">
                     <a href="./views/news.php?id=<?= htmlspecialchars($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>

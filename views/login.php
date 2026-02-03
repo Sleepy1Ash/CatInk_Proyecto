@@ -26,7 +26,6 @@ include("./../layout/header.php");
             </form>
         </div>
     </div>
-
 </div>
 <?php
 include("./../layout/footer.php");

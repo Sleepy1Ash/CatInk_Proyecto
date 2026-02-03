@@ -3,8 +3,27 @@
 </main>
 <!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
 <script src="/CatInk_Proyecto/CSS/scripts.js"></script>
+<script>
+let searchTimeout = null;
+
+const input = document.getElementById('searchInput');
+
+if (input) {
+  input.addEventListener('keyup', function () {
+    clearTimeout(searchTimeout);
+
+    const q = this.value.trim();
+
+    searchTimeout = setTimeout(() => {
+      if (q.length >= 2) {
+        window.location.href = `./../CatInk_Proyecto/views/categoria.php?q=${encodeURIComponent(q)}`;
+      }
+    }, 400);
+  });
+}
+</script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
-<footerclass="site-footer mt-5">
+<footer class="site-footer mt-5">
   <div class="container py-5">
     <div class="row gy-4">
       <!-- Logo / descripción -->

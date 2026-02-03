@@ -31,7 +31,8 @@ include("../data/conexion.php");
 // Obtencion de informacion del formulario
 $titulo = $_POST['titulo'];
 $descripcion = $_POST['descripcion'];
-$categoria = $_POST['categoria'];
+$categoria = $_POST['categoria'] ?? [];
+$categoriaCsv = implode(',', $categoria);
 $autor = $_POST['autor'];
 $contenido = $_POST['contenido'];
 $fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
@@ -54,7 +55,7 @@ $stmt->bind_param(
   "ssssss",
   $titulo,
   $descripcion,
-  $categoria, 
+  $categoriaCsv, 
   $autor,
   $contenido,
   $fecha_publicacion

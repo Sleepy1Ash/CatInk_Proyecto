@@ -20,7 +20,8 @@ function guardarImagenBase64WebpConId($base64, $noticiaId, $crop, $calidad = 80)
 $id = intval($_POST['id'] ?? 0);
 $titulo = $_POST['titulo'] ?? '';
 $descripcion = $_POST['descripcion'] ?? '';
-$categoria = $_POST['categoria'] ?? '';
+$categoria = $_POST['categoria'] ?? [];
+$categoriaCsv = implode(',', $categoria);
 $contenido = $_POST['contenido'] ?? '';
 $fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
 
@@ -34,7 +35,7 @@ $update = $con->prepare("
   SET titulo = ?, descripcion = ?, categoria = ?, contenido = ?, fecha_publicacion = ?
   WHERE id = ?
 ");
-$update->bind_param("sssssi", $titulo, $descripcion, $categoria, $contenido, $fecha_publicacion, $id);
+$update->bind_param("sssssi", $titulo, $descripcion, $categoriaCsv, $contenido, $fecha_publicacion, $id);
 $update->execute();
 
 $stmt = $con->prepare("SELECT crop1, crop2, crop3 FROM noticias WHERE id = ?");

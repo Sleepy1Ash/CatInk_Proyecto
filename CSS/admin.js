@@ -38,6 +38,26 @@
   const saved = localStorage.getItem('theme') || 'light';
   applyTheme(saved);
 
+  // Toggle Sidebar (Mobile)
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebarToggle && sidebar) {
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+    
+    // Close sidebar when clicking outside (optional but good for UX)
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth < 768 && 
+            sidebar.classList.contains('active') && 
+            !sidebar.contains(e.target) && 
+            e.target !== sidebarToggle &&
+            !sidebarToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+  }
+
 
 /* ===============================
    PREVISUALIZACIÓN DE IMÁGENES
