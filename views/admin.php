@@ -23,6 +23,7 @@ include("./../data/conexion.php");
             n.id,
             n.titulo,
             n.descripcion,
+            n.categoria,
             n.crop2,
             n.vistas,
             n.likes,
@@ -31,7 +32,7 @@ include("./../data/conexion.php");
         FROM noticias n
         LEFT JOIN noticias_stats ns ON n.id = ns.noticia_id
         GROUP BY 
-            n.id, n.titulo, n.descripcion, n.crop3, n.vistas, n.fecha_publicacion
+            n.id, n.titulo, n.descripcion, n.categoria, n.crop3, n.vistas, n.fecha_publicacion
         ORDER BY n.fecha_publicacion DESC
         LIMIT 5
     ");
@@ -184,6 +185,9 @@ include("./../data/conexion.php");
                             </div>
                             <img src="<?= htmlspecialchars($img) ?>" class="card-img-top" alt="<?= htmlspecialchars($noticia['titulo']) ?>">
                             <div class="card-body">
+                                <?php foreach (array_filter(array_map('trim', explode(',', $noticia['categoria'] ?? ''))) as $cat): ?>
+                                    <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <?php endforeach; ?>
                                 <h5 class="card-title text-truncate" title="<?= htmlspecialchars($noticia['titulo']) ?>">
                                     <?= htmlspecialchars($noticia['titulo']) ?>
                                 </h5>
