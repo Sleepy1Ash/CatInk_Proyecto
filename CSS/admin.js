@@ -38,6 +38,26 @@
   const saved = localStorage.getItem('theme') || 'light';
   applyTheme(saved);
 
+  // Toggle Sidebar (Mobile)
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebarToggle && sidebar) {
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+    
+    // Close sidebar when clicking outside (optional but good for UX)
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth < 768 && 
+            sidebar.classList.contains('active') && 
+            !sidebar.contains(e.target) && 
+            e.target !== sidebarToggle &&
+            !sidebarToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+        }
+    });
+  }
+
 
 /* ===============================
    PREVISUALIZACIÓN DE IMÁGENES
@@ -129,101 +149,145 @@
 (() => {
   let galleryCropper = null;
   let crops = [];
-  const maxCrops = 3;
+  let currentStep = 0;
+
+  const cropSteps = [
+    { name: 'Original', ratio: NaN },
+    { name: 'Banner', ratio: 21 / 6 },
+    { name: 'Miniatura', ratio: 16 / 9 }
+  ];
 
   const imageInputMain = document.getElementById("imageInputMain");
   const image = document.getElementById("cropperImage");
   const previewGrid = document.getElementById("previewGrid");
 
+  const btnAdd = document.getElementById("cropAdd");
+  const btnReset = document.getElementById("cropReset");
+  const btnDelete = document.getElementById("cropDelete");
+
   if (!imageInputMain || !image || !previewGrid) return;
 
+  /* ===== CARGA IMAGEN ===== */
   imageInputMain.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
 
+    resetAll();
+
     const reader = new FileReader();
     reader.onload = () => {
       image.src = reader.result;
+
       galleryCropper?.destroy();
       galleryCropper = new Cropper(image, {
         viewMode: 1,
         autoCropArea: 1,
-        // Restricciones de tamaño 
-        aspectRatio: 16 / 9,     // ratio inicial
+        aspectRatio: cropSteps[0].ratio,
         cropBoxResizable: false,
-        cropBoxMovable: true,
         dragMode: 'move',
-        //ux
         responsive: true,
         guides: true,
-        center: true,
-        highlight: false,
-        background: false,
-        zoomOnWheel: true
+        background: false
       });
     };
     reader.readAsDataURL(file);
   });
 
-  document.querySelectorAll(".aspect-ratio-controls button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".aspect-ratio-controls button").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+  /* ===== AÑADIR RECORTE ===== */
+  btnAdd?.addEventListener("click", () => {
+    if (!galleryCropper || currentStep >= cropSteps.length) return;
 
-      if (!galleryCropper) return;
-      const ratio = btn.dataset.ratio;
-      if (ratio === 'free') {
-        return;
-      } else {
-        const [w, h] = ratio.split('/').map(Number);
-        galleryCropper.setAspectRatio(w / h);
-      }
+    const canvas = galleryCropper.getCroppedCanvas({
+      imageSmoothingQuality: "high"
     });
-  });
 
-  document.getElementById("cropAdd")?.addEventListener("click", () => {
-    if (!galleryCropper || crops.length >= maxCrops) return;
-
-    const canvas = galleryCropper.getCroppedCanvas({ imageSmoothingQuality: "high" });
     const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
     crops.push(dataUrl);
     updatePreviews();
-  });
 
-  document.getElementById("cropReset")?.addEventListener("click", () => {
-    crops = [];
-    previewGrid.innerHTML = "";
-    for (let i = 1; i <= 3; i++) {
-      const input = document.getElementById(`crop${i}`);
-      if (input) input.value = "";
+    currentStep++;
+
+    if (currentStep < cropSteps.length) {
+      galleryCropper.setAspectRatio(cropSteps[currentStep].ratio);
     }
   });
 
+  /* ===== RESET TOTAL ===== */
+  btnReset?.addEventListener("click", resetAll);
+
+  /* ===== DESHACER ÚLTIMO ===== */
+  btnDelete?.addEventListener("click", () => {
+    if (crops.length === 0) return;
+
+    crops.pop();
+    currentStep = Math.max(0, currentStep - 1);
+
+    galleryCropper.setAspectRatio(cropSteps[currentStep].ratio);
+    updatePreviews();
+  });
+
+  /* ===== HELPERS ===== */
   function updatePreviews() {
     previewGrid.innerHTML = "";
+
+    for (let i = 0; i < 3; i++) {
+      const input = document.getElementById(`crop${i + 1}`);
+      if (input) input.value = "";
+    }
+
     crops.forEach((crop, i) => {
       const img = document.createElement("img");
       img.src = crop;
       previewGrid.appendChild(img);
+
       const input = document.getElementById(`crop${i + 1}`);
       if (input) input.value = crop;
     });
   }
+
+  function resetAll() {
+    crops = [];
+    currentStep = 0;
+    previewGrid.innerHTML = "";
+
+    for (let i = 1; i <= 3; i++) {
+      const input = document.getElementById(`crop${i}`);
+      if (input) input.value = "";
+    }
+
+    if (galleryCropper) {
+      galleryCropper.setAspectRatio(cropSteps[0].ratio);
+      galleryCropper.reset();
+    }
+  }
 })();
+
 
 /* ===============================
    EDITOR QUILL
 ================================ */
 // ====== REGISTROS NECESARIOS ======
+// Importaciones de Quill
 const Font = Quill.import('formats/font');
+const Size = Quill.import('formats/size');
+const ImageResize = Quill.import('modules/imageResize');
+const Parchment = Quill.import('parchment');
+// Declaraciones
 Font.whitelist = ['arial', 'times', 'roboto', 'courier'];
 Quill.register(Font, true);
-
-const Size = Quill.import('formats/size');
 Size.whitelist = ['small', false, 'large', 'huge'];
 Quill.register(Size, true);
-const ImageResize = Quill.import('modules/imageResize');
 Quill.register(ImageResize, true);
+const LineHeightStyle = new Parchment.Attributor.Style(
+  'lineheight',
+  'line-height',
+  {
+    scope: Parchment.Scope.BLOCK,
+    whitelist: ['0', '0.85', '1', '1.5', '2', '2.5', '3']
+  }
+);
+Quill.register(LineHeightStyle, true);
+
 // ====== INICIALIZACIÓN ======
 const quill = new Quill('#editor', {
   theme: 'snow',
@@ -240,6 +304,12 @@ const quill = new Quill('#editor', {
     }
   }
 });
+// ====== CARGAR CONTENIDO EXISTENTE ======
+const editorContent = document.getElementById('editorContent');
+
+if (editorContent && editorContent.textContent.trim().length > 0) {
+  quill.clipboard.dangerouslyPasteHTML(editorContent.innerHTML);
+}
 
 // ====== HANDLER DE IMÁGENES (PREPARADO PARA CROP) ======
 function imageHandler() {
@@ -262,7 +332,10 @@ function imageHandler() {
   };
 }
 /* verifica el contenido del editor antes de enviar el formulario */
-const form = document.getElementById('formPublicacion');
+const form = 
+            document.getElementById('formPublicacion')
+            ? document.getElementById('formPublicacion')
+            : document.getElementById('formEdicion');
 const contenidoInput = document.getElementById('contenido');
 
 if (form && contenidoInput) {
@@ -276,7 +349,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteButtons = document.querySelectorAll(".btn-delete");
     const modalOverlay = document.getElementById("modalOverlay");
     const modalTitle = document.getElementById("modalTitle");
-    const modalForm = document.getElementById("modalForm");
     const modalIdInput = document.getElementById("modalId");
 
     deleteButtons.forEach(button => {
@@ -307,4 +379,48 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modalContent) {
         modalContent.addEventListener("click", e => e.stopPropagation());
     }
+});
+// modal validacion
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modalTime = document.getElementById("timeModalOverlay");
+    const autoAdjustBtn = document.getElementById("autoAdjustBtn");
+    const manualAdjustBtn = document.getElementById("manualAdjustBtn");
+    const fechaInput = document.getElementsByName("fecha_publicacion")[0];
+    const guardarNoticiaBtns = document.getElementsByName("guardarNoticia");
+    const modalForm = document.getElementById("formPublicacion");
+    
+    function getLocalDatetimeString(date = new Date()) {
+      const offset = date.getTimezoneOffset();
+      const local = new Date(date.getTime() - offset * 60000);
+      return local.toISOString().slice(0,16);
+    } 
+    guardarNoticiaBtns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            const ahora = getLocalDatetimeString();
+            const fechaSeleccionada = fechaInput.value;
+
+            if (fechaSeleccionada < ahora) {
+                modalTime.style.display = "flex";
+            } else {
+                modalForm.requestSubmit();
+            }
+        });
+    });
+
+    autoAdjustBtn.addEventListener("click", () => {
+        fechaInput.value = getLocalDatetimeString();
+        modalTime.style.display = "none";
+        modalForm.requestSubmit();
+    });
+
+    manualAdjustBtn.addEventListener("click", () => {
+        modalTime.style.display = "none";
+    });
+
+    // Evitar cerrar modal al hacer click dentro
+    const modalContent = document.querySelector(".crop-modal-content");
+    modalContent?.addEventListener("click", e => e.stopPropagation());
 });

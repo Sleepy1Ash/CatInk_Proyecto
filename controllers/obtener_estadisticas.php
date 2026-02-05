@@ -1,83 +1,66 @@
 <?php
 include("../data/conexion.php");
-
 header('Content-Type: application/json');
 
-if (!isset($_GET['noticia_id']) || !isset($_GET['rango'])) {
-    echo json_encode(['error' => 'Faltan parámetros']);
+if (!isset($_GET['noticia_id'])) {
+    echo json_encode(['error' => 'Falta el parámetro noticia_id']);
     exit;
 }
 
 $noticiaId = intval($_GET['noticia_id']);
-$rango = $_GET['rango']; // 'diario', 'semanal', 'mensual'
+
+// Fechas opcionales
+$fechaInicio = $_GET['fecha_inicio'] ?? date('Y-m-d', strtotime('-30 days'));
+$fechaFin    = $_GET['fecha_fin'] ?? date('Y-m-d');
+
+$fechaInicioSql = $fechaInicio . ' 00:00:00';
+$fechaFinSql    = $fechaFin . ' 23:59:59';
+
+// Calcular rango en días
+$dias = (strtotime($fechaFin) - strtotime($fechaInicio)) / 86400;
+
+// Determinar modo y agrupación
+if ($dias <= 15) {
+    $modo = 'diario';
+    $groupBy = "DATE(fecha)";
+    $labelFormat = "DATE(fecha)";
+    $formatLabel = fn($row) => $row['label_fecha'];
+} elseif ($dias <= 60) {
+    $modo = 'semanal';
+    $groupBy = "YEARWEEK(fecha, 1)";
+    $labelFormat = "MIN(DATE(fecha))";
+    $formatLabel = fn($row) => $row['label_fecha'];
+} else {
+    $modo = 'quincenal';
+    $groupBy = "CONCAT(YEAR(fecha), '-', CEIL(DAY(fecha)/15))";
+    $labelFormat = "MIN(DATE(fecha))";
+    $formatLabel = fn($row) => $row['label_fecha'];
+}
+
+// Consulta dinámica
+$sql = "
+    SELECT 
+        {$groupBy} AS periodo,
+        {$labelFormat} AS label_fecha,
+        COUNT(*) AS lecturas,
+        AVG(tiempo_segundos) AS tiempo_promedio,
+        SUM(tiempo_segundos) AS tiempo_total
+    FROM noticias_stats
+    WHERE noticia_id = ?
+      AND fecha BETWEEN ? AND ?
+    GROUP BY periodo
+    ORDER BY label_fecha ASC
+";
+
+$stmt = $con->prepare($sql);
+$stmt->bind_param("iss", $noticiaId, $fechaInicioSql, $fechaFinSql);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $labels = [];
 $vistas = [];
 $tiempoPromedio = [];
 $tiempoTotal = [];
-
-// Configuración de la consulta según el rango
-switch ($rango) {
-    case 'semanal':
-        // Últimas 12 semanas
-        $sql = "SELECT 
-                    YEARWEEK(fecha, 1) as periodo, 
-                    MIN(DATE(fecha)) as fecha_inicio,
-                    COUNT(*) as lecturas, 
-                    AVG(tiempo_segundos) as tiempo_promedio,
-                    SUM(tiempo_segundos) as tiempo_total
-                FROM noticias_stats 
-                WHERE noticia_id = ? 
-                  AND fecha >= DATE_SUB(NOW(), INTERVAL 12 WEEK)
-                GROUP BY YEARWEEK(fecha, 1)
-                ORDER BY periodo ASC";
-        $formatLabel = function($row) {
-            return 'Semana ' . date('W', strtotime($row['fecha_inicio']));
-        };
-        break;
-
-    case 'mensual':
-        // Últimos 12 meses
-        $sql = "SELECT 
-                    DATE_FORMAT(fecha, '%Y-%m') as periodo, 
-                    COUNT(*) as lecturas, 
-                    AVG(tiempo_segundos) as tiempo_promedio,
-                    SUM(tiempo_segundos) as tiempo_total
-                FROM noticias_stats 
-                WHERE noticia_id = ? 
-                  AND fecha >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
-                GROUP BY periodo
-                ORDER BY periodo ASC";
-        $formatLabel = function($row) {
-            setlocale(LC_TIME, 'es_ES.UTF-8');
-            $dateObj = DateTime::createFromFormat('!Y-m', $row['periodo']);
-            return $dateObj->format('M Y');
-        };
-        break;
-
-    case 'diario':
-    default:
-        // Últimos 15 días (para que no sea demasiado ancho)
-        $sql = "SELECT 
-                    DATE(fecha) as periodo, 
-                    COUNT(*) as lecturas, 
-                    AVG(tiempo_segundos) as tiempo_promedio,
-                    SUM(tiempo_segundos) as tiempo_total
-                FROM noticias_stats 
-                WHERE noticia_id = ? 
-                  AND fecha >= DATE_SUB(NOW(), INTERVAL 15 DAY)
-                GROUP BY periodo
-                ORDER BY periodo ASC";
-        $formatLabel = function($row) {
-            return date('d/m', strtotime($row['periodo']));
-        };
-        break;
-}
-
-$stmt = $con->prepare($sql);
-$stmt->bind_param("i", $noticiaId);
-$stmt->execute();
-$result = $stmt->get_result();
 
 while ($row = $result->fetch_assoc()) {
     $labels[] = $formatLabel($row);
@@ -87,6 +70,7 @@ while ($row = $result->fetch_assoc()) {
 }
 
 echo json_encode([
+    'modo' => $modo,
     'labels' => $labels,
     'vistas' => $vistas,
     'tiempoPromedio' => $tiempoPromedio,

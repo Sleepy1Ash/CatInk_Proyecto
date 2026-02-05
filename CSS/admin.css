@@ -10,6 +10,7 @@
 body.has-sidebar .site-main {
   margin-left: var(--sidebar-width);
   padding: 16px;
+  transition: margin-left 0.3s ease;
 }
 body.has-sidebar .site-main .container {
   max-width: none;
@@ -25,12 +26,30 @@ body.has-sidebar .container {
 }
 body.has-sidebar .site-footer {
   margin-left: var(--sidebar-width);
+  transition: margin-left 0.3s ease;
+}
+button a {
+  text-decoration: none;
+  color: #EF3363;
 }
 h1 {
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 24px;
     align-items: center;
+}
+hr {
+  border: none;
+  border-radius: 100%;
+  height: 4px;
+  background-color: var(--accent);
+}
+.titulos {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  margin-top: 18px;
+  align-items: center;
 }
 /* Diseño de la Siderbar de noticias */
 .sidebar {
@@ -44,7 +63,174 @@ h1 {
   display: flex;
   flex-direction: column;
   z-index: 100;
+  transition: transform 0.3s ease;
 }
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+  }
+  .sidebar.active {
+    transform: translateX(0);
+  }
+  body.has-sidebar .site-main,
+  body.has-sidebar .site-footer {
+    margin-left: 0;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .btn-group {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .btn-group .btn {
+    width: 100%;
+    margin-left: 0;
+  }
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Form components responsiveness */
+  .checkbox-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .check {
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 6px;
+    display: block; /* Ensure full width click area */
+  }
+  
+  /* Cropper adjustments */
+  .cropper-wrapper {
+    height: 300px;
+  }
+  .crop-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .crop-actions .btn, 
+  .crop-actions button {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  /* Preview grid */
+  .preview {
+    justify-content: center;
+  }
+  .preview-item {
+    width: 45%;
+  }
+  
+  /* Quill Editor Toolbar */
+  .ql-toolbar.ql-snow .ql-formats {
+    margin-right: 5px;
+  }
+}
+
+/* ============================
+   Estilos para Calendario (Contenidos)
+   ============================ */
+.calendar-days {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px; /* espacio para scrollbar */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; /* smooth scroll iOS */
+}
+
+.day-column {
+  min-width: 300px;
+  flex: 0 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+}
+
+.day-header {
+  padding: 12px;
+  background: rgba(0,0,0,0.03);
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.day-news {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.noticias-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.noticias-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.noticias-card h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.noticias-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.noticias-actions .btn {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+}
+
+/* Ajustes Mobile específicos para Calendario */
+@media (max-width: 768px) {
+  .day-column {
+    min-width: 85vw; /* Casi pantalla completa en móvil */
+  }
+  
+  /* Ajuste de filtros en admin.php si no usan grid estándar */
+  .card-filter .row {
+    flex-direction: column;
+  }
+  
+  /* Ajuste de contenedor de imagen en crear.php */
+  .cropper-container img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 
 .sidebar-menu {
   list-style: none;
@@ -128,11 +314,28 @@ h1 {
     font-weight: bold;
 }
 
+/* Estilos para el contenedor principal de formularios admin */
+.admin-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 16px;
+  width: 100%;
+}
+
 .form-card {
     background: transparent;
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,.08);
+}
+
+@media (max-width: 768px) {
+  .form-card {
+    padding: 16px;
+  }
+  .admin-container {
+    padding: 0 12px;
+  }
 }
 
 .form-grid {
@@ -200,6 +403,53 @@ span {
 .btn-success:hover {
     background: #218838;
 }
+.btn-delete {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid #25303d;
+    background: var(--bg);
+    color: #ff0000;
+    cursor: pointer;
+}
+.btn-delete:hover {
+    background: #0f103b;
+}
+.btn-edit {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid #25303d;
+    background: var(--bg);
+    cursor: pointer;
+}
+.btn-edit:hover {
+    background: #0f103b;
+}
+.btn-view {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid #25303d;
+    background: var(--bg);
+    cursor: pointer;
+}
+.btn-view:hover {
+    background: #0f103b;
+}
+.checkbox-group{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+}
+.check {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 10px;
+}
 /* estilos para vista previa de imágenes */
 .preview {
     display: flex;
@@ -250,10 +500,31 @@ span {
     color: #ffffff;
     cursor: pointer;
 }
-
 .btn-secondary:hover {
     background: #5a6268;
-}.crop-controls {
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.btn-danger {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid #25303d;
+    background: var(--bg);
+    color: #ff0000;
+    cursor: pointer;
+}
+.btn-danger:hover {
+    background: #5a6268;
+}
+.crop-controls {
     margin-top: 10px;
     display: flex;
     gap: 10px;
@@ -423,6 +694,7 @@ body.has-sidebar .cropper-container {
     display: flex;
     gap: 10px;
     margin: 10px 0;
+    flex-wrap: wrap;
 }
 
 .aspect-ratio-controls button {
@@ -476,6 +748,43 @@ select .ql-font {
 .editor-toolbar .ql-picker.ql-font .ql-picker-item[data-value="courier"] {
   font-family: "Courier New", monospace;
 }
+/* SELECT CERRADO */
+.editor-toolbar .ql-picker.ql-lineheight .ql-picker-label {
+  min-width: 50px;
+  height: 24px;
+  padding: 6px 28px 6px 10px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  color: var(--text);
+}
+/* TEXTO DEL LABEL (valor seleccionado) */
+.editor-toolbar .ql-picker.ql-lineheight .ql-picker-label::before {
+  content: attr(data-value);
+  font-size: 14px;
+  color: #111111;
+}
+/* PLACEHOLDER CUANDO NO HAY VALOR */
+.editor-toolbar
+.ql-picker.ql-lineheight
+.ql-picker-label:not([data-value])::before {
+  content: "Interlineado";
+  opacity: 0.7;
+}
+/* DROPDOWN */
+.editor-toolbar .ql-picker.ql-lineheight .ql-picker-options {
+  min-width: 50px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+/* TEXTO DE LAS OPCIONES */
+.editor-toolbar .ql-picker.ql-lineheight .ql-picker-item::before {
+  content: attr(data-value);
+  font-size: 14px;
+  color: #111111;
+}
 
 /* EDITOR */
 .editor-content {
@@ -503,7 +812,6 @@ select .ql-font {
   border-radius: 6px;
   margin: 2px;
 }
-
 /* IMÁGENES */
 .ql-editor img {
   max-width: 100%;
@@ -717,13 +1025,127 @@ select, input[type="datetime-local"] {
 /* Cards */
 .img-card {
     width: 100%;
-    height: 240px;
+    height: auto;
     object-fit: cover;
     border-radius: 8px;
 }
+.img-card-left{
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.card-img-top {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
 .card {
     margin-bottom: 8px;
+    margin-top: 8px;
+    padding: 12px;
 }
+.card-filter {
+  height: 124px;
+  background: var(--card-bg); 
+  border: 1px solid var(--border); 
+  border-radius: 8px; 
+  overflow: hidden; 
+  box-shadow: 0 6px 18px rgba(11,11,11,0.04);
+  margin-bottom: 15px;
+}
+.card-footer span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.news-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0b1220;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+.calendar-days {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  scroll-snap-type: x mandatory;
+}
+.day-column {
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #0b1220, #05080f);
+  border-radius: 14px;
+  padding: 16px;
+  scroll-snap-align: start;
+}
+.day-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,.08);
+  border-radius: 10px;
+  color: #fff;
+}
+.day-news {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.noticias-card {
+    background: #0d1628;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0,0,0,.3);
+    transition: transform .2s ease;
+    width: 100%;
+}
+.noticias-card:hover {
+    transform: translateY(-4px);
+}
+.noticias-card img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.noticias-card h6 {
+    padding: 10px 12px 0;
+    font-weight: 600;
+}
+
+.noticias-card small {
+    padding: 0 12px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.noticias-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+}
+
+.botonesSemana {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+h4 {
+  padding: 12px 12px;
+}
+
 /* ===============================
    ESTILOS TABLA DE NOTICIAS
 ================================ */
@@ -772,26 +1194,66 @@ select, input[type="datetime-local"] {
     transition: 0.2s;
 }
 
-.btn-group .btn:hover {
-    transform: scale(1.05);
-}
+/* ===============================
+   RESPONSIVIDAD (MOBILE)
+   =============================== */
+@media (max-width: 768px) {
+    /* Ajuste layout principal */
+    body.has-sidebar .site-main {
+        margin-left: 0;
+    }
+    body.has-sidebar .site-footer {
+        margin-left: 0;
+    }
+    body.has-sidebar .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 
-/* Badge vistas */
-.badge {
-    font-size: 0.9rem;
-    padding: 0.4em 0.6em;
-}
+    /* Sidebar off-canvas */
+    .sidebar {
+        transform: translateX(-100%);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
 
-/* Modal estilo personalizado */
-.modal-content {
-    border-radius: 10px;
-    padding: 0.5rem;
-}
+    /* Tablas responsivas */
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 
-.modal-header {
-    border-bottom: 1px solid #dee2e6;
-}
+    /* Formularios y Grid */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
 
-.modal-footer {
-    border-top: 1px solid #dee2e6;
+    /* Preview Grid */
+    .preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Botones de tabla en vertical o compactos */
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .btn-group .btn {
+        margin-left: 0;
+        width: 100%;
+    }
 }

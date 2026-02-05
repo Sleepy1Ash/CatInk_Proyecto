@@ -28,8 +28,7 @@
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
 </head>
 <body class="has-sidebar">
 <div class="sidebar">
@@ -45,7 +44,7 @@
         </li>
         <hr>
         <li class="sidebar-menu-item">
-            <a href="./../../CatInk_Proyecto/views/contenidos.php" class="sidebar-menu-link">Administrar</a>
+            <a href="./../../CatInk_Proyecto/views/contenidos.php" class="sidebar-menu-link">Contenido</a>
     </ul>
     <div class="sidebar-footer">
       <button id="themeToggle" class="btn btn-icon" title="Cambiar tema">🌙</button>
@@ -54,3 +53,6 @@
 </div>
 <!-- Inicio del contenido principal para zonas de administración -->
 <main class="site-main">
+  <button id="sidebarToggle" class="btn btn-outline-secondary d-md-none mb-3">
+    <i class="bi bi-list"></i> Menú
+  </button>

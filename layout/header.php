@@ -26,20 +26,26 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav nav-left">
-        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">News</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">About us</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+        <li class="nav-item"><a class="nav-link active" href="./../../CatInk_Proyecto/index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Peliculas">Peliculas</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Series">Series</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Cultura Pop">Cultura Pop</a></li>
+        <li class="nav-item"><a class="nav-link" href="./../../CatInk_Proyecto/views/categoria.php?cat=Anime">Anime</a></li>
+        <li class="nav-item d-flex gap-2 align-items-center">
+            <!-- BOTÓN MODO OSCURO -->
+            <button id="themeToggle" class="btn btn-outline-secondary">🌙</button>
+            <a href="./../../CatInk_Proyecto/views/login.php" class="btn btn-outline-secondary"><span class="bi bi-person-fill"></span></a>
+        </li>
       </ul>
-      <div class="row">
-        <div class="col">
-          <!-- BOTÓN MODO OSCURO -->
-          <button id="themeToggle" class="btn btn-outline-secondary">🌙</button>
-        </div>
-        <div class="col">
-          <a href="views/login.php" class="btn btn-outline-secondary"><span class="bi bi-person-fill"></span></a>
-        </div>
-      </div>
+      <form class="nav-search" onsubmit="return false;">
+        <i class="bi bi-search"></i>
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Buscar noticias..."
+          autocomplete="off"
+        >
+      </form>
     </div>
   </div>
 </nav>

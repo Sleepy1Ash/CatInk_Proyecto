@@ -1,4 +1,6 @@
 <?php
+// Zona horaria default
+date_default_timezone_set('America/Mexico_City');
 // Convertidor de imagenes a base64 y guardado en BD
 function guardarImagenBase64WebpConId($base64, $noticiaId, $crop, $calidad = 80) {
   if (empty($base64)) return null;
@@ -29,10 +31,12 @@ include("../data/conexion.php");
 // Obtencion de informacion del formulario
 $titulo = $_POST['titulo'];
 $descripcion = $_POST['descripcion'];
-$categoria = $_POST['categoria'];
+$categoria = $_POST['categoria'] ?? [];
+$categoriaCsv = implode(',', $categoria);
 $autor = $_POST['autor'];
 $contenido = $_POST['contenido'];
 $fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
+$fecha_publicacion = str_replace('T', ' ', $fecha_publicacion);
 // Validacion basica
 if (
   empty($titulo) ||
@@ -51,7 +55,7 @@ $stmt->bind_param(
   "ssssss",
   $titulo,
   $descripcion,
-  $categoria, 
+  $categoriaCsv, 
   $autor,
   $contenido,
   $fecha_publicacion
@@ -72,6 +76,6 @@ $update = $con->prepare("
 $update->bind_param("sssi", $crop1, $crop2, $crop3, $noticiaId);
 $update->execute();
 // Redireccionamiento
-header("Location: ./../views/admin.php");
+header("Location: ./../views/contenidos.php");
 exit;
 ?>

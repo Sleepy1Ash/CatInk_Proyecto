@@ -3,6 +3,25 @@
 </main>
 <!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
 <script src="/CatInk_Proyecto/CSS/scripts.js"></script>
+<script>
+let searchTimeout = null;
+
+const input = document.getElementById('searchInput');
+
+if (input) {
+  input.addEventListener('keyup', function () {
+    clearTimeout(searchTimeout);
+
+    const q = this.value.trim();
+
+    searchTimeout = setTimeout(() => {
+      if (q.length >= 2) {
+        window.location.href = `./../CatInk_Proyecto/views/categoria.php?q=${encodeURIComponent(q)}`;
+      }
+    }, 400);
+  });
+}
+</script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
 <footer class="site-footer mt-5">
   <div class="container py-5">
@@ -45,23 +64,5 @@
     </div>
   </div>
 </footer>
-<!-- Modal de confirmación -->
-<div id="modalOverlay" class="modal-overlay">
-    <div class="modal">
-        <div class="modal-header" id="modalTitle">
-            <!-- Título dinámico -->
-        </div>
-        <div class="modal-body">
-            <span class="text-danger small">Esta acción no se puede deshacer.</span>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary btn-cancel">Cancelar</button>
-            <form action="../controllers/eliminar_noticia.php" method="POST" id="modalForm">
-                <input type="hidden" name="id" id="modalId">
-                <button type="submit" class="btn btn-danger">Eliminar</button>
-            </form>
-        </div>
-    </div>
-</div>
 </body>
 </html>
