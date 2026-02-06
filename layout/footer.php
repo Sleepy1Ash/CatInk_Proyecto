@@ -1,22 +1,18 @@
-
 <!-- Fin del contenido principal -->
 </main>
 <!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
 <script src="/CatInk_Proyecto/CSS/scripts.js"></script>
 <script>
 let searchTimeout = null;
-
 const input = document.getElementById('searchInput');
-
 if (input) {
   input.addEventListener('keyup', function () {
     clearTimeout(searchTimeout);
-
     const q = this.value.trim();
-
     searchTimeout = setTimeout(() => {
       if (q.length >= 2) {
-        window.location.href = `./../CatInk_Proyecto/views/categoria.php?q=${encodeURIComponent(q)}`;
+        // Redirige al controlador de búsqueda/categoría
+        window.location.href = `/CatInk_Proyecto/views/categoria.php?q=${encodeURIComponent(q)}`;
       }
     }, 400);
   });
@@ -52,14 +48,13 @@ if (input) {
           <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
         </div>
       </div>
-
     </div>
   </div>
   <!-- Derechos -->
   <div class="footer-bottom">
     <div class="container text-center">
       <small>
-        © 2026 TuSitio. Todos los derechos reservados.
+        © 2026 CatInk. Todos los derechos reservados.
       </small>
     </div>
   </div>

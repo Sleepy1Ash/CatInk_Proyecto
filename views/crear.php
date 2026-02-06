@@ -1,85 +1,79 @@
 <?php 
-// Página de creacion (añadir noticias)
-include("./../layout/headerAdmin.php");
+// Página de creación de noticias
+include(__DIR__ . "/../layout/headerAdmin.php");
+include(__DIR__ . "/../data/conexion.php");
+
+// Obtener categorías desde la base de datos
+$categoriasResult = $con->query("SELECT id_c, nombre FROM categorias ORDER BY nombre ASC");
+$categorias = [];
+while($row = $categoriasResult->fetch_assoc()){
+    $categorias[] = $row;
+}
 ?>
 <div class="admin-container">
     <h1>Alta de noticia | CatInk News</h1>
     <form id="formPublicacion" action="./../../CatInk_Proyecto/controllers/noticiascontroller.php" method="POST" enctype="multipart/form-data">
         <div class="form-card card">
             <!-- Autor oculto -->
-            <input type="hidden" name="autor" value="<?php echo $fila['id_u']; ?>">
+            <input type="hidden" name="autor" value="<?= $fila['id_u'] ?>">
             <!-- TÍTULO -->
             <div class="form-group">
                 <label for="titulo">Título</label>
-                <span>Maximo 50 caracteres</span>
-                <input type="text" id="titulo" name="titulo" required>
+                <span>Máximo 50 caracteres</span>
+                <input type="text" id="titulo" name="titulo" maxlength="50" required>
             </div>
             <!-- DESCRIPCIÓN -->
             <div class="form-group">
-                <label for="descripcion">Descripción corta </label>
-                <span>Maximo 150 caracteres</span>
+                <label for="descripcion">Descripción corta</label>
+                <span>Máximo 150 caracteres</span>
                 <textarea 
                     id="descripcion" 
                     name="descripcion" 
+                    maxlength="150" 
                     rows="3"
                     placeholder="Resumen breve de la noticia"
                     required></textarea>
             </div>
-            <!-- Categoria -->
+            <!-- CATEGORÍAS dinámicas -->
             <div class="form-group">
                 <label for="categorias">Categorías</label>
                 <div class="checkbox-group">
-                    <label class="check">
-                        <input type="checkbox" name="categoria[]" value="Peliculas">
-                        Películas
-                    </label>
-                    <label class="check">
-                        <input type="checkbox" name="categoria[]" value="Series">
-                        Series
-                    </label>
-                    <label class="check">
-                        <input type="checkbox" name="categoria[]" value="Cultura Pop">
-                        Cultura Pop
-                    </label>
-                    <label class="check">
-                        <input type="checkbox" name="categoria[]" value="Anime">
-                        Anime
-                    </label>
+                    <?php foreach($categorias as $cat): ?>
+                        <label class="check">
+                            <input type="checkbox" name="categoria[]" value="<?= $cat['id_c'] ?>">
+                            <?= htmlspecialchars($cat['nombre']) ?>
+                        </label>
+                    <?php endforeach; ?>
                 </div>
             </div>
             <!-- IMAGEN PRINCIPAL -->
             <div class="form-group">
                 <label>Imagen principal</label>
-                <span>El orden de los botones muestra las capturas necesarias y como deben ser guardadas</span>
+                <span>El orden de los botones muestra las capturas necesarias y cómo deben guardarse</span>
                 <!-- Subida -->
                 <input type="file" id="imageInputMain" accept="image/*">
-                <br>
                 <!-- Zona cropper -->
                 <div class="cropper-container">
                     <img id="cropperImage">
                 </div>
-
                 <!-- Acciones -->
                 <div class="crop-actions">
-                    <button type="button" class="btn btn-outline-secondary" id="cropAdd"><i class="bi bi-plus"></i>Añadir recorte</button>
-                    <button type="button" class="btn btn-outline-secondary" id="cropDelete"><i class="bi bi-arrow-counterclockwise"></i>Deshacer último recorte</button>
-                    <button type="button" class="btn btn-outline-secondary" id="cropReset"><i class="bi bi-recycle"></i>Reset</button>
+                    <button type="button" class="btn btn-outline-secondary" id="cropAdd"><i class="bi bi-plus"></i> Añadir recorte</button>
+                    <button type="button" class="btn btn-outline-secondary" id="cropDelete"><i class="bi bi-arrow-counterclockwise"></i> Deshacer último recorte</button>
+                    <button type="button" class="btn btn-outline-secondary" id="cropReset"><i class="bi bi-recycle"></i> Reset</button>
                 </div>
-
                 <!-- Recortes finales -->
                 <div class="cropped-preview">
                     <h4>Vista previa</h4>
                     <div class="preview-grid" id="previewGrid"></div>
                 </div>
-
                 <!-- Inputs ocultos -->
                 <input type="hidden" name="crop1" id="crop1">
                 <input type="hidden" name="crop2" id="crop2">
                 <input type="hidden" name="crop3" id="crop3">
             </div>
-
             <!-- CONTENIDO -->
-           <div class="form-group">
+            <div class="form-group">
                 <label>Contenido</label>
 
                 <!-- TOOLBAR -->
@@ -148,7 +142,6 @@ include("./../layout/headerAdmin.php");
                 <!-- Campo oculto para PHP -->
                 <input type="hidden" name="contenido" id="contenido">
             </div>
-
             <!-- PROGRAMACIÓN -->
             <div class="form-group">
                 <label>Programar publicación</label>
@@ -156,17 +149,17 @@ include("./../layout/headerAdmin.php");
             </div>
             <!-- ACCIONES -->
             <div class="form-actions">
-                <button type="submit" class="btn-success" name="guardarNoticia">
+                <button type="submit" class="btn btn-success" name="guardarNoticia">
                     Guardar noticia
                 </button>
             </div>
         </div>
     </form>
 </div>
-<!-- Modal de Confirmación Hora (Requerido por admin.js) -->
+<!-- Modal de Confirmación Hora -->
 <div id="timeModalOverlay" class="crop-modal" style="display: none;">
     <div class="crop-modal-content">
-        <h3 id="modalTitle">Hora no valida</h3>
+        <h3 id="modalTitle">Hora no válida</h3>
         <p>
             La fecha y hora seleccionadas es menor a la actual.
             <br><br>
@@ -174,7 +167,7 @@ include("./../layout/headerAdmin.php");
         </p>
         <div class="modal-actions">
             <button class="btn-success" id="autoAdjustBtn" type="button">
-                Ajustar autimáticamente y guardar
+                Ajustar automáticamente y guardar
             </button>
             <button class="btn-secondary" id="manualAdjustBtn" type="button">
                 Volver a ajustar la hora
@@ -183,6 +176,5 @@ include("./../layout/headerAdmin.php");
     </div>
 </div>
 <?php
-// Se incluye el footerAdmin que cierra el main y añade scripts
-include("./../layout/footerAdmin.php");
+include(__DIR__ . "/../layout/footerAdmin.php");
 ?>

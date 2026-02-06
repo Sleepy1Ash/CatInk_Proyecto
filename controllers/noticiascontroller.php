@@ -1,81 +1,80 @@
 <?php
-// Zona horaria default
 date_default_timezone_set('America/Mexico_City');
-// Convertidor de imagenes a base64 y guardado en BD
+// ============================
+// GUARDAR IMAGEN BASE64
+// ============================
 function guardarImagenBase64WebpConId($base64, $noticiaId, $crop, $calidad = 80) {
   if (empty($base64)) return null;
-
   if (!preg_match('/^data:image\/(jpeg|jpg|png);base64,/', $base64)) {
     return null;
   }
-
   $base64 = preg_replace('/^data:image\/\w+;base64,/', '', $base64);
   $binario = base64_decode($base64);
   if ($binario === false) return null;
-
   $imagen = imagecreatefromstring($binario);
   if (!$imagen) return null;
-
   $timestamp = time();
   $nombre = "noticia_{$noticiaId}_{$crop}_{$timestamp}.webp";
   $rutaFisica = __DIR__ . "/../img/noticias/" . $nombre;
-
   imagewebp($imagen, $rutaFisica, $calidad);
   imagedestroy($imagen);
-
   return "img/noticias/" . $nombre;
 }
-
-// Controlador para gestionar las noticias
+// ============================
+// CONEXION
+// ============================
 include("../data/conexion.php");
-// Obtencion de informacion del formulario
+// ============================
+// DATOS FORMULARIO
+// ============================
 $titulo = $_POST['titulo'];
 $descripcion = $_POST['descripcion'];
-$categoria = $_POST['categoria'] ?? [];
-$categoriaCsv = implode(',', $categoria);
+$categorias = $_POST['categoria'] ?? []; // ahora IDs
 $autor = $_POST['autor'];
 $contenido = $_POST['contenido'];
 $fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
 $fecha_publicacion = str_replace('T', ' ', $fecha_publicacion);
-// Validacion basica
-if (
-  empty($titulo) ||
-  empty($descripcion) ||
-  empty($contenido)
-) {
+// ============================
+// VALIDACION
+// ============================
+if (empty($titulo) || empty($descripcion) || empty($contenido)) {
   die("Datos incompletos");
 }
-// Insercion en la base de datos con preparacion
-$sql = "INSERT INTO noticias
-(titulo, descripcion, categoria, autor, contenido, fecha_publicacion)
-VALUES (?, ?, ?, ?, ?, ?)";
-
+// ============================
+// INSERTAR NOTICIA (YA SIN CATEGORIA)
+// ============================
+$sql = "INSERT INTO noticias (titulo, descripcion, autor, contenido, fecha_publicacion)
+        VALUES (?, ?, ?, ?, ?)";
 $stmt = $con->prepare($sql);
-$stmt->bind_param(
-  "ssssss",
-  $titulo,
-  $descripcion,
-  $categoriaCsv, 
-  $autor,
-  $contenido,
-  $fecha_publicacion
-);
+$stmt->bind_param("ssiss", $titulo, $descripcion, $autor, $contenido, $fecha_publicacion);
 $stmt->execute();
-
 $noticiaId = $con->insert_id;
+// ============================
+// GUARDAR IMAGENES
+// ============================
 $crop1 = guardarImagenBase64WebpConId($_POST['crop1'] ?? null, $noticiaId, 'crop1');
 $crop2 = guardarImagenBase64WebpConId($_POST['crop2'] ?? null, $noticiaId, 'crop2');
 $crop3 = guardarImagenBase64WebpConId($_POST['crop3'] ?? null, $noticiaId, 'crop3');
-
-// Actualizacion de rutas
-$update = $con->prepare("
-  UPDATE noticias
-  SET crop1 = ?, crop2 = ?, crop3 = ?
-  WHERE id = ?
-");
+// ============================
+// ACTUALIZAR RUTAS IMAGENES
+// ============================
+$update = $con->prepare("UPDATE noticias SET crop1=?, crop2=?, crop3=? WHERE id=?");
 $update->bind_param("sssi", $crop1, $crop2, $crop3, $noticiaId);
 $update->execute();
-// Redireccionamiento
+// ============================
+// INSERTAR CATEGORIAS RELACIONADAS
+// ============================
+if (!empty($categorias)) {
+  $stmtCat = $con->prepare("INSERT INTO noticia_categoria (noticia_id, categoria_id) VALUES (?, ?)");
+
+  foreach ($categorias as $cat_id) {
+    $stmtCat->bind_param("ii", $noticiaId, $cat_id);
+    $stmtCat->execute();
+  }
+}
+// ============================
+// REDIRECCION
+// ============================
 header("Location: ./../views/contenidos.php");
 exit;
 ?>

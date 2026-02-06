@@ -3,7 +3,7 @@
     $server="127.0.0.1";
     $user="root";
     $pass="";
-    $dbname="catink";
+    $dbname="cat_ink";
     //sentencia de coneccion
     $con=new mysqli($server,$user,$pass,$dbname);
     /*if($con->connect_error){
