@@ -3,53 +3,55 @@ include("./../layout/header.php");
 include("./../data/conexion.php");
 $q         = trim($_GET['q'] ?? '');
 $categoria = trim($_GET['cat'] ?? '');
-// Función para parsear categorías de JSON o separadores
-function parseCategorias($s) {
-    $s = trim($s ?? '');
-    if ($s === '') return [];
-    if (preg_match('/^\s*\[/', $s)) {
-        $decoded = json_decode($s, true);
-        if (is_array($decoded)) return array_filter(array_map('trim', $decoded));
-    }
-    $s = preg_replace('/[\\[\\]\\"\\\']/', '', $s);
-    $parts = preg_split('/[,;|\/]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-    return array_filter(array_map('trim', $parts));
-}
-// Construcción dinámica de la consulta
+// ==============================
+// CONSULTA PRINCIPAL DINÁMICA
+// ==============================
 if ($q !== '') {
     $stmt = $con->prepare("
-        SELECT id, titulo, descripcion, categoria, crop3, fecha_publicacion
-        FROM noticias
-        WHERE fecha_publicacion <= NOW()
-          AND (
-            titulo LIKE ?
-            OR descripcion LIKE ?
-            OR contenido LIKE ?
-          )
-        ORDER BY fecha_publicacion DESC
+        SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
+               GROUP_CONCAT(c.nombre SEPARATOR ',') AS categorias
+        FROM noticias n
+        LEFT JOIN noticia_categoria nc ON n.id = nc.noticia_id
+        LEFT JOIN categorias c ON nc.categoria_id = c.id_c
+        WHERE n.fecha_publicacion <= NOW()
+          AND (n.titulo LIKE ? OR n.descripcion LIKE ? OR n.contenido LIKE ?)
+        GROUP BY n.id
+        ORDER BY n.fecha_publicacion DESC
     ");
     $like = "%$q%";
     $stmt->bind_param("sss", $like, $like, $like);
 } elseif ($categoria !== '') {
-    // Filtrar noticias que contengan la categoría (JSON o separadores)
     $stmt = $con->prepare("
-        SELECT id, titulo, descripcion, categoria, crop3, fecha_publicacion
-        FROM noticias
-        WHERE fecha_publicacion <= NOW()
-        ORDER BY fecha_publicacion DESC
+        SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
+              GROUP_CONCAT(c.nombre SEPARATOR ',') AS categorias
+        FROM noticias n
+        INNER JOIN noticia_categoria nc_filter ON n.id = nc_filter.noticia_id
+        INNER JOIN categorias c_filter ON nc_filter.categoria_id = c_filter.id_c AND c_filter.nombre = ?
+        LEFT JOIN noticia_categoria nc ON n.id = nc.noticia_id
+        LEFT JOIN categorias c ON nc.categoria_id = c.id_c
+        WHERE n.fecha_publicacion <= NOW()
+        GROUP BY n.id
+        ORDER BY n.fecha_publicacion DESC
     ");
+    $stmt->bind_param("s", $categoria);
 } else {
     $stmt = $con->prepare("
-        SELECT id, titulo, descripcion, categoria, crop3, fecha_publicacion
-        FROM noticias
-        WHERE fecha_publicacion <= NOW()
-        ORDER BY fecha_publicacion DESC
+        SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
+               GROUP_CONCAT(c.nombre SEPARATOR ',') AS categorias
+        FROM noticias n
+        LEFT JOIN noticia_categoria nc ON n.id = nc.noticia_id
+        LEFT JOIN categorias c ON nc.categoria_id = c.id_c
+        WHERE n.fecha_publicacion <= NOW()
+        GROUP BY n.id
+        ORDER BY n.fecha_publicacion DESC
         LIMIT 20
     ");
 }
 $stmt->execute();
 $result = $stmt->get_result();
+// ==============================
 // SIDEBAR
+// ==============================
 $stmtUltimas = $con->prepare("
     SELECT id, titulo
     FROM noticias
@@ -81,16 +83,23 @@ $populares = $stmtPopulares->get_result();
       </h4>
     <?php endif; ?>
     <div class="row">
-      <!-- COLUMNA PRINCIPAL -->
+      <!-- ================== COLUMNA PRINCIPAL ================== -->
       <div class="col-md-8">
         <?php if ($result->num_rows === 0): ?>
           <p>No se encontraron resultados.</p>
         <?php endif; ?>
         <?php while ($row = $result->fetch_assoc()): ?>
           <?php
-            $cats = parseCategorias($row['categoria'] ?? []);
-            // Si hay filtro por categoría, saltar los que no coinciden
-            if ($categoria !== '' && !in_array($categoria, $cats)) continue;
+            $cats = !empty($row['categorias']) ? explode(",", $row['categorias']) : [];
+            // LIMPIAR ESPACIOS
+            $cats = array_map('trim', $cats);
+            // SI HAY FILTRO POR CATEGORÍA, PONERLA PRIMERO
+            if ($categoria !== '' && in_array($categoria, $cats)) {
+                // Quitarla del array
+                $cats = array_diff($cats, [$categoria]);
+                // Volver a ponerla al inicio
+                array_unshift($cats, $categoria);
+            }
             $img = !empty($row['crop3']) ? "./../".$row['crop3'] : "./../img/placeholder.jpg";
           ?>
           <div class="card mb-3">
@@ -100,8 +109,9 @@ $populares = $stmtPopulares->get_result();
               </div>
               <div class="col-md-8">
                 <div class="card-body">
+                  <!-- CATEGORÍAS -->
                   <?php foreach ($cats as $cat): ?>
-                    <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                    <span class="news-tag"><?= htmlspecialchars(trim($cat)) ?></span>
                   <?php endforeach; ?>
                   <h5 class="card-title">
                     <a href="./../views/news.php?id=<?= $row['id'] ?>" class="news-link">
@@ -118,7 +128,7 @@ $populares = $stmtPopulares->get_result();
           </div>
         <?php endwhile; ?>
       </div>
-      <!-- SIDEBAR -->
+      <!-- ================== SIDEBAR ================== -->
       <div class="col-md-4">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">

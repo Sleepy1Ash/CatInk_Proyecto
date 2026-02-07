@@ -25,7 +25,7 @@ try {
         $labelFormat = "MIN(DATE(ns.fecha))";
     }
     // ============================
-    // CONSULTA ACTUALIZADA
+    // Consulta de estadísticas
     // ============================
     $sql = "
         SELECT
@@ -35,9 +35,9 @@ try {
             COUNT(ns.id_s) AS vistas,
             SUM(ns.tiempo_segundos) AS tiempo
         FROM noticias_stats ns
-        JOIN noticias n ON n.id = ns.noticia_id
-        JOIN noticia_categoria nc ON nc.noticia_id = n.id
-        JOIN categorias c ON c.id_c = nc.categoria_id
+        INNER JOIN noticias n ON n.id = ns.noticia_id
+        INNER JOIN noticia_categoria nc ON nc.noticia_id = n.id
+        INNER JOIN categorias c ON c.id_c = nc.categoria_id
         WHERE ns.fecha BETWEEN ? AND ?
         GROUP BY c.nombre, periodo
         ORDER BY label_fecha ASC
@@ -83,7 +83,6 @@ try {
         'labels' => $labels,
         'categorias' => $dataCategorias
     ]);
-
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);

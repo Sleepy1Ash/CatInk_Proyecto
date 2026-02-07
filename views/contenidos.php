@@ -38,8 +38,8 @@ while ($row = $result->fetch_assoc()) {
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Gestión de Contenidos</h1>
-        <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
     </div>
+    <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
     <?php if (isset($_GET['msg']) && $_GET['msg'] == 'eliminado'): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             Noticia eliminada correctamente.
@@ -79,9 +79,9 @@ while ($row = $result->fetch_assoc()) {
                                             👁 <?= number_format($row['vistas']) ?> | ❤️ <?= number_format($row['likes']) ?>
                                         </small>
                                         <div class="noticias-actions">
-                                            <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit"><i class="bi bi-pencil-square"></i></a>
-                                            <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view"><i class="bi bi-eye"></i></a>
-                                            <button class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>"><i class="bi bi-trash"></i></button>
+                                            <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                                            <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Estadisticas"><i class="bi bi-eye"></i></a>
+                                            <button class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>

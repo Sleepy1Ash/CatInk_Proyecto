@@ -12,7 +12,7 @@ $stmt = $con->prepare("
         n.crop1,
         n.crop2,
         n.crop3,
-        n.fecha_publicacion,
+        n.fecha_publicacion as fecha,
         n.likes,
         GROUP_CONCAT(c.nombre SEPARATOR ',') AS categorias
     FROM noticias n
@@ -34,6 +34,7 @@ $popularesNoticiasSidebar = array_slice($popularesNoticiasSidebar, 0, 3);
 // Noticias principales para slider y últimas
 $slider = array_slice($noticias, 0, 5);
 $ultimasNoticias = array_slice($noticias, 0, 7);
+$noticiasMasRecientes = array_slice($noticias, 7, 11);
 ?>
 <!-- ===================== -->
 <!-- SLIDER PRINCIPAL -->
@@ -69,7 +70,7 @@ $ultimasNoticias = array_slice($noticias, 0, 7);
 <!-- ===================== -->
 <div class="container mt-5">
     <div class="container-fluid">
-        <center><h2>Últimas Noticias</h2><br></center>
+        <center><h2>Últimas Noticias de la Semana</h2><br></center>
         <div class="row">
             <!-- Primeras 2 noticias principales -->
             <div class="col-md-8">
@@ -80,52 +81,135 @@ $ultimasNoticias = array_slice($noticias, 0, 7);
                             <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
                         <?php endforeach; ?>
                         <a href="./views/news.php?id=<?= $ultimasNoticias[0]['id'] ?>" class="news-link">
-                            <h3><?= htmlspecialchars($ultimasNoticias[0]['titulo']) ?></h3>
+                            <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[0]['titulo']) ?></h3>
                         </a>
-                        <p><?= htmlspecialchars($ultimasNoticias[0]['descripcion']) ?></p>
+                        <p class="description-limit-1"><?= htmlspecialchars($ultimasNoticias[0]['descripcion']) ?></p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="news-card">
-                    <img src="<?= htmlspecialchars($ultimasNoticias[1]['crop2'] ?? $ultimasNoticias[1]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
+                    <img src="<?= htmlspecialchars($ultimasNoticias[1]['crop3'] ?? $ultimasNoticias[1]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[1]['categorias'] ?? ''))) as $cat): ?>
                             <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
                         <?php endforeach; ?>
                         <a href="./views/news.php?id=<?= $ultimasNoticias[1]['id'] ?>" class="news-link">
-                            <h3><?= htmlspecialchars($ultimasNoticias[1]['titulo']) ?></h3>
+                            <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[1]['titulo']) ?></h3>
                         </a>
-                        <p><?= htmlspecialchars($ultimasNoticias[1]['descripcion']) ?></p>
+                        <p class="description-limit-1"><?= htmlspecialchars($ultimasNoticias[1]['descripcion']) ?></p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Noticias restantes -->
-        <div class="row mt-3">
-            <?php for($i=2; $i < count($ultimasNoticias); $i++): ?>
-                <div class="col-md-<?= ($i==6)?'8':'4' ?> mb-3">
-                    <div class="news-card">
-                        <img src="<?= htmlspecialchars($ultimasNoticias[$i]['crop3'] ?? $ultimasNoticias[$i]['crop2'] ?? 'img/placeholder.jpg') ?>" alt="">
-                        <div class="news-overlay">
-                            <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[$i]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
-                            <?php endforeach; ?>
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[$i]['id'] ?>" class="news-link">
-                                <h3><?= htmlspecialchars($ultimasNoticias[$i]['titulo']) ?></h3>
-                            </a>
-                            <p><?= htmlspecialchars($ultimasNoticias[$i]['descripcion']) ?></p>
-                        </div>
+        <div class="row">
+            <div class="col">
+                <div class="news-card">
+                    <img src="<?= htmlspecialchars($ultimasNoticias[2]['crop3'] ?? $ultimasNoticias[2]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
+                    <div class="news-overlay">
+                        <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[2]['categorias'] ?? ''))) as $cat): ?>
+                            <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                        <?php endforeach; ?>
+                        <a href="./views/news.php?id=<?= $ultimasNoticias[2]['id'] ?>" class="news-link">
+                            <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[2]['titulo']) ?></h3>
+                        </a>
+                        <p class="description-limit-1"><?= htmlspecialchars($ultimasNoticias[2]['descripcion']) ?></p>
                     </div>
                 </div>
-            <?php endfor; ?>
+            </div>
+            <div class="col">
+                <div class="news-card">
+                    <img src="<?= htmlspecialchars($ultimasNoticias[3]['crop3'] ?? $ultimasNoticias[3]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
+                    <div class="news-overlay">
+                        <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[3]['categorias'] ?? ''))) as $cat): ?>
+                            <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                        <?php endforeach; ?>
+                        <a href="./views/news.php?id=<?= $ultimasNoticias[3]['id'] ?>" class="news-link">
+                            <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[3]['titulo']) ?></h3>
+                        </a>
+                        <p class="description-limit-1"><?= htmlspecialchars($ultimasNoticias[3]['descripcion']) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="news-card">
+                    <img src="<?= htmlspecialchars($ultimasNoticias[4]['crop3'] ?? $ultimasNoticias[4]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
+                    <div class="news-overlay">
+                        <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[04]['categorias'] ?? ''))) as $cat): ?>
+                            <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                        <?php endforeach; ?>
+                        <a href="./views/news.php?id=<?= $ultimasNoticias[4]['id'] ?>" class="news-link">
+                            <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[4]['titulo']) ?></h3>
+                        </a>
+                        <p class="description-limit-1"><?= htmlspecialchars($ultimasNoticias[4]['descripcion']) ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="news-card">
+                    <img src="<?= htmlspecialchars($ultimasNoticias[5]['crop3'] ?? $ultimasNoticias[5]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
+                    <div class="news-overlay">
+                        <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[5]['categorias'] ?? ''))) as $cat): ?>
+                            <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                        <?php endforeach; ?>
+                        <a href="./views/news.php?id=<?= $ultimasNoticias[5]['id'] ?>" class="news-link">
+                            <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[5]['titulo']) ?></h3>
+                        </a>
+                        <p class="description-limit-1"><?= htmlspecialchars($ultimasNoticias[5]['descripcion']) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="news-card">
+                    <img src="<?= htmlspecialchars($ultimasNoticias[6]['crop2'] ?? $ultimasNoticias[6]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
+                    <div class="news-overlay">
+                        <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[6]['categorias'] ?? ''))) as $cat): ?>
+                            <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                        <?php endforeach; ?>
+                        <a href="./views/news.php?id=<?= $ultimasNoticias[6]['id'] ?>" class="news-link">
+                            <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[6]['titulo']) ?></h3>
+                        </a>
+                        <p class="description-limit-1"><?= htmlspecialchars($ultimasNoticias[6]['descripcion']) ?></p>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- ===================== -->
         <!-- SIDEBAR -->
         <!-- ===================== -->
         <div class="row mt-5">
             <div class="col-md-8">
-                <!-- Aquí puedes agregar banners y secciones de noticias adicionales -->
+                <button class="banner-button">
+                    <a href="">
+                        <img src="img/publicidad2.jpeg" alt="" class="banner">
+                    </a>
+                </button>
+                <center>
+                    <h2>Noticias mas recientes</h2>
+                </center>
+                <?php foreach($noticiasMasRecientes as $row): ?>
+                <div class="card mb-3">
+                    <div class="row row-no-gap">
+                        <div class="col-md-4">
+                            <img src="<?= htmlspecialchars($row['crop3']  ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
+                                    <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <?php endforeach; ?>
+                                <h5 class="card-title">
+                                    <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                </h5>
+                                <p><?= htmlspecialchars($row['descripcion']) ?></p>
+                                <small class="text-muted">Publicado: <?= date("M d", strtotime($row['fecha'])) ?></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
             <div class="col-md-4">
                 <div class="sidebar-wrapper">

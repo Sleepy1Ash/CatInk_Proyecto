@@ -31,6 +31,9 @@ while($row = $resCat->fetch_assoc()){
 ?>
 <div class="admin-container">
     <h1>Editar noticia | CatInk News</h1>
+    <div class="mt-3">
+        <a href="./../views/contenidos.php" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i> Volver</a>
+    </div>
     <form id="formEdicion" action="./../../CatInk_Proyecto/controllers/actualizar_noticia.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?= $noticia['id'] ?>">
         <div class="form-card card">
@@ -171,9 +174,6 @@ while($row = $resCat->fetch_assoc()){
             </div>
         </div>
     </form>
-    <div class="mt-3">
-        <a href="./../views/contenidos.php" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i> Volver</a>
-    </div>
     <!-- Modal de Confirmación Hora -->
     <div id="timeModalOverlay" class="crop-modal" style="display:none;">
         <div class="crop-modal-content">

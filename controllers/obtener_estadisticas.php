@@ -1,73 +1,47 @@
 <?php
 include("../data/conexion.php");
 header('Content-Type: application/json');
-if (!isset($_GET['noticia_id'])) {
-    echo json_encode(['error' => 'Falta el parámetro noticia_id']);
-    exit;
-}
-$noticiaId = intval($_GET['noticia_id']);
-// Fechas opcionales
-$fechaInicio = $_GET['fecha_inicio'] ?? date('Y-m-d', strtotime('-30 days'));
-$fechaFin    = $_GET['fecha_fin'] ?? date('Y-m-d');
-$fechaInicioSql = $fechaInicio . ' 00:00:00';
-$fechaFinSql    = $fechaFin . ' 23:59:59';
-// Calcular rango en días
-$dias = (strtotime($fechaFin) - strtotime($fechaInicio)) / 86400;
-// Determinar modo y agrupación
-if ($dias <= 15) {
-    $modo = 'diario';
-    $groupBy = "DATE(fecha)";
-    $labelFormat = "DATE(fecha)";
-} elseif ($dias <= 60) {
-    $modo = 'semanal';
-    $groupBy = "YEARWEEK(fecha, 1)";
-    $labelFormat = "MIN(DATE(fecha))";
+//validar noticia_id
+$noticiaId = intval($_GET['noticia_id'] ?? 0);
+if(!$noticiaId) exit(json_encode(['error'=>'noticia_id requerido']));
+//validar fechas
+$fi = $_GET['fecha_inicio'] ?? date('Y-m-d', strtotime('-30 days'));
+$ff = $_GET['fecha_fin'] ?? date('Y-m-d');
+$fiSql = "$fi 00:00:00";
+$ffSql = "$ff 23:59:59";
+// RANGO
+$dias = (strtotime($ff) - strtotime($fi)) / 86400;
+if($dias <= 15){
+    $group = "DATE(fecha)";
+} elseif($dias <= 60){
+    $group = "YEARWEEK(fecha,1)";
 } else {
-    $modo = 'quincenal';
-    $groupBy = "CONCAT(YEAR(fecha), '-', CEIL(DAY(fecha)/15))";
-    $labelFormat = "MIN(DATE(fecha))";
+    $group = "CONCAT(YEAR(fecha), '-', CEIL(DAY(fecha)/15))";
 }
-// ============================
-// CONSULTA ESTADÍSTICAS
-// ============================
 $sql = "
-    SELECT 
-        {$groupBy} AS periodo,
-        {$labelFormat} AS label_fecha,
-        COUNT(*) AS lecturas,
-        AVG(tiempo_segundos) AS tiempo_promedio,
-        SUM(tiempo_segundos) AS tiempo_total
-    FROM noticias_stats
-    WHERE noticia_id = ?
-      AND fecha BETWEEN ? AND ?
-    GROUP BY periodo
-    ORDER BY label_fecha ASC
+SELECT 
+    $group AS periodo,
+    MIN(DATE(fecha)) AS label_fecha,
+    COUNT(*) AS vistas,
+    AVG(tiempo_segundos) AS tiempo_promedio
+FROM noticias_stats
+WHERE noticia_id = ?
+AND fecha BETWEEN ? AND ?
+GROUP BY periodo
+ORDER BY label_fecha
 ";
 $stmt = $con->prepare($sql);
-$stmt->bind_param("iss", $noticiaId, $fechaInicioSql, $fechaFinSql);
+$stmt->bind_param("iss",$noticiaId,$fiSql,$ffSql);
 $stmt->execute();
-$result = $stmt->get_result();
-// ============================
-// PROCESAR RESULTADOS
-// ============================
-$labels = [];
-$vistas = [];
-$tiempoPromedio = [];
-$tiempoTotal = [];
-while ($row = $result->fetch_assoc()) {
+$r = $stmt->get_result();
+$labels=[];$vistas=[];$tiempo=[];
+while($row=$r->fetch_assoc()){
     $labels[] = $row['label_fecha'];
-    $vistas[] = intval($row['lecturas']);
-    $tiempoPromedio[] = round(floatval($row['tiempo_promedio']), 1);
-    $tiempoTotal[] = intval($row['tiempo_total']);
+    $vistas[] = (int)$row['vistas'];
+    $tiempo[] = round($row['tiempo_promedio'],1);
 }
-// ============================
-// RESPUESTA JSON
-// ============================
 echo json_encode([
-    'modo' => $modo,
-    'labels' => $labels,
-    'vistas' => $vistas,
-    'tiempoPromedio' => $tiempoPromedio,
-    'tiempoTotal' => $tiempoTotal
+    'labels'=>$labels,
+    'vistas'=>$vistas,
+    'tiempoPromedio'=>$tiempo
 ]);
-?>

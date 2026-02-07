@@ -27,7 +27,7 @@ try {
         $labelFormat = "MIN(DATE(nl.fecha))";
     }
     // ============================
-    // Likes por categoría (JOIN normalizado)
+    // Likes por categoría
     // ============================
     $sql = "
         SELECT
@@ -36,9 +36,9 @@ try {
             {$labelFormat} AS label_fecha,
             COUNT(nl.id_l) AS likes
         FROM noticia_likes nl
-        JOIN noticias n ON n.id = nl.noticia_id
-        JOIN noticia_categoria nc ON nc.noticia_id = n.id
-        JOIN categorias c ON c.id_c = nc.categoria_id
+        INNER JOIN noticias n ON n.id = nl.noticia_id
+        INNER JOIN noticia_categoria nc ON nc.noticia_id = n.id
+        INNER JOIN categorias c ON c.id_c = nc.categoria_id
         WHERE nl.fecha BETWEEN ? AND ?
         GROUP BY c.nombre, periodo
         ORDER BY label_fecha ASC
@@ -48,12 +48,12 @@ try {
     $stmt->execute();
     $result = $stmt->get_result();
     // ============================
-    // Likes por región (país/estado)
+    // Likes por región
     // ============================
     $sqlGeo = "
-        SELECT
-            pais,
-            estado,
+        SELECT 
+            COALESCE(pais, 'Desconocido') AS pais,
+            COALESCE(estado, 'Desconocido') AS estado,
             COUNT(*) AS total
         FROM noticia_likes
         WHERE fecha BETWEEN ? AND ?
@@ -64,34 +64,48 @@ try {
     $stmtGeo->bind_param("ss", $fechaInicioSql, $fechaFinSql);
     $stmtGeo->execute();
     $resultGeo = $stmtGeo->get_result();
+    // ============================
+    // Procesar datos
+    // ============================
     $labels = [];
     $dataCategorias = [];
     $paises = [];
     $estados = [];
-    // Procesar likes por región
+    // Geolocalización
     while ($row = $resultGeo->fetch_assoc()) {
-        $pais = $row['pais'] ?: 'Desconocido';
-        $estado = $row['estado'] ?: 'Desconocido';
+        $pais = $row['pais'];
+        $estado = $row['estado'];
         $paises[$pais] = ($paises[$pais] ?? 0) + (int)$row['total'];
         $estados[$estado] = ($estados[$estado] ?? 0) + (int)$row['total'];
     }
-    // Procesar likes por categoría
+    // Likes por categoría
     while ($row = $result->fetch_assoc()) {
         $label = $row['label_fecha'];
-        if (!in_array($label, $labels)) $labels[] = $label;
+        if (!in_array($label, $labels)) {
+            $labels[] = $label;
+        }
         $cat = $row['categoria'];
-        if (!isset($dataCategorias[$cat])) $dataCategorias[$cat] = ['likes' => []];
+        if (!isset($dataCategorias[$cat])) {
+            $dataCategorias[$cat] = ['likes' => []];
+        }
         $dataCategorias[$cat]['likes'][$label] = (int)$row['likes'];
     }
-    // Normalizar arrays (rellenar ceros)
+    // ============================
+    // Normalizar (rellenar ceros)
+    // ============================
     foreach ($dataCategorias as $cat => $metrics) {
         $finalLikes = [];
+
         foreach ($labels as $l) {
             $finalLikes[] = $metrics['likes'][$l] ?? 0;
         }
-        $dataCategorias[$cat] = ['likes' => $finalLikes];
+        $dataCategorias[$cat] = [
+            'likes' => $finalLikes
+        ];
     }
-    // Preparar datos geográficos
+    // ============================
+    // Preparar datos GEO
+    // ============================
     $geoData = [
         'paises' => [
             'labels' => array_keys($paises),
@@ -102,6 +116,9 @@ try {
             'values' => array_values($estados)
         ]
     ];
+    // ============================
+    // Respuesta JSON
+    // ============================
     echo json_encode([
         'modo' => $modo,
         'labels' => $labels,

@@ -57,13 +57,16 @@ hr {
   top: 0;
   left: 0;
   width: var(--sidebar-width);
-  height: 100vh;
+  height: 100dvh;
   background: var(--card-bg);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   z-index: 100;
   transition: transform 0.3s ease;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 @media (max-width: 768px) {
@@ -236,7 +239,9 @@ hr {
   list-style: none;
   padding: 8px;
   margin: 0;
-  flex: 1;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .sidebar-menu-item {
@@ -1070,6 +1075,11 @@ select, input[type="datetime-local"] {
   overflow: hidden;
   width: 100%;
 }
+.news-tags {
+  display: flex;
+  flex-wrap: wrap; /* permite salto de línea */
+  gap: 6px;        /* separación entre tags */
+}
 .calendar-days {
   display: flex;
   gap: 24px;
@@ -1214,6 +1224,8 @@ h4 {
     .sidebar {
         transform: translateX(-100%);
         box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .sidebar.active {
         transform: translateX(0);

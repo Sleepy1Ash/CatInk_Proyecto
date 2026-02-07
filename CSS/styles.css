@@ -7,7 +7,6 @@
 /* Reset básico */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color: #111; }
-
 :root {
   --sidebar-width: 220px;
   /* Variables de tema: ajustar colores para modo claro */
@@ -20,7 +19,6 @@ html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Rob
   --indicator-stroke: rgba(0,0,0,0.9);
   --footer-bottom-bg: rgba(0,0,0,0.03);
 }
-
 /* Variables para modo oscuro (aplicadas cuando [data-bs-theme="dark"]) */
 [data-bs-theme="dark"] {
   --bg: #0b1220;
@@ -32,7 +30,6 @@ html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Rob
   --indicator-stroke: rgba(255,255,255,0.9);
   --footer-bottom-bg: rgba(255,255,255,0.03);
 }
-
 /* Layout general: cuerpo como columna flex para sticky footer */
 body { display:flex; flex-direction:column; min-height:100vh; background: var(--bg); color: var(--text); overflow-x: hidden; }
 .site-main {
@@ -44,12 +41,12 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   margin-left: -16px;
   margin-right: -16px;
   width: calc(100% + 32px);
+  margin-top: -16px;
 }
 /* Basic container utilities */
 .container { width: 100%; max-width: 1140px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
 .container-fluid { width: 100%; padding-left: 16px; padding-right: 16px; }
 .container-noticia { width: 100%; max-width: 800px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
-
 /* =========================
    Navbar & Header Styles
    ========================= */
@@ -60,7 +57,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   position: relative;
   z-index: 2000;
 }
-
 .navbar .container-fluid {
   display: flex;
   flex-wrap: wrap; /* Importante para móvil: permite que el menú caiga debajo */
@@ -68,7 +64,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   justify-content: space-between;
   gap: 12px;
 }
-
 .navbar-brand {
   display: flex;
   align-items: center;
@@ -77,14 +72,12 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   font-weight: 700;
   margin-right: 0;
 }
-
 #logo {
   border-radius: 50%;
   max-height: 50px;
   width: auto;
   object-fit: contain;
 }
-
 /* Toggler (Mobile) */
 .navbar-toggler {
   border: 1px solid var(--border);
@@ -111,7 +104,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 [data-bs-theme="dark"] .navbar-toggler-icon {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
-
 /* Menú Colapsable */
 .navbar-collapse {
   flex-basis: 100%; /* Ocupa toda la línea en móvil */
@@ -122,7 +114,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 .navbar-collapse.show {
   display: block; /* Mostrar al expandir */
 }
-
 .navbar-nav {
   display: flex;
   flex-direction: column; /* Vertical en móvil */
@@ -132,7 +123,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   gap: 8px;
   margin-top: 12px;
 }
-
 .nav-link {
   display: block;
   padding: 8px 12px;
@@ -146,7 +136,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   background: rgba(0,0,0,0.05);
   color: var(--accent);
 }
-
 /* Search Bar */
 .nav-search {
   display: flex;
@@ -170,7 +159,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(239, 51, 99, 0.2);
 }
-
 /* =========================
    Desktop Navbar (>768px)
    ========================= */
@@ -178,25 +166,21 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   .navbar .container-fluid {
     flex-wrap: nowrap; /* Una sola línea */
     justify-content: flex-start;
-  }
-  
+  } 
   .navbar-toggler {
     display: none; /* Ocultar botón */
   }
-  
   .navbar-collapse {
     display: flex !important; /* Siempre visible */
     flex-basis: auto;
     margin-top: 0;
   }
-  
   .navbar-nav {
     flex-direction: row; /* Horizontal */
     margin-top: 0;
     margin-left: 20px;
     gap: 16px;
   }
-  
   .nav-search {
     width: auto;
     margin-top: 0;
@@ -204,14 +188,12 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
     min-width: 250px;
   }
 }
-
 /* Grid simple
   - .row y .col para maquetar bloques sencillos
   - las variantes .col-md-* se aplican en media queries
 */
 .row { display:flex; flex-wrap:wrap; gap:16px; }
 .col { flex:1; }
-
 /* Botones
   - .btn con variante .btn-outline-secondary
 */
@@ -228,10 +210,8 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 .btn-accent:hover {
   opacity: 0.9;
 }
-
 /* nav utilities */
 .nav-left { margin-right: auto; }
-
 /* form input replacement for .form-control */
 .input { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; background:transparent; color:var(--text); margin-bottom:10px; }
 .input:focus {
@@ -241,7 +221,6 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 /* card header/footer neutral styles */
 .card-header { padding:12px 16px; background: transparent; }
 .card-footer { padding: 12px 16px; background: transparent;}
-
 /* Componente Card
   - .card, .card-body, .card-title, .card-text
   - Uso: entradas principales y sidebars
@@ -252,18 +231,8 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
 .card-text { color: var(--text); font-size: 0.95rem; }
 .card-img-top { width:100%; height:auto; display:block; }
 .card-tag { text-transform:uppercase; font-size:.85rem; font-weight:600; opacity:.8; margin-bottom:10px; margin-top: 10px; background-color:#EF3363; border-radius:8px; padding:4px 8px; display:inline-block; }
-
 /* Make anchor buttons look consistent */
 a.btn { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; color:inherit; }
-
-/* Navbar toggler */
-.navbar-toggler { background:transparent; border:1px solid rgba(0,0,0,0.08); padding:6px 8px; border-radius:4px; }
-.navbar-toggler-icon { display:inline-block; width:20px; height:14px; position:relative; }
-.navbar-toggler-icon::before, .navbar-toggler-icon::after, .navbar-toggler-icon span { content: ''; position:absolute; left:0; right:0; height:2px; background:currentColor; }
-.navbar-toggler-icon::before { top:0; }
-.navbar-toggler-icon span { top:6px; }
-.navbar-toggler-icon::after { bottom:0; }
-
 /* Comportamiento de colapso (menu responsive)
    - .collapse se muestra como bloque en móvil, y como flex en escritorio
 */
@@ -281,12 +250,10 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     margin-left: 0;
   }
 }
-
 /* spacing helpers */
 .mt-5 { margin-top: 3rem; }
 .py-5 { padding-top: 3rem; padding-bottom: 3rem; }
 .text-center { text-align:center; }
-
 /* Footer
   - .site-footer contiene columnas de enlace y redes
   - .footer-bottom es la franja inferior con copyright
@@ -302,7 +269,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .social-links a { font-size:1.5rem; color:var(--text); opacity:0.9; transition: transform .2s ease, opacity .2s ease; text-decoration:none; }
 .social-links a:hover { opacity:1; transform: translateY(-3px); }
 .footer-bottom { background: var(--footer-bottom-bg); padding: 15px 0; }
-
 /* Carousel specific styles (extracted) */
 .carousel, .carousel-inner, .carousel-item { max-height: 60vh; position:relative; overflow:hidden; }
 .carousel-inner { position: relative; }
@@ -323,27 +289,22 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .indicator-avatar img { width:100%; height:100%; border-radius:50%; object-fit:cover; }
 .indicator-avatar svg { position:absolute; inset:0; transform:rotate(-90deg); }
 .indicator-avatar circle { fill:none; stroke:var(--indicator-stroke); stroke-width:3; stroke-dasharray:100; stroke-dashoffset:100; transition: stroke-dashoffset linear; }
-
 /* Carousel visibility control */
 .carousel-img { width:100%; display:block; }
-
 /* caption show on md+ */
 .caption-md { display: none; }
 @media (min-width: 768px) { .caption-md { display:block; } }
-
 /* row without gap */
 .row-no-gap { gap: 0; }
-
 /* left image for card */
 .card-img-left { width:100%; height:100%; object-fit:cover; display:block; }
-
 /* text muted */
 .text-muted { color: var(--muted); }
-
 /* Utility replacements for some Bootstrap helpers used in markup */
 .d-none { display: none !important; }
 @media (min-width: 768px) {
   .d-md-block { display: block !important; }
+  .d-md-none { display: none !important; }
 }
 .img-fluid { max-width: 100%; height: auto; display: block; }
 .rounded-start { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
@@ -353,69 +314,56 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .align-items-center { align-items: center; }
 .d-flex { display: flex; }
 .gap-2 { gap: 0.5rem; }
-
 /* List group minimal */
 .list-group { list-style: none; padding: 0; margin: 0; }
 .list-group-flush { border-top: none; }
 .list-group-item { padding: 10px 16px; border-top: 1px solid var(--border); }
-.card-footer { padding: 12px 16px; background: rgba(0,0,0,0.02); }
-
 /* Uso de Bootstrap Icons: las reglas específicas se obtienen desde
   la hoja de estilos de Bootstrap Icons importada en los headers.
   Se mantiene la clase .bi por compatibilidad visual. */
 .bi { display:inline-block; font-style:normal; }
-
 /* responsive tweaks */
 @media (max-width: 768px) {
   .container, .container-fluid { padding-left: 12px; padding-right:12px; }
   .carousel-caption { padding-right: 12%; padding-left: 6%; }
   /* Forzar columnas a 100% en pantallas pequeñas (apilar) */
   .col { flex-basis: 100%; max-width: 100%; }
-  
   /* Ensure col-md-* also stack on mobile */
   [class*="col-md-"] {
     flex: 0 0 100%;
     max-width: 100%;
   }
-  
   /* Adjust horizontal cards to NOT stack on mobile, per user request */
   .card .row-no-gap {
     flex-direction: row; /* Force row */
   }
-  
   /* Override the 100% width for col-md-* inside these specific cards */
   .card .row-no-gap > .col-md-4 {
     flex: 0 0 40%; /* Image takes 40% width */
     max-width: 40%;
   }
-  
   .card .row-no-gap > .col-md-8 {
     flex: 0 0 60%; /* Content takes 60% width */
     max-width: 60%;
   }
-
   .card-img-left {
     height: 100%; /* Full height of container */
     width: 100%;
     object-fit: cover;
     min-height: 120px; /* Minimum height */
   }
-  
   /* Adjust card body padding for smaller space */
   .card .card-body {
     padding: 10px;
   }
-  
   .card-title {
     font-size: 1rem; /* Smaller title */
   }
-  
   .card-text, .card-body p {
     font-size: 0.85rem; /* Smaller text */
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
   /* Login responsive adjustments */
   .login-wrapper {
     padding: 1rem;
@@ -423,7 +371,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   .login-card {
     width: 100%;
   }
-
   /* Scrollable cards row (carousel-like) for mobile */
   .scrollable-cards-row {
     display: flex;
@@ -436,83 +383,12 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     margin-right: -12px; /* Compensate for container padding right */
     padding-right: 12px; /* Add padding to right so last card isn't cut off */
   }
-
   .scrollable-cards-row .col {
     flex: 0 0 85%; /* Card width 85% of screen */
     max-width: 85%;
     scroll-snap-align: center; /* Snap to center */
   }
 }
-
-/* =================================
-   Componentes Específicos (News, Index)
-   ================================= */
-
-/* News Card (Index) */
-.news-card {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 16px;
-  background: var(--card-bg);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.news-card img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  min-height: 250px;
-}
-
-.news-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0));
-  padding: 20px;
-  color: #fff;
-}
-
-.news-tag {
-  background: var(--accent);
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  display: inline-block;
-  margin-bottom: 8px;
-}
-
-.news-link {
-  text-decoration: none;
-  color: var(--text);
-}
-
-.news-link:hover {
-  text-decoration: underline;
-}
-
-.news-overlay h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.5rem;
-  line-height: 1.2;
-}
-
-.news-overlay p {
-  font-size: 0.95rem;
-  opacity: 0.9;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 /* Single News View */
 .img-titular {
   width: 100%;
@@ -522,13 +398,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   border-radius: 8px;
   margin-bottom: 24px;
 }
-
-.banner {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
 .descripcion {
   font-size: 1.1rem;
   line-height: 1.6;
@@ -536,7 +405,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   margin-bottom: 16px;
   font-weight: 500;
 }
-
 .meta {
   font-size: 0.9rem;
   color: var(--muted);
@@ -544,7 +412,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
-
 .like-btn {
   background: transparent;
   border: 1px solid var(--accent);
@@ -555,15 +422,15 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   margin-bottom: 16px;
   transition: all 0.2s ease;
 }
-
 .like-btn:hover {
   background: var(--accent);
   color: #fff;
 }
-
 /* Quill Content Safe Display */
 .ql-editor {
   overflow-wrap: break-word;
+  padding: 0;
+  font-family: inherit;
 }
 .ql-editor img {
   max-width: 100%;
@@ -574,27 +441,18 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   margin-bottom: 1em;
   line-height: 1.6;
 }
-
+.ql-editor iframe {
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  margin: 24px auto;
+}
 /* Sidebar Wrapper */
 .sidebar-wrapper {
   position: sticky;
   top: 20px;
-}
-
-/* Login Wrapper */
-.login-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-  padding: 20px;
-}
-.login-card {
-  width: 100%;
-  max-width: 400px;
-}
-.login-card-body {
-  padding: 2rem;
 }
 @media (max-width: 768px) {
   /* Navbar adjustments */
@@ -612,7 +470,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     display: block;
     width: 100%;
   }
-  
   /* Carousel height adjustment for mobile */
   .carousel, .carousel-inner, .carousel-item, .carousel-item img {
     max-height: 50vh; /* Ajustado a 50vh segun solicitud */
@@ -621,7 +478,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     height: 50vh;
     object-position: center;
   }
-  
   /* Caption adjustments for mobile */
   .carousel-caption {
     display: flex !important; /* Force show on mobile overriding caption-md */
@@ -630,7 +486,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
     align-items: flex-start; /* Alinea los elementos (incluyendo tags) a la izquierda */
   }
-  
   /* Ajuste específico para que el tag no se expanda al 100% en flex column */
   .carousel-tag {
     align-self: flex-start; /* Importante: evita que se estire */
@@ -638,12 +493,10 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     width: auto;
     margin-bottom: 8px;
   }
-  
   .carousel-caption h5 {
     font-size: 1.5rem;
     margin-bottom: 8px;
   }
-  
   .carousel-caption p {
     font-size: 0.95rem;
     -webkit-line-clamp: 3;
@@ -651,7 +504,6 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
   /* Custom indicators mobile */
   .custom-indicators {
     display: flex;
@@ -663,13 +515,11 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     width: 100%;
     justify-content: center;
   }
-  
   .indicator-avatar {
     width: 48px;
     height: 48px;
   }
 }
-
 /* md+ responsive utilities and card column sizes */
 @media (min-width: 768px) {
   /* Reducir gap en escritorio para evitar overflow que provoque wrapping */
@@ -694,36 +544,8 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   /* Alinear la fila principal y asegurar que no haya saltos inesperados */
   .row { align-items: stretch; }
 }
-/* Noticias */
-/* Titulares */
-.img-titular { width:100%; height:auto; object-fit:cover; display:block; margin-bottom:12px; }
 /* Contenidos */
 .img-adicional { width:100%; height:auto; object-fit:cover; display:block; margin-top:12px; margin-bottom:12px; }
-.ql-editor {
-  padding: 0;
-  font-family: inherit;
-}
-
-.ql-editor img {
-  max-width: 100%;
-  height: auto;
-}
-.ql-editor p {
-  margin-bottom: 1em;
-}
-.ql-editor iframe {
-  display: block;
-  width: 100%;
-  max-width: 900px;
-  aspect-ratio: 16 / 9;
-  height: auto;
-  margin: 24px auto;
-}
-/* Posicion permanente */
-.sidebar-wrapper {
-  position: sticky;
-  top: 20px;
-}
 .sidebar-card {
   width: 100%;
 }
@@ -733,7 +555,8 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   height: 225px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,.2);
+  margin: 6px 0;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 .news-card img {
   width: 100%;
@@ -748,7 +571,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.85), rgba(0,0,0,.3), rgba(0,0,0,0));
+  background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.6) 35%, rgba(0,0,0,.25) 65%, rgba(0,0,0,0) 100%);
   z-index: 1;
 }
 /* Overlay de noticias */
@@ -757,12 +580,17 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   inset: 0;
   padding: 12px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: flex-start;
-  gap: 6px;
+  align-content: space-between;
+  gap: 0;
   color: #fff;
   z-index: 2;
 }
+.news-overlay .news-tag { order: 0; }
+.news-overlay .news-link,
+.news-overlay p { order: 2; flex: 1 0 100%; margin-top: 2px; }
 /* TAG */
 .news-tag {
   background: var(--accent);
@@ -773,13 +601,13 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   text-transform: uppercase;
   color: #fff;
   display: inline-block;
-  margin-bottom: 8px;
   margin-right: 6px;
   z-index: 3;
 }
 /* En overlay: forzar que los tags queden arriba y visibles */
 .news-overlay .news-tag {
-  align-self: flex-start;
+  align-self: flex-start !important;
+  display: inline-flex;
   margin-bottom: 8px;
 }
 /* En cards horizontales (lista): mantener chips alineados en línea */
@@ -791,6 +619,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   font-size: 1.4rem;
   font-weight: 800;
   margin: 0;
+  line-height: 1.2;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -806,7 +635,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   overflow: hidden;
 }
 /* boton de like */
-.like-btn {
+.news-overlay .like-btn {
   background: none;
   border: none;
   color: #fff;
@@ -814,17 +643,25 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   cursor: pointer;
   transition: color 0.3s ease;
 }
-.like-btn:hover {
+.news-overlay .like-btn:hover {
   color: #EF3363;
 }
 /* banners */
 .banner {
   width: 100%;
+  max-width: 100%;
   height: auto;
+  border-radius: 8px;
   object-fit: cover;
   display: block;
-  margin-bottom: 12px;
-  margin-top: 12px;
+}
+/* boton de banner */
+.banner-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 8px;
 }
 /* Login styles */
 .login-wrapper {
@@ -844,11 +681,8 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   min-height: 18rem;
   margin-top: 4px;
   margin-bottom: 4px;
+  padding: 2 rem;
 }
-/* ===============================
-   LIMITADORES DE TEXTO GLOBAL
-   =============================== */
-
 /* TÍTULOS */
 .title-limit-1 {
   display: -webkit-box;
@@ -856,14 +690,12 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .title-limit-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 /* DESCRIPCIONES */
 .desc-limit-1 {
   display: -webkit-box;
@@ -872,54 +704,31 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .desc-limit-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .desc-limit-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-/* ===============================
-   NEWS CARDS (OVERLAY)
-   =============================== */
-
-.news-overlay h3 {
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin: 0;
-  line-height: 1.2;
-}
-
-.news-overlay p {
-  font-size: .95rem;
-  opacity: .9;
-  margin: 0;
-}
-
 /* ===============================
    HORIZONTAL CARDS
    =============================== */
-
 .card-body h5 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
 .card-body p {
   font-size: .95rem;
   color: var(--muted);
 }
-
 /* ===============================
    MOBILE OPTIMIZATION
    =============================== */

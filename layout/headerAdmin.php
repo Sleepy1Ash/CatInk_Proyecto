@@ -52,6 +52,9 @@ if (!$fila) {
         <li class="sidebar-menu-item">
             <a href="./contenidos.php" class="sidebar-menu-link">Contenido</a>
         </li>
+        <li class="sidebar-menu-item">
+            <a href="./publicidad.php" class="sidebar-menu-link">Publicidad</a>
+        </li>
     </ul>
     <div class="sidebar-footer">
       <button id="themeToggle" class="btn btn-icon" title="Cambiar tema">🌙</button>

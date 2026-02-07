@@ -2,38 +2,31 @@
 include("./../layout/header.php");
 include("./../data/conexion.php");
 $id = intval($_GET['id'] ?? 1);
-// Función para parsear categorías
-function parseCategorias($s) {
-    $s = trim($s ?? '');
-    if ($s === '') return [];
-    if (preg_match('/^\s*\[/', $s)) {
-        $decoded = json_decode($s, true);
-        if (is_array($decoded)) return array_filter(array_map('trim', $decoded));
-    }
-    $s = preg_replace('/[\\[\\]\\"\\\']/', '', $s);
-    $parts = preg_split('/[,;|\/]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-    return array_filter(array_map('trim', $parts));
-}
-// Obtener noticia
-$sql = "SELECT * FROM noticias WHERE id = ? AND fecha_publicacion <= NOW()";
+// ==============================
+// Obtener noticia con autor y categorías
+// ==============================
+$sql = "
+    SELECT n.*, u.nombre AS autor_nombre,
+           GROUP_CONCAT(c.nombre SEPARATOR ',') AS categorias
+    FROM noticias n
+    LEFT JOIN usuarios u ON n.autor = u.id_u
+    LEFT JOIN noticia_categoria nc ON n.id = nc.noticia_id
+    LEFT JOIN categorias c ON nc.categoria_id = c.id_c
+    WHERE n.id = ? AND n.fecha_publicacion <= NOW()
+    GROUP BY n.id
+";
 $stmt = $con->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $noticia = $result->fetch_assoc();
 if (!$noticia) die("Noticia no encontrada");
-// Obtener autor
-$autor_nombre = "Desconocido";
-if (!empty($noticia['autor'])) {
-    $sql2 = "SELECT nombre FROM usuarios WHERE id_u = ?";
-    $stmt2 = $con->prepare($sql2);
-    $stmt2->bind_param("i", $noticia['autor']);
-    $stmt2->execute();
-    $res2 = $stmt2->get_result();
-    $autor_row = $res2->fetch_assoc();
-    if ($autor_row) $autor_nombre = $autor_row['nombre'];
-}
-// Últimas y populares
+// Parsear categorías
+$cats = !empty($noticia['categorias']) ? explode(',', $noticia['categorias']) : [];
+$cats = array_map('trim', $cats);
+// ==============================
+// Últimas y Populares
+// ==============================
 $stmtUltimas = $con->prepare("
     SELECT id, titulo
     FROM noticias
@@ -55,15 +48,17 @@ $populares = $stmtPopulares->get_result();
 <div class="container mt-5">
   <div class="container-fluid">
     <div class="row">
+      <!-- COLUMNA PRINCIPAL -->
       <div class="col-md-8">
         <div class="container-noticia">
-          <?php foreach (parseCategorias($noticia['categoria']) as $cat): ?>
+          <!-- Categorías -->
+          <?php foreach ($cats as $cat): ?>
             <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
           <?php endforeach; ?>
           <h1><?= htmlspecialchars($noticia['titulo']) ?></h1>
           <p class="descripcion"><?= nl2br(htmlspecialchars($noticia['descripcion'])) ?></p>
           <p class="meta">
-            Por <strong><?= htmlspecialchars($autor_nombre) ?></strong> —
+            Por <strong><?= htmlspecialchars($noticia['autor_nombre'] ?? 'Desconocido') ?></strong> —
             <?= date("d/m/Y H:i", strtotime($noticia['fecha_publicacion'])) ?>
           </p>
           <button id="likeBtn" class="like-btn" data-id="<?= $id ?>">
@@ -73,7 +68,7 @@ $populares = $stmtPopulares->get_result();
             $img = !empty($noticia['crop1']) ? "./../" . htmlspecialchars($noticia['crop1']) : "./../img/placeholder.jpg";
           ?>
           <img src="<?= $img ?>" alt="" class="img-titular">
-          <!-- Contenido completo de la noticia (sin inicializar Quill) -->
+          <!-- Contenido completo de la noticia -->
           <div class="ql-editor">
             <?= $noticia['contenido'] ?>
           </div>
@@ -119,7 +114,7 @@ $populares = $stmtPopulares->get_result();
     </div>
   </div>
 </div>
-<!-- Scripts de interacciones -->
+<!-- Scripts de interacción -->
 <script>
   // Sumar vistas
   fetch("./../controllers/sumarvistas.php", {
