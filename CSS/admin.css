@@ -1269,3 +1269,58 @@ h4 {
         width: 100%;
     }
 }
+/* Crop publicitario */
+.crop-container {
+    max-width: 600px;
+    margin-top: 10px;
+}
+.crop-buttons {
+    margin: 10px 0;
+}
+.crop-buttons button {
+    padding: 8px 15px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+/* Estilos de tarjeta de publicidad */
+.publicidad-card {
+    margin: 10px;
+    width: 300px;
+}
+.btn-delete-publicidad {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid #25303d;
+    background: var(--bg);
+    color: #ff0000;
+    cursor: pointer;
+}
+.btn-delete-publicidad:hover {
+    background: #0f103b;
+}
+/* Modals */
+.modal {
+    display: none; /* oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: var(--bg);
+    padding: 20px;
+    border-radius: 6px;
+    width: 400px;
+    max-width: 90%;
+    position: relative;
+}
+.modal-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}

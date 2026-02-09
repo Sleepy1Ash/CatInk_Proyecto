@@ -50,10 +50,16 @@ if (!$fila) {
         </li>
         <hr>
         <li class="sidebar-menu-item">
+            <a href="./cats.php" class="sidebar-menu-link">Categorias</a>
+        </li>
+        <li class="sidebar-menu-item">
             <a href="./contenidos.php" class="sidebar-menu-link">Contenido</a>
         </li>
         <li class="sidebar-menu-item">
             <a href="./publicidad.php" class="sidebar-menu-link">Publicidad</a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="./usuarios.php" class="sidebar-menu-link">Usuarios</a>
         </li>
     </ul>
     <div class="sidebar-footer">

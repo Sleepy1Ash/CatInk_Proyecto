@@ -58,7 +58,7 @@
    PREVISUALIZACIÓN DE IMÁGENES
 ================================ */
 (() => {
-  const input = document.getElementById('imagenes');
+  const input = document.getElementById('imagen');
   const preview = document.getElementById('preview');
   if (!input || !preview) return;
   let archivosTemporales;
@@ -294,7 +294,7 @@ if (form && contenidoInput) {
     contenidoInput.value = quill.root.innerHTML;
   });
 }
-// modal
+// modal-noticia
 document.addEventListener("DOMContentLoaded", () => {
     // Abrir modal
     const deleteButtons = document.querySelectorAll(".btn-delete");
@@ -305,15 +305,13 @@ document.addEventListener("DOMContentLoaded", () => {
         button.addEventListener("click", () => {
             const noticiaId = button.dataset.id;
             const noticiaTitulo = button.dataset.titulo;
-
             modalTitle.textContent = `¿Eliminar la noticia "${noticiaTitulo}"?`;
             modalIdInput.value = noticiaId;
-
             modalOverlay.style.display = "flex";
         });
     });
     // Cerrar modal
-    const closeModalButtons = document.querySelectorAll(".btn-cancel, .modal-overlay");
+    const closeModalButtons = document.querySelectorAll(".btn-cancel, #modalOverlay");
     closeModalButtons.forEach(btn => {
         btn.addEventListener("click", (e) => {
             // Evitar cerrar si hace click dentro del modal
@@ -328,6 +326,38 @@ document.addEventListener("DOMContentLoaded", () => {
         modalContent.addEventListener("click", e => e.stopPropagation());
     }
 });
+// modal-publicidad
+document.addEventListener("DOMContentLoaded", ()=>{
+
+    const deleteButtons = document.querySelectorAll(".btn-delete-publicidad");
+    const modalOverlayP = document.getElementById("modalOverlayP");
+    const modalTitleP = document.getElementById("modalTitleP");
+    const modalIdInputP = document.getElementById("modalIdP");
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const pubId = button.dataset.id;
+            const pubTitulo = button.dataset.titulo;
+            modalTitleP.textContent = `¿Eliminar la publicidad "${pubTitulo}"?`;
+            modalIdInputP.value = pubId;
+            modalOverlayP.style.display = "flex";
+        });
+    });
+
+    // Cancelar
+    document.querySelector(".btn-cancel").addEventListener("click", ()=>{
+        modalOverlayP.style.display = "none";
+    });
+
+    // Click fuera del modal
+    modalOverlayP.addEventListener("click", (e)=>{
+        if(e.target === modalOverlayP){
+            modalOverlayP.style.display = "none";
+        }
+    });
+
+});
+
 // modal validacion
 document.addEventListener("DOMContentLoaded", () => {
     const modalTime = document.getElementById("timeModalOverlay");
@@ -365,3 +395,76 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalContent = document.querySelector(".crop-modal-content");
     modalContent?.addEventListener("click", e => e.stopPropagation());
 });
+// Crop de publicidad
+(() => {
+  let cropper;
+  const inputImage = document.getElementById("imagen");
+  const imagePreview = document.getElementById("imagePreview");
+  const resultPreview = document.getElementById("resultPreview");
+  const cropBtn = document.getElementById("cropBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const tipoPublicidad = document.getElementById("tipo");
+  const inputCrop = document.getElementById("imagenCrop");
+
+  // Tamaños según tipo
+  function getAspectRatio() {
+      let tipo = tipoPublicidad.value;
+      if (tipo == "1") return 21 / 6; // Banner
+      if (tipo == "2") return 1 / 1;  // Cuadro
+      return NaN;
+  }
+
+  // Cargar imagen
+  inputImage.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+          imagePreview.src = reader.result;
+          imagePreview.style.display = "block";
+
+          if (cropper) cropper.destroy();
+
+          cropper = new Cropper(imagePreview, {
+              aspectRatio: getAspectRatio(),
+              viewMode: 1,
+              autoCropArea: 1,
+              cropBoxResizable: false,
+              dragMode: 'move',
+              responsive: true,
+              guides: true,
+              background: false
+          });
+      };
+      reader.readAsDataURL(file);
+  });
+
+  // Cambiar tipo publicidad en tiempo real
+  tipoPublicidad.addEventListener("change", () => {
+      if (cropper) {
+          cropper.setAspectRatio(getAspectRatio());
+      }
+  });
+
+  // Recortar
+  cropBtn.addEventListener("click", () => {
+      if (!cropper) return;
+
+      const canvas = cropper.getCroppedCanvas({
+          width: 1200,
+          height: 600,
+      });
+
+      const croppedImage = canvas.toDataURL("image/jpeg", 0.9);
+      resultPreview.src = croppedImage;
+      inputCrop.value = croppedImage; // enviar al backend
+  });
+
+  // Deshacer
+  resetBtn.addEventListener("click", () => {
+      if (cropper) cropper.reset();
+      resultPreview.src = "";
+      inputCrop.value = "";
+  });
+})();

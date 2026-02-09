@@ -8,8 +8,8 @@ $startOfWeek->modify(($weekOffset * 7) . ' days');
 $startOfWeek->modify('monday this week');
 $endOfWeek = clone $startOfWeek;
 $endOfWeek->modify('sunday this week');
-$fechaInicio = $startOfWeek->format('Y-m-d');
-$fechaFin = $endOfWeek->format('Y-m-d');
+$fechaInicio = $startOfWeek->format('Y-m-d 00:00:00');
+$fechaFin = $endOfWeek->format('Y-m-d 23:59:59');
 // Inicializamos array para la semana
 $newsByDate = [];
 $period = new DatePeriod(
@@ -80,7 +80,7 @@ while ($row = $result->fetch_assoc()) {
                                         </small>
                                         <div class="noticias-actions">
                                             <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
-                                            <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Estadisticas"><i class="bi bi-eye"></i></a>
+                                            <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Estadisticas"><i class="bi bi-bar-chart"></i></a>
                                             <button class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
                                         </div>
                                     </div>

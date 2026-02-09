@@ -35,6 +35,18 @@ $popularesNoticiasSidebar = array_slice($popularesNoticiasSidebar, 0, 3);
 $slider = array_slice($noticias, 0, 5);
 $ultimasNoticias = array_slice($noticias, 0, 7);
 $noticiasMasRecientes = array_slice($noticias, 7, 11);
+//Obtener banner publicidad
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 ORDER BY RAND() LIMIT 1");
+$stmt->execute();
+$publicidad = $stmt->get_result()->fetch_assoc();
+//Obtener cuadro publicitario
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 2 ORDER BY RAND() LIMIT 1");
+$stmt->execute();
+$publicidadCuadro = $stmt->get_result()->fetch_assoc();
+//obtener publicidad inferior
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 ORDER BY RAND() LIMIT 1");
+$stmt->execute();
+$publicidadInferior = $stmt->get_result()->fetch_assoc();
 ?>
 <!-- ===================== -->
 <!-- SLIDER PRINCIPAL -->
@@ -135,7 +147,7 @@ $noticiasMasRecientes = array_slice($noticias, 7, 11);
                 <div class="news-card">
                     <img src="<?= htmlspecialchars($ultimasNoticias[4]['crop3'] ?? $ultimasNoticias[4]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
-                        <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[04]['categorias'] ?? ''))) as $cat): ?>
+                        <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[4]['categorias'] ?? ''))) as $cat): ?>
                             <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
                         <?php endforeach; ?>
                         <a href="./views/news.php?id=<?= $ultimasNoticias[4]['id'] ?>" class="news-link">
@@ -181,40 +193,43 @@ $noticiasMasRecientes = array_slice($noticias, 7, 11);
         <!-- ===================== -->
         <div class="row mt-5">
             <div class="col-md-8">
-                <button class="banner-button">
-                    <a href="">
-                        <img src="img/publicidad2.jpeg" alt="" class="banner">
-                    </a>
-                </button>
+                <a href="<?php echo htmlspecialchars($publicidad['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidad['id_pub']); ?>">
+                    <img src="<?php echo htmlspecialchars($publicidad['imagen']); ?>" alt="" class="banner">
+                </a>
                 <center>
                     <h2>Noticias mas recientes</h2>
                 </center>
                 <?php foreach($noticiasMasRecientes as $row): ?>
-                <div class="card mb-3">
-                    <div class="row row-no-gap">
-                        <div class="col-md-4">
-                            <img src="<?= htmlspecialchars($row['crop3']  ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
-                                    <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
-                                <?php endforeach; ?>
-                                <h5 class="card-title">
-                                    <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
-                                </h5>
-                                <p><?= htmlspecialchars($row['descripcion']) ?></p>
-                                <small class="text-muted">Publicado: <?= date("M d", strtotime($row['fecha'])) ?></small>
+                    <div class="card mb-3">
+                        <div class="row row-no-gap">
+                            <div class="col-md-4">
+                                <img src="<?= htmlspecialchars($row['crop3']  ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
+                                        <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                    <?php endforeach; ?>
+                                    <h5 class="card-title">
+                                        <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                    </h5>
+                                    <p><?= htmlspecialchars($row['descripcion']) ?></p>
+                                    <small class="text-muted">Publicado: <?= date("M d", strtotime($row['fecha'])) ?></small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
+                <a href="<?php echo htmlspecialchars($publicidadInferior['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadInferior['id_pub']); ?>">
+                    <img src="<?php echo htmlspecialchars($publicidadInferior['imagen']); ?>" alt="" class="banner">
+                </a>
             </div>
             <div class="col-md-4">
                 <div class="sidebar-wrapper">
                     <div class="card sidebar-card">
-                        <img src="img/publicidad.jpeg" class="card-img-top">
+                        <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
+                            <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="card-img-top">
+                        </a>
                         <div class="card-body">
                             <h5>🆕 Lo más nuevo</h5>
                             <ul class="list-group list-group-flush mb-3">
@@ -239,4 +254,50 @@ $noticiasMasRecientes = array_slice($noticias, 7, 11);
         </div>
     </div>
 </div>
+<!-- Conteo de clicks -->
+<script>
+    document.querySelectorAll(".banner-button").forEach(banner => {
+        banner.addEventListener("click", function(e) {
+            e.preventDefault();//pausar redireccionamiento
+            let url = this.href;
+            let publicidadId = this.dataset.pub;
+            let data = new FormData();
+            data.append("publicidad_id", publicidadId);
+            fetch("./controllers/publicidad_click.php", {
+                method: "POST",
+                body: data
+            }).finally(()=>{
+                window.location.href = url;//redireccionar despues de registrar click
+            });
+        });
+    });
+</script>
+<!-- Conteo de tiempo y visualizaciones -->
+<script>
+    document.querySelectorAll(".banner-button").forEach(banner => {
+        let publicidadId = banner.dataset.pub;
+        let startTime = null;
+        let totalTime = 0;
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    startTime = Date.now();
+                } else if (startTime) {
+                    totalTime += (Date.now() - startTime) / 1000;
+                    startTime = null;
+                }
+            });
+        }, { threshold: 0.5 });
+        observer.observe(banner);
+        setInterval(()=>{
+            if (totalTime > 1) {
+                let data = new FormData();
+                data.append("publicidad_id", publicidadId);
+                data.append("tiempo", Math.round(totalTime));
+                navigator.sendBeacon("./controllers/publicidad_view.php", data);
+                totalTime = 0;  
+            }
+        }, 5000);
+    });
+</script>
 <?php include(__DIR__ . "/layout/footer.php"); ?>

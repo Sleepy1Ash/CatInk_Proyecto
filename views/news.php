@@ -44,6 +44,14 @@ $stmtPopulares = $con->prepare("
 ");
 $stmtPopulares->execute();
 $populares = $stmtPopulares->get_result();
+//Obtener banner publicidad
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 ORDER BY RAND() LIMIT 1");
+$stmt->execute();
+$publicidad = $stmt->get_result()->fetch_assoc();
+//Obtener cuadro publicitario
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 2 ORDER BY RAND() LIMIT 1");
+$stmt->execute();
+$publicidadCuadro = $stmt->get_result()->fetch_assoc();
 ?>
 <div class="container mt-5">
   <div class="container-fluid">
@@ -72,20 +80,18 @@ $populares = $stmtPopulares->get_result();
           <div class="ql-editor">
             <?= $noticia['contenido'] ?>
           </div>
-          <button style="margin: 10px;">
-            <a href="https://www.instagram.com/catink_/" target="_blank">
-              <img src="./../img/publicidad2.jpeg" alt="" class="banner">
-            </a>
-          </button>
+          <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
+            <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
+          </a>
         </div>
       </div>
       <!-- SIDEBAR -->
       <div class="col-md-4">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">
-            <button>
-              <img src="./../img/publicidad.jpeg" class="card-img-top">
-            </button>
+            <a href="<?= $publicidadCuadro['url'] ?>" class="banner-button" data-pub="<?= $publicidadCuadro['id_pub'] ?>">
+              <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="card-img-top">
+            </a>
             <div class="card-body">
               <h5>🆕 Lo más nuevo</h5>
               <ul class="list-group list-group-flush mb-3">

@@ -100,14 +100,28 @@ while($row = $resultNoticias->fetch_assoc()){
         </div>
      </div>
     <!-- GRÁFICOS -->
-    <div class="row mb-4">
-        <div class="col-md-6"><canvas id="globalChartVistas"></canvas></div>
-        <div class="col-md-6"><canvas id="globalChartTiempo"></canvas></div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Estadísticas Globales</h5>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6"><canvas id="globalChartVistas"></canvas></div>
+                        <div class="col-md-6"><canvas id="globalChartTiempo"></canvas></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6"><canvas id="globalChartLikes"></canvas></div>
+                        <div class="col-md-6"><canvas id="globalChartLikesRegion"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row mb-4">
-        <div class="col-md-6"><canvas id="globalChartLikes"></canvas></div>
-        <div class="col-md-6"><canvas id="globalChartLikesRegion"></canvas></div>
-    </div>
+    
     <!-- ÚLTIMAS NOTICIAS -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-light"><h5>Últimas Noticias</h5></div>

@@ -86,6 +86,7 @@ CREATE TABLE publicidad (
   id_pub INT AUTO_INCREMENT PRIMARY KEY,
   titulo VARCHAR(255) NOT NULL,
   imagen VARCHAR(255) NOT NULL,
+  tipo TINYINT(1) DEFAULT 1,
   url VARCHAR(255) NOT NULL,
   activo TINYINT(1) DEFAULT 1,
   fecha_inicio DATETIME,
