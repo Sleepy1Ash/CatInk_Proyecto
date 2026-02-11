@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Crear Usuario</h1>
     </div>
-    <form id="formUsuario" action="" method="POST" enctype="multipart/form-data">
+    <form id="formUsuario" action="./../controllers/altausuarios.php" method="POST">
         <div class="form-card card">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
@@ -33,6 +33,74 @@
                 <small id="errorPassword" style="color:#dc3545; display:none;">
                     Las contraseñas no coinciden
                 </small>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Permisos Publicidad</h5>
+                            </div>
+                            <div class="card-body form-group">
+                                <label><input type="checkbox" name="publicidad[]" value="1"> Crear</label>
+                                <label><input type="checkbox" name="publicidad[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="publicidad[]" value="4"> Editar</label>
+                                <label><input type="checkbox" name="publicidad[]" value="8"> Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Permisos Noticias</h5>
+                            </div>
+                            <div class="card-body form-group">
+                                <label><input type="checkbox" name="noticias[]" value="1"> Crear</label>
+                                <label><input type="checkbox" name="noticias[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="noticias[]" value="4"> Editar</label>
+                                <label><input type="checkbox" name="noticias[]" value="8"> Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Permisos Categoría</h5>
+                            </div>
+                            <div class="card-body form-group">
+                                <label><input type="checkbox" name="categorias[]" value="1"> Crear</label>
+                                <label><input type="checkbox" name="categorias[]" value="2"> Leer</label>   
+                                <label><input type="checkbox" name="categorias[]" value="4"> Editar</label>
+                                <label><input type="checkbox" name="categorias[]" value="8"> Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Permisos Suscripciones</h5>
+                            </div>
+                            <div class="card-body form-group">
+                                <label><input type="checkbox" name="suscripciones[]" value="1"> Crear</label>
+                                <label><input type="checkbox" name="suscripciones[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="suscripciones[]" value="4"> Editar</label>
+                                <label><input type="checkbox" name="suscripciones[]" value="8"> Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Permisos Usuarios</h5>
+                            </div>
+                            <div class="card-body form-group">
+                                <label><input type="checkbox" name="usuarios[]" value="1"> Crear</label>
+                                <label><input type="checkbox" name="usuarios[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="usuarios[]" value="4"> Editar</label>
+                                <label><input type="checkbox" name="usuarios[]" value="8"> Eliminar</label>
+                            </div>
+                        </div>
+                </div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-success">Crear Usuario</button>

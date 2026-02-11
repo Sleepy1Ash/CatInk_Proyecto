@@ -13,6 +13,11 @@ CREATE TABLE usuarios (
   usuario VARCHAR(255),
   correo VARCHAR(255),
   pass VARCHAR(255),
+  perm_categoria TINYINT(1) DEFAULT 0,
+  perm_noticia TINYINT(1) DEFAULT 0,
+  perm_publicidad TINYINT(1) DEFAULT 0,
+  perm_suscripcion TINYINT(1) DEFAULT 0,
+  perm_usuario TINYINT(1) DEFAULT 0,
   registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -16,26 +16,33 @@ $stmt = $con->prepare("SELECT id_u, usuario, pass FROM usuarios WHERE usuario = 
 $stmt->bind_param("s", $usuario);
 $stmt->execute();
 $result = $stmt->get_result();
-// ============================
-// VERIFICAR PASSWORD
-// ============================
-// Si todavía tienes passwords en texto plano, usa esto:
 if ($result && $result->num_rows > 0) {
     $fila = $result->fetch_assoc();
-    // Si ya tienes contraseñas hasheadas, usar:
-    // if (password_verify($pass, $fila['pass'])) { ... }
+    $passCorrecta = false;
+    // ============================
+    // VERIFICAR PASSWORD (plana o hash)
+    // ============================
     if ($pass === $fila['pass']) {
+        // contraseña en texto plano
+        $passCorrecta = true;
+    } elseif (password_verify($pass, $fila['pass'])) {
+        // contraseña hasheada
+        $passCorrecta = true;
+    }
+    if ($passCorrecta) {
         session_start();
         session_regenerate_id(true); // seguridad
         $_SESSION['usuario'] = $fila['usuario'];
         $_SESSION['id_u'] = $fila['id_u'];
         header('Location: ../views/admin.php');
         exit();
+    } else {
+        header('Location: ../index.php?error=1');
+        exit();
     }
+} else {
+    // Usuario no encontrado
+    header('Location: ../index.php?error=1');
+    exit();
 }
-// ============================
-// LOGIN FALLIDO
-// ============================
-header('Location: ../index.php?error=1');
-exit();
 ?>
