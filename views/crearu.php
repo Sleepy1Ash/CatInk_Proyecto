@@ -43,7 +43,7 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="publicidad[]" value="1"> Crear</label>
-                                <label><input type="checkbox" name="publicidad[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="publicidad[]" value="2"> Ver</label>
                                 <label><input type="checkbox" name="publicidad[]" value="4"> Editar</label>
                                 <label><input type="checkbox" name="publicidad[]" value="8"> Eliminar</label>
                             </div>
@@ -56,7 +56,7 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="noticias[]" value="1"> Crear</label>
-                                <label><input type="checkbox" name="noticias[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="noticias[]" value="2"> Ver</label>
                                 <label><input type="checkbox" name="noticias[]" value="4"> Editar</label>
                                 <label><input type="checkbox" name="noticias[]" value="8"> Eliminar</label>
                             </div>
@@ -69,7 +69,7 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="categorias[]" value="1"> Crear</label>
-                                <label><input type="checkbox" name="categorias[]" value="2"> Leer</label>   
+                                <label><input type="checkbox" name="categorias[]" value="2"> Ver</label>   
                                 <label><input type="checkbox" name="categorias[]" value="4"> Editar</label>
                                 <label><input type="checkbox" name="categorias[]" value="8"> Eliminar</label>
                             </div>
@@ -82,7 +82,7 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="suscripciones[]" value="1"> Crear</label>
-                                <label><input type="checkbox" name="suscripciones[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="suscripciones[]" value="2"> Ver</label>
                                 <label><input type="checkbox" name="suscripciones[]" value="4"> Editar</label>
                                 <label><input type="checkbox" name="suscripciones[]" value="8"> Eliminar</label>
                             </div>
@@ -95,7 +95,7 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="usuarios[]" value="1"> Crear</label>
-                                <label><input type="checkbox" name="usuarios[]" value="2"> Leer</label>
+                                <label><input type="checkbox" name="usuarios[]" value="2"> Ver</label>
                                 <label><input type="checkbox" name="usuarios[]" value="4"> Editar</label>
                                 <label><input type="checkbox" name="usuarios[]" value="8"> Eliminar</label>
                             </div>

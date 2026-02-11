@@ -16,7 +16,6 @@ $usuarios = $stmt->get_result();
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
                         <th scope="col">Nombre</th>
                         <th scope="col">Usuario</th>
                         <th scope="col">Email</th>
@@ -27,20 +26,34 @@ $usuarios = $stmt->get_result();
                 <tbody>
                     <?php foreach($usuarios as $u): ?>
                     <tr>
-                        <td><?= $u['id_u'] ?></td>
                         <td><?= $u['nombre'] ?></td>
                         <td><?= $u['usuario'] ?></td>
                         <td><?= $u['correo'] ?></td>
                         <td><?= $u['registro'] ?></td>
                         <td>
-                            <a href="" class="btn btn-secondary" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
-                            <button class="btn btn-delete" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
+                            <a href="./editaru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
+                            <a href="./veru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Ver Usuario"><i class="bi bi-eye"></i></a>
+                            <button class="btn btn-delete-usuario" data-id="<?= $u['id_u'] ?>" data-nombre="<?= $u['nombre'] ?>" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+<!-- Modal eliminacion usuario -->
+<div id="modalOverlayU" class="crop-modal" style="display: none;">
+    <div class="crop-modal-content">
+        <h3 id="modalTitleU">Confirmar eliminación</h3>
+        <p>¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.</p>
+        <form id="modalFormU" action="./../controllers/eliminarusuario.php?id=<?= $u['id_u'] ?>" method="POST">
+            <input type="hidden" name="id" id="modalIdU">
+            <div class="crop-actions">
+                <button type="button" class="btn btn-secondary btn-cancel">Cancelar</button>
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </div>
+        </form>
     </div>
 </div>
 <?php include("./../layout/footerAdmin.php"); ?>

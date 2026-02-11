@@ -46,6 +46,8 @@ if (input) {
           <a href="#" aria-label="Twitter / X"><i class="bi bi-twitter-x"></i></a>
           <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
           <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          <a href="#" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+          <a href="/CatInk_Proyecto/views/suscripcion.php" aria-label="Suscribete"><i class="bi bi-chat-left-dots"></i> Suscribete</a>
         </div>
       </div>
     </div>

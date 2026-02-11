@@ -746,3 +746,40 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     overflow: hidden;
   }
 }
+/* formulario suscripcion */
+.form-card {
+    background: transparent;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,.08);
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.form-group textarea {
+    resize: vertical;
+}
+/* Ajuste del botón */
+.form-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+.btn-success {
+    margin-top: 20px;
+    padding: 12px;
+    background: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn-success:hover {
+    background: #218838;
+}

@@ -328,12 +328,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // modal-publicidad
 document.addEventListener("DOMContentLoaded", ()=>{
-
     const deleteButtons = document.querySelectorAll(".btn-delete-publicidad");
     const modalOverlayP = document.getElementById("modalOverlayP");
     const modalTitleP = document.getElementById("modalTitleP");
     const modalIdInputP = document.getElementById("modalIdP");
-
     deleteButtons.forEach(button => {
         button.addEventListener("click", () => {
             const pubId = button.dataset.id;
@@ -343,12 +341,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
             modalOverlayP.style.display = "flex";
         });
     });
-
     // Cancelar
     document.querySelector(".btn-cancel").addEventListener("click", ()=>{
         modalOverlayP.style.display = "none";
     });
-
     // Click fuera del modal
     modalOverlayP.addEventListener("click", (e)=>{
         if(e.target === modalOverlayP){
@@ -357,7 +353,33 @@ document.addEventListener("DOMContentLoaded", ()=>{
     });
 
 });
+// modal-usuario
+document.addEventListener("DOMContentLoaded", ()=>{
+    const deleteButtons = document.querySelectorAll(".btn-delete-usuario");
+    const modalOverlayU = document.getElementById("modalOverlayU");
+    const modalTitleU = document.getElementById("modalTitleU");
+    const modalIdInputU = document.getElementById("modalIdU");
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const usuarioId = button.dataset.id;
+            const usuarioNombre = button.dataset.nombre;
+            modalTitleU.textContent = `¿Eliminar el usuario "${usuarioNombre}"?`;
+            modalIdInputU.value = usuarioId;
+            modalOverlayU.style.display = "flex";
+        });
+    });
+    // Cancelar
+    document.querySelector(".btn-cancel").addEventListener("click", ()=>{
+        modalOverlayU.style.display = "none";
+    });
+    // Click fuera del modal
+    modalOverlayU.addEventListener("click", (e)=>{
+        if(e.target === modalOverlayU){
+            modalOverlayU.style.display = "none";
+        }
+    });
 
+});
 // modal validacion
 document.addEventListener("DOMContentLoaded", () => {
     const modalTime = document.getElementById("timeModalOverlay");

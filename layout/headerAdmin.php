@@ -59,6 +59,9 @@ if (!$fila) {
             <a href="./publicidad.php" class="sidebar-menu-link">Publicidad</a>
         </li>
         <li class="sidebar-menu-item">
+            <a href="./suscripciones.php" class="sidebar-menu-link">Suscripciones</a>
+        </li>
+        <li class="sidebar-menu-item">
             <a href="./usuarios.php" class="sidebar-menu-link">Usuarios</a>
         </li>
     </ul>
