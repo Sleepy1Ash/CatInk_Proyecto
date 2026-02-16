@@ -150,7 +150,26 @@ CREATE TABLE suscripciones (
   estado VARCHAR(255),
   fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+-- ================================
+-- PROGRAMACION DE CORREOS
+-- ================================
+CREATE TABLE programacion_correos (
+  id_programacion INT AUTO_INCREMENT PRIMARY KEY,
+  hora TIME NOT NULL,
+  estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+  creado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- ================================
+-- CORREOS - PUBLICITARIOS
+-- ================================
+CREATE TABLE correos_publicitarios (
+  id_correo INT AUTO_INCREMENT PRIMARY KEY,
+  titulo varchar(255),
+  asunto varchar(255),
+  contenido longtext,
+  imagen VARCHAR(255),
+  creado TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 -- ================================
 -- INDEXES PARA RENDIMIENTO
 -- ================================

@@ -83,7 +83,7 @@ if (!$fila) {
 <body class="has-sidebar">
 <div class="sidebar">
     <div class="logotipo">
-        <img id="icon" src="./../img/logo_alt.jpg" alt="Logo">
+        <img id="icon" src="./../img/logo_alt_alt.jpg" alt="Logo">
     </div>
     <div id="user">
         <h4><?= htmlspecialchars($fila['usuario']) ?></h4>

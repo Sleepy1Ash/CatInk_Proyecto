@@ -55,7 +55,7 @@ function quillPreview($html, $limit = 500) {
                             <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
                         </div>
                         <div class="col">
-                            <a href="news.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Ver"><i class="bi bi-eye"></i></a>
+                            <a href="newsAdmin.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Ver"><i class="bi bi-eye"></i></a>
                         </div>
                     </div>
                 </div>

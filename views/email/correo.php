@@ -24,7 +24,7 @@
     $mail = new PHPMailer(true);
     $contenidoNoticias = '';
     foreach ($noticias as $index => $noticia) {
-        $webp = 'http://192.168.100.17/CatInk_Proyecto/' . $noticia['crop3'];
+        $webp = 'http://192.168.1.24/CatInk_Proyecto/' . $noticia['crop3'];
         $png = __DIR__ . "/logo_temp_{$index}.png"; // archivos temporales únicos
         // Convertir WebP a PNG
         $image = imagecreatefromwebp($webp);
@@ -33,22 +33,48 @@
 
         // Adjuntar imagen convertida al objeto PHPMailer
         $mail->addEmbeddedImage($png, "logo{$index}", "logo.png"); // cid único
-
+        $mail->addEmbeddedImage(
+            __DIR__ . '/logo_alt.png',
+            'banner',
+            'logo_alt.png'
+        );
         // Concatenar HTML, referenciando la cid única
-        $contenidoNoticias .= "<div class='card mb-3' style='max-width: 540px;'>";
-        $contenidoNoticias .= "<div class='row g-0'>";
-        $contenidoNoticias .= "<div class='col-md-4'>";
-        $contenidoNoticias .= "<img src='cid:logo{$index}' class='img-fluid rounded-start' alt='...'>";
-        $contenidoNoticias .= "</div>";
-        $contenidoNoticias .= "<div class='col-md-8'>";
-        $contenidoNoticias .= "<div class='card-body'>";
-        $contenidoNoticias .= "<h5 class='card-title'>{$noticia['titulo']}</h5>";
-        $contenidoNoticias .= "<p class='card-text'>{$noticia['descripcion']}</p>";
-        $contenidoNoticias .= "<a href='http://192.168.100.17/CatInk_Proyecto/views/news.php?id={$noticia['id']}' class='btn btn-primary'>Leer más</a>";
-        $contenidoNoticias .= "</div>";
-        $contenidoNoticias .= "</div>";
-        $contenidoNoticias .= "</div>";
-        $contenidoNoticias .= "</div>";
+        $contenidoNoticias .= "
+                                <table width='100%' cellpadding='0' cellspacing='0' border='0' 
+                                style='background:#ffffff; margin-bottom:15px; border-radius:10px;'>
+                                <tr>
+                                <!-- IMAGEN -->
+                                <td width='240' valign='top' style='padding:10px;'>
+                                <img 
+                                src='cid:logo{$index}' 
+                                width='220'
+                                style='
+                                width:100%;
+                                max-width:220px;
+                                height:auto;
+                                display:block;
+                                border-radius:10px;
+                                border:0;
+                                '>
+                                </td>
+                                <!-- TEXTO -->
+                                <td valign='top' style='padding:10px; font-family:Arial, sans-serif; color:#000;'>
+                                <a href='http://192.168.1.24/CatInk_Proyecto/views/news.php?id={$noticia['id']}'
+                                style='
+                                background:#EF3363;
+                                color:#EF3363;
+                                text-decoration:none;
+                                '>
+                                <h3 style='margin:0;'>{$noticia['titulo']}</h3>
+                                </a>
+                                <p style='margin-top:10px;'>
+                                {$noticia['descripcion']}
+                                </p>
+                                </td>
+                                </tr>
+                                </table>
+                                ";
+
     }
     $plantillaPath = __DIR__ . "/diarias.html";
     if (!file_exists($plantillaPath)) {

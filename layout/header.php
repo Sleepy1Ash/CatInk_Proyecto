@@ -24,7 +24,7 @@ $categorias = $resultCats->fetch_all(MYSQLI_ASSOC);
 <nav class="navbar">
   <div class="container-fluid">
     <a class="navbar-brand" href="/CatInk_Proyecto/index.php">
-      <img id="logo" src="/CatInk_Proyecto/img/logo_alt.jpg" alt="CatInk Logo">
+      <img id="logo" src="/CatInk_Proyecto/img/logo.png" alt="CatInk Logo">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
       data-bs-target="#navbarNav">
@@ -32,7 +32,7 @@ $categorias = $resultCats->fetch_all(MYSQLI_ASSOC);
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav nav-left">
-        <li class="nav-item"><a class="nav-link active" href="/CatInk_Proyecto/index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/CatInk_Proyecto/index.php">Home</a></li>
         <?php foreach ($categorias as $cat): ?>
           <li class="nav-item">
             <a class="nav-link" href="/CatInk_Proyecto/views/categoria.php?cat=<?= urlencode($cat['nombre']) ?>">

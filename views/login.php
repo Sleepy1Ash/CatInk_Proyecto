@@ -5,7 +5,7 @@ include("./../layout/header.php");
     <div style="display:flex; justify-content:center; margin-top: 5%;">
         <div class="card" style="width: 22rem; background:transparent; border:0;">
             <!-- Logo dentro de la tarjeta -->
-            <img src="./../img/logo_alt.jpg" class="card-img-top" alt="logo">
+            <img src="./../img/logo_alt_alt.jpg" class="card-img-top" alt="logo">
             <div class="card-header text-center">
                 <h5 class="card-title">Login</h5>
             </div>

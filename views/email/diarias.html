@@ -4,15 +4,39 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recomendaciones diarias</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   </head>
-  <body>
-    <div class="container-fluid">
-        <h1>Recomendaciones diarias</h1>
-        <hr>
-        <h2>Ultimas noticias</h2>
-        {{noticias}}
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <body style="background-color:#EF3363; margin:0; padding:0;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="padding:20px;">
+      <tr>
+        <td align="center">
+          <!-- CONTENEDOR -->
+          <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#EF3363; border-radius:15px; overflow:hidden;">
+            <!-- BANNER (YA NO SE CORTA) -->
+            <tr>
+              <td style="line-height:0; font-size:0;">
+                <img 
+                  src="cid:banner"
+                  width="600"
+                  style="width:100%; max-width:600px; height:auto; display:block; border:0;"
+                >
+              </td>
+            </tr>
+            <!-- TEXTO -->
+            <tr>
+              <td align="center" style="padding:20px;">
+                <h1 style="font-family:Arial; color:#ffffff; margin:0;">
+                  Recomendaciones diarias
+                </h1>
+                <hr style="border:1px solid #ffffff; width:80%;">
+                <h2 style="font-family:Arial; color:#ffffff;">
+                  Ultimas noticias
+                </h2>
+                {{noticias}}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

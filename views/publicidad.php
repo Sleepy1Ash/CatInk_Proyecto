@@ -22,7 +22,14 @@
         <h1>Gestión de Publicidad</h1>
     </div>
     <?php if($ACL['crear']): ?>
-    <a href="crearp.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Agregar Publicidad</a>
+        <div class="row">
+            <div class="col">
+                <a href="crearp.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Agregar Publicidad</a>
+            </div>
+            <div class="col">
+                <a href="correo_pub.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Agregar Correo Publicitario</a>
+            </div>
+        </div>
     <?php endif; ?>
     <div class="row">
         <?php
@@ -35,13 +42,16 @@
                         <h5 class="card-title"><?= $pub['titulo'] ?></h5>
                         <p class="news-tag">Tipo: <?= $pub['tipo'] == 1 ? 'Banner Largo' : 'Banner Cuadrado' ?></p>
                         <p class="card-text">Inicio: <?= date("M d, Y", strtotime($pub['fecha_inicio']))?> - Fin: <?= date("M d, Y", strtotime($pub['fecha_fin'])) ?></p>
+                        <p class="card-text">Url: <?= $pub['url'] ?></p>
                     </div>
                     <?php if(!empty($ACL['editar']) || !empty($ACL['eliminar'])): ?>
                         <div class="card-footer">
                             <?php if($ACL['editar']): ?>
                                 <a href="editarp.php?id=<?= $pub['id_pub'] ?>" class="btn btn-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
                             <?php endif; ?>
-                            <a href="verp.php?id=<?= $pub['id_pub'] ?>" class="btn btn-secondary" title="Ver Estadísticas"><i class="bi bi-bar-chart"></i></a>  
+                            <?php if($superadmin): ?>
+                                <a href="verp.php?id=<?= $pub['id_pub'] ?>" class="btn btn-secondary" title="Ver Estadísticas"><i class="bi bi-bar-chart"></i></a> 
+                            <?php endif; ?>
                             <?php if($ACL['eliminar']): ?>
                                 <button class="btn btn-delete-publicidad" data-id="<?= $pub['id_pub'] ?>" data-titulo="<?= htmlspecialchars($pub['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
                             <?php endif; ?>
