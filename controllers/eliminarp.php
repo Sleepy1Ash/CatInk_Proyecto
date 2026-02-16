@@ -1,4 +1,7 @@
 <?php
+session_start();
+include("./aclcontroller.php");
+proteger('publicidad','eliminar');
 include("../data/conexion.php");
 if (isset($_POST['id'])) {
     $id = intval($_POST['id']);

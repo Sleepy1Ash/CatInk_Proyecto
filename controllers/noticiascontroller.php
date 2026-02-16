@@ -1,4 +1,7 @@
 <?php
+session_start();
+include("./aclcontroller.php");
+proteger('noticias','crear');
 date_default_timezone_set('America/Mexico_City');
 // ============================
 // GUARDAR IMAGEN BASE64

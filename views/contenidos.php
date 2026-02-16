@@ -1,7 +1,28 @@
-<?php 
+<?php
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
-// Calculo de semanas
+// ============================
+// ACL GLOBAL PARA NOTICIAS
+// ============================
+$ACL = $_SESSION['ACL']['noticias'] ?? [
+    "crear" => false,
+    "leer" => false,
+    "editar" => false,
+    "eliminar" => false
+];
+// JS global ACL
+?>
+<script>
+    const ACL = <?= json_encode($ACL) ?>;
+</script>
+<?php
+if (empty($ACL['leer'])) {
+    header("Location: admin.php");
+    exit();
+}
+// ============================
+// Cálculo de semanas
+// ============================
 $weekOffset = isset($_GET['week']) ? (int)$_GET['week'] : 0;
 $startOfWeek = new DateTime();
 $startOfWeek->modify(($weekOffset * 7) . ' days');
@@ -10,7 +31,7 @@ $endOfWeek = clone $startOfWeek;
 $endOfWeek->modify('sunday this week');
 $fechaInicio = $startOfWeek->format('Y-m-d 00:00:00');
 $fechaFin = $endOfWeek->format('Y-m-d 23:59:59');
-// Inicializamos array para la semana
+// Inicializamos array por día
 $newsByDate = [];
 $period = new DatePeriod(
     $startOfWeek,
@@ -18,28 +39,28 @@ $period = new DatePeriod(
     (clone $endOfWeek)->modify('+1 day')
 );
 foreach ($period as $day) {
-    $key = $day->format('Y-m-d');
-    $newsByDate[$key] = [];
+    $newsByDate[$day->format('Y-m-d')] = [];
 }
 // Obtener noticias de la semana
 $sql = "SELECT id, titulo, descripcion, fecha_publicacion, vistas, likes, crop3 
         FROM noticias 
         WHERE fecha_publicacion BETWEEN ? AND ?
-        ORDER BY fecha_publicacion ASC";  
+        ORDER BY fecha_publicacion ASC";
 $stmt = $con->prepare($sql);
 $stmt->bind_param("ss", $fechaInicio, $fechaFin);
 $stmt->execute();
 $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
-    $dateKey = date('Y-m-d', strtotime($row['fecha_publicacion']));
-    $newsByDate[$dateKey][] = $row;
+    $newsByDate[date('Y-m-d', strtotime($row['fecha_publicacion']))][] = $row;
 }
 ?>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Gestión de Contenidos</h1>
     </div>
-    <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
+    <?php if (!empty($ACL['crear'])): ?>
+        <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
+    <?php endif; ?>
     <?php if (isset($_GET['msg']) && $_GET['msg'] == 'eliminado'): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             Noticia eliminada correctamente.
@@ -60,30 +81,34 @@ while ($row = $result->fetch_assoc()) {
                                     $img = !empty($row['crop3']) ? "./../".$row['crop3'] : "https://via.placeholder.com/300x200";
                                     $ahora = new DateTime();
                                     $fechaPublicacion = new DateTime($row['fecha_publicacion']);
-                                    if ($fechaPublicacion < $ahora) {
-                                        $estado = '<span><i class="bi bi-check-circle"></i> Publicado</span>';
-                                    } elseif ($fechaPublicacion->format('Y-m-d') === $ahora->format('Y-m-d') && $fechaPublicacion > $ahora) {
-                                        $estado = '<span><i class="bi bi-calendar-event-fill"></i> Por publicar</span>';
-                                    } else {
-                                        $estado = '<span><i class="bi bi-calendar-event"></i> Programado</span>';
-                                    }
+                                    $estado = ($fechaPublicacion < $ahora) ? 
+                                        '<span><i class="bi bi-check-circle"></i> Publicado</span>' :
+                                        (($fechaPublicacion->format('Y-m-d') === $ahora->format('Y-m-d') && $fechaPublicacion > $ahora) ? 
+                                            '<span><i class="bi bi-calendar-event-fill"></i> Por publicar</span>' :
+                                            '<span><i class="bi bi-calendar-event"></i> Programado</span>');
                                 ?>
-                                    <div class="noticias-card">
-                                        <div class="card-header d-flex justify-content-between">
-                                            <?= $estado ?>
-                                            <span><i class="bi bi-clock"></i> <?= $fechaPublicacion->format('H:i') ?></span>
-                                        </div>
-                                        <img src="<?= htmlspecialchars($img) ?>" alt="" class="card-img-top">
-                                        <h6><?= htmlspecialchars($row['titulo']) ?></h6>
-                                        <small class="text-muted">
-                                            👁 <?= number_format($row['vistas']) ?> | ❤️ <?= number_format($row['likes']) ?>
-                                        </small>
-                                        <div class="noticias-actions">
-                                            <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
-                                            <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Estadisticas"><i class="bi bi-bar-chart"></i></a>
-                                            <button class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
-                                        </div>
+                                <div class="noticias-card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <?= $estado ?>
+                                        <span><i class="bi bi-clock"></i> <?= $fechaPublicacion->format('H:i') ?></span>
                                     </div>
+                                    <img src="<?= htmlspecialchars($img) ?>" alt="" class="card-img-top">
+                                    <h6><?= htmlspecialchars($row['titulo']) ?></h6>
+                                    <small class="text-muted">
+                                        👁 <?= number_format($row['vistas']) ?> | ❤️ <?= number_format($row['likes']) ?>
+                                    </small>
+                                    <?php if (!empty($ACL['editar']) || !empty($ACL['eliminar'])): ?>
+                                    <div class="noticias-actions">
+                                        <?php if (!empty($ACL['editar'])): ?>
+                                            <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                                        <?php endif; ?>
+                                        <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Estadísticas"><i class="bi bi-bar-chart"></i></a>
+                                        <?php if (!empty($ACL['eliminar'])): ?>
+                                            <button class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>

@@ -1,4 +1,7 @@
 <?php
+session_start();
+include("./aclcontroller.php");
+proteger('noticias','eliminar');
 include("../data/conexion.php");
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $id = intval($_POST['id']);

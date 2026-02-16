@@ -1,4 +1,6 @@
 <?php
+    include("./../controllers/aclcontroller.php");
+    proteger('usuarios', 'eliminar');
     include ('../data/conexion.php');
     $id = $_POST['id'];
     $sql = "DELETE FROM usuarios WHERE id_u = $id";

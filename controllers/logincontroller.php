@@ -1,5 +1,7 @@
 <?php
 include("../data/conexion.php");
+include("../views/helpers/modulos.php");
+include("../views/helpers/helper.php");
 // ============================
 // OBTENER DATOS DEL FORMULARIO
 // ============================
@@ -12,7 +14,7 @@ if (empty($usuario) || empty($pass)) {
 // ============================
 // CONSULTA SEGURA (Prepared Statement)
 // ============================
-$stmt = $con->prepare("SELECT id_u, usuario, pass FROM usuarios WHERE usuario = ?");
+$stmt = $con->prepare("SELECT * FROM usuarios WHERE usuario = ?");
 $stmt->bind_param("s", $usuario);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -33,9 +35,20 @@ if ($result && $result->num_rows > 0) {
         session_start();
         session_regenerate_id(true); // seguridad
         $_SESSION['usuario'] = $fila['usuario'];
-        $_SESSION['id_u'] = $fila['id_u'];
-        header('Location: ../views/admin.php');
-        exit();
+        $_SESSION['ACL']= mapearPermisos($fila);
+        // redirigir a admin si es superadmin
+        if(esSuperAdmin($fila)){
+            $_SESSION['superadmin'] = true;
+            header('Location: ../views/admin.php');
+            exit();
+        }
+        // redirigir al primer modulo de lectura
+        $modulo = primerModuloLectura($_SESSION['ACL']);
+        if($modulo){
+            $_SESSION['superadmin'] = false;
+            header('Location: '.$modulo);
+            exit();
+        }
     } else {
         header('Location: ../index.php?error=1');
         exit();

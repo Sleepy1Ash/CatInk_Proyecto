@@ -1,4 +1,6 @@
 <?php
+include("./../controllers/aclcontroller.php");
+proteger('usuarios', 'crear');
 include("./../data/conexion.php");
 header('Content-Type: application/json');
 

@@ -1,8 +1,43 @@
 <?php
-session_start();
+if(session_status() == PHP_SESSION_NONE){
+    session_start();
+}
+require_once "./../views/helpers/helper.php";
+require_once "./../views/helpers/acl.php";
 if (!isset($_SESSION["usuario"])) {
-    header("Location: index.php");
+    header("Location: ./../index.php");
     exit();
+}
+//detectar modulo automaticamente
+$archivoActual = basename($_SERVER['PHP_SELF'], ".php");
+$mapVistaModulo = [
+    'cats' => 'categorias',
+    'contenidos' => 'noticias',
+    'publicidad' => 'publicidad',
+    'suscripciones' => 'suscripciones',
+    'usuarios' => 'usuarios'
+];
+$superadmin = $_SESSION['superadmin'];
+// cargar acl globalmente
+$ACL = null;
+if(isset($mapVistaModulo[$archivoActual])){
+    $ACL = cargarACL($mapVistaModulo[$archivoActual]);
+}
+// proteccion para admin.php
+if($archivoActual === "admin" && !$superadmin){
+    // si no tiene lectura en ningun modulo → fuera
+    $tieneAcceso = false;
+    foreach($_SESSION['ACL'] as $mod){
+        if($mod['leer']){
+            $tieneAcceso = true;
+            break;
+        }
+    }
+    if(!$tieneAcceso){
+        session_destroy();
+        header("Location: ./../index.php");
+        exit();
+    }
 }
 $usuario = $_SESSION['usuario'];
 include("./../data/conexion.php");
@@ -12,11 +47,10 @@ $stmt->bind_param("s", $usuario);
 $stmt->execute();
 $result = $stmt->get_result();
 $fila = $result->fetch_assoc();
-
 if (!$fila) {
     // Si el usuario no existe en la BD, destruir sesión y redirigir
     session_destroy();
-    header("Location: index.php");
+    header("Location: ./../index.php");
     exit();
 }
 ?>
@@ -35,35 +69,57 @@ if (!$fila) {
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <?php if($ACL): ?>
+        <script>
+            const ACL = {
+                crear: <?= $ACL['crear'] ? 'true' : 'false' ?>,
+                leer: <?= $ACL['leer'] ? 'true' : 'false' ?>,
+                editar: <?= $ACL['editar'] ? 'true' : 'false' ?>,
+                eliminar: <?= $ACL['eliminar'] ? 'true' : 'false' ?>
+            };
+        </script>
+    <?php endif; ?>
 </head>
 <body class="has-sidebar">
 <div class="sidebar">
     <div class="logotipo">
-        <a href="./admin.php"><img id="icon" src="./../img/logo_alt.jpg" alt="Logo"></a>
+        <img id="icon" src="./../img/logo_alt.jpg" alt="Logo">
     </div>
     <div id="user">
         <h4><?= htmlspecialchars($fila['usuario']) ?></h4>
     </div>
     <ul class="sidebar-menu">
-        <li class="sidebar-menu-item">
-            <a href="./admin.php" class="sidebar-menu-link"><i class="bi bi-house"></i> Inicio</a>
-        </li>
-        <hr>
-        <li class="sidebar-menu-item">
-            <a href="./cats.php" class="sidebar-menu-link">Categorias</a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="./contenidos.php" class="sidebar-menu-link">Contenido</a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="./publicidad.php" class="sidebar-menu-link">Publicidad</a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="./suscripciones.php" class="sidebar-menu-link">Suscripciones</a>
-        </li>
-        <li class="sidebar-menu-item">
-            <a href="./usuarios.php" class="sidebar-menu-link">Usuarios</a>
-        </li>
+        <?php if ($superadmin): ?>
+            <li class="sidebar-menu-item">
+                <a href="./admin.php" class="sidebar-menu-link"><i class="bi bi-house"></i> Inicio</a>
+            </li>
+            <hr>
+        <?php endif; ?>
+        <?php if (($_SESSION['ACL']['categorias']['leer']?? false)): ?>
+            <li class="sidebar-menu-item">
+                <a href="./cats.php" class="sidebar-menu-link">Categorias</a>
+            </li>
+        <?php endif; ?>
+        <?php if (($_SESSION['ACL']['noticias']['leer']?? false)): ?>
+            <li class="sidebar-menu-item">
+                <a href="./contenidos.php" class="sidebar-menu-link">Contenido</a>
+            </li>
+        <?php endif; ?>
+        <?php if (($_SESSION['ACL']['publicidad']['leer']?? false)): ?>
+            <li class="sidebar-menu-item">
+                <a href="./publicidad.php" class="sidebar-menu-link">Publicidad</a>
+            </li>
+        <?php endif; ?>
+        <?php if (($_SESSION['ACL']['suscripciones']['leer']?? false)): ?>
+            <li class="sidebar-menu-item">
+                <a href="./suscripciones.php" class="sidebar-menu-link">Suscripciones</a>
+            </li>
+        <?php endif; ?>
+        <?php if (($_SESSION['ACL']['usuarios']['leer']?? false)): ?>
+            <li class="sidebar-menu-item">
+                <a href="./usuarios.php" class="sidebar-menu-link">Usuarios</a>
+            </li>
+        <?php endif; ?>
     </ul>
     <div class="sidebar-footer">
       <button id="themeToggle" class="btn btn-icon" title="Cambiar tema">🌙</button>

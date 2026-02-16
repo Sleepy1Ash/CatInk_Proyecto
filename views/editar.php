@@ -1,5 +1,24 @@
 <?php
 include("./../layout/headerAdmin.php");
+include("./../controllers/aclcontroller.php");
+// ACL global para noticias
+$ACL = $_SESSION['ACL']['noticias'] ?? [
+    "crear" => false,
+    "leer" => false,
+    "editar" => false,
+    "eliminar" => false
+];
+proteger('noticias','editar');
+include("./../data/conexion.php");
+if (empty($ACL['editar'])) {
+    header("Location: admin.php");
+    exit();
+}
+?>
+<script>
+    const ACL = <?= json_encode($ACL) ?>;
+</script>
+<?php
 if (!isset($_GET['id'])) { header("Location: contenidos.php"); exit; }
 $id = intval($_GET['id']);
 // Obtener noticia
@@ -168,9 +187,11 @@ while($row = $resCat->fetch_assoc()){
             <input hidden type="datetime-local" name="fecha_publicacion" value="<?= date('Y-m-d\TH:i', strtotime($noticia['fecha_publicacion'])) ?>">
             <!-- ACCIONES -->
             <div class="form-actions">
-                <button type="submit" class="btn-success">
-                    Guardar cambios
-                </button>
+                <?php if (!empty($ACL['editar'])): ?>
+                    <button type="submit" class="btn-success">
+                        Guardar cambios
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </form>

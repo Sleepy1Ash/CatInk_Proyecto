@@ -1,4 +1,7 @@
 <?php
+session_start();
+include("./aclcontroller.php");
+proteger('publicidad','crear');
 // ============================
 // FUNCION GUARDAR IMAGEN BASE64 WEBP
 // ============================

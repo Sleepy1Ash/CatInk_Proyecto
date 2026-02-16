@@ -1,5 +1,7 @@
 <?php
 include("./../layout/headerAdmin.php");
+include("./../controllers/aclcontroller.php");
+proteger('usuarios', 'editar');
 include("./../data/conexion.php");
 $id = $_GET['id'];
 $stmt = $con->prepare("SELECT * FROM usuarios WHERE id_u=?");
@@ -11,6 +13,7 @@ $user = $stmt->get_result()->fetch_assoc();
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Editar Usuario</h1>
     </div>
+    <a href="./../views/usuarios.php" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i> Regresar</a>
     <form id="editUserForm" action="./../controllers/editarusuario.php?id=<?= $id ?>" method="POST">
         <div class="form-card card">
             <input type="hidden" name="id" value="<?= $id ?>">
@@ -29,9 +32,9 @@ $user = $stmt->get_result()->fetch_assoc();
             <!-- CONTRASEÑA OPCIONAL -->
             <div class="form-group">
                 <label>Nueva Contraseña (opcional)</label>
-                <input type="password" name="password">
+                <input type="text" name="password">
                 <label>Confirmar Contraseña</label>
-                <input type="password" name="confirm_password">
+                <input type="text" name="confirm_password">
             </div>
             <div class="form-group">
                 <div class="row">

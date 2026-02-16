@@ -1,5 +1,16 @@
 <?php
 include("./../layout/headerAdmin.php");
+$ACL = $_SESSION['ACL']['usuarios'] ?? [
+    'crear' => true,
+    'leer' => true,
+    'editar' => true,
+    'eliminar' => true,
+];
+?>
+<script>
+    ACL = <?= json_encode($ACL) ?>;
+</script>
+<?php
 include("./../data/conexion.php");
 $stmt = $con->prepare("SELECT * FROM usuarios");
 $stmt->execute();
@@ -9,7 +20,9 @@ $usuarios = $stmt->get_result();
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Gestión de Usuarios</h1>
     </div>
-    <a href="./crearu.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Crear Usuario</a>
+    <?php if($ACL['crear']): ?>
+        <a href="./crearu.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Crear Usuario</a>
+    <?php endif; ?>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Lista de Usuarios</h5>
@@ -20,7 +33,9 @@ $usuarios = $stmt->get_result();
                         <th scope="col">Usuario</th>
                         <th scope="col">Email</th>
                         <th scope="col">Fecha Registro</th>
-                        <th scope="col">Acciones</th>
+                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                            <th scope="col">Acciones</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,11 +45,17 @@ $usuarios = $stmt->get_result();
                         <td><?= $u['usuario'] ?></td>
                         <td><?= $u['correo'] ?></td>
                         <td><?= $u['registro'] ?></td>
-                        <td>
-                            <a href="./editaru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
-                            <a href="./veru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Ver Usuario"><i class="bi bi-eye"></i></a>
-                            <button class="btn btn-delete-usuario" data-id="<?= $u['id_u'] ?>" data-nombre="<?= $u['nombre'] ?>" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
-                        </td>
+                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                            <td>
+                                <?php if($ACL['editar']): ?>
+                                    <a href="./editaru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
+                                <?php endif; ?>
+                                <a href="./veru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Ver Usuario"><i class="bi bi-eye"></i></a>
+                                <?php if($ACL['eliminar']): ?>
+                                    <button class="btn btn-delete-usuario" data-id="<?= $u['id_u'] ?>" data-nombre="<?= $u['nombre'] ?>" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

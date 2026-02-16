@@ -1,8 +1,25 @@
-<?php 
-// Página de creación de noticias
+<?php
 include(__DIR__ . "/../layout/headerAdmin.php");
+include(__DIR__."/../controllers/aclcontroller.php");
+// ACL global para noticias
+$ACL = $_SESSION['ACL']['noticias'] ?? [
+    "crear" => false,
+    "leer" => false,
+    "editar" => false,
+    "eliminar" => false
+];
+proteger('noticias','crear');
+// Página de creación de noticias
 include(__DIR__ . "/../data/conexion.php");
-
+if (empty($ACL['crear'])) {
+    header("Location: admin.php");
+    exit();
+}
+?>
+<script>
+    const ACL = <?= json_encode($ACL) ?>;
+</script>
+<?php
 // Obtener categorías desde la base de datos
 $categoriasResult = $con->query("SELECT id_c, nombre FROM categorias ORDER BY nombre ASC");
 $categorias = [];
@@ -149,9 +166,11 @@ while($row = $categoriasResult->fetch_assoc()){
             </div>
             <!-- ACCIONES -->
             <div class="form-actions">
-                <button type="submit" class="btn btn-success" name="guardarNoticia">
-                    Guardar noticia
-                </button>
+                <?php if (!empty($ACL['crear'])): ?>
+                    <button type="submit" class="btn btn-success" name="guardarNoticia">
+                        Guardar noticia
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </form>

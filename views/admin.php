@@ -2,6 +2,30 @@
 include(__DIR__ . "/../layout/headerAdmin.php");
 include(__DIR__ . "/../data/conexion.php");
 // ====================================
+// ACL GLOBAL
+// ====================================
+// Obtener permisos específicos del módulo "noticias"
+$ACLNoticias = $_SESSION['ACL']['noticias'] ?? [
+    'crear' => false,
+    'leer' => false,
+    'editar' => false,
+    'eliminar' => false
+];
+
+// Verificar si el usuario puede ver admin.php
+$puedeVerAdmin = false;
+foreach($_SESSION['ACL'] as $mod){
+    if($mod['leer']){
+        $puedeVerAdmin = true;
+        break;
+    }
+}
+if(!$superadmin && !$puedeVerAdmin){
+    session_destroy();
+    header("Location: ./../index.php");
+    exit();
+}
+// ====================================
 // KPIs
 // ====================================
 $kpis = $con->query("
@@ -48,7 +72,10 @@ while($row = $resultNoticias->fetch_assoc()){
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Bienvenido, <?= htmlspecialchars($fila['usuario']) ?></h1>
     </div>
+    <!-- BOTÓN NUEVA NOTICIA -->
+    <?php if($ACLNoticias['crear']): ?>
     <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
+    <?php endif; ?> 
     <!-- KPIs -->
      <div class="card">
         <div class="card-body">

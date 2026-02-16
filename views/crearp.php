@@ -1,5 +1,7 @@
 <?php
     include("./../layout/headerAdmin.php");
+    include("./../controllers/aclcontroller.php");
+    proteger('publicidad','crear');
     include("./../data/conexion.php");
     $categoriasResult = $con->query("SELECT id_c, nombre FROM categorias ORDER BY nombre ASC");
     $categorias = [];

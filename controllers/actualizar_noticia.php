@@ -1,4 +1,7 @@
 <?php
+session_start();
+include("./aclcontroller.php");
+proteger('noticias','editar');
 include("../data/conexion.php");
 // ============================
 // FUNCION GUARDAR IMAGEN BASE64

@@ -1,5 +1,7 @@
 <?php
     include("./../layout/headerAdmin.php");
+    include("./../controllers/aclcontroller.php");
+    proteger('publicidad','editar');
     include("./../data/conexion.php");
     if (!isset($_GET['id'])) {
         header("Location: publicidad.php");

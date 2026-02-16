@@ -1,14 +1,17 @@
 <?php
+session_start();
+include("./../controllers/aclcontroller.php");
+proteger('categorias','eliminar');
 include("./../data/conexion.php");
 header('Content-Type: application/json');
-// Validar id
 $id_c = intval($_POST['id_c'] ?? 0);
-if($id_c <= 0) exit(json_encode(['error'=>'ID de categoría inválido']));
-// Eliminar relaciones con noticias (opcional, si quieres eliminar automáticamente)
+if($id_c <= 0){
+    echo json_encode(['error'=>'ID de categoría inválido']);
+    exit();
+}
 $stmt = $con->prepare("DELETE FROM noticia_categoria WHERE categoria_id=?");
 $stmt->bind_param("i",$id_c);
 $stmt->execute();
-// Eliminar categoría
 $stmt = $con->prepare("DELETE FROM categorias WHERE id_c=?");
 $stmt->bind_param("i",$id_c);
 if($stmt->execute()){

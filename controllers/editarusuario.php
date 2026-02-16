@@ -1,4 +1,6 @@
 <?php
+include("./../controllers/aclcontroller.php");
+proteger('usuarios', 'editar');
 include("./../data/conexion.php");
 
 // ========================

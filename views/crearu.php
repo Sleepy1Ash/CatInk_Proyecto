@@ -1,5 +1,7 @@
 <?php
     include("./../layout/headerAdmin.php");
+    include("./../controllers/aclcontroller.php");
+    proteger('usuarios', 'crear');
     include("./../data/conexion.php");
 ?>
 <div class="container-fluid">
@@ -27,9 +29,9 @@
             <div class="form-group">
                 <label for="password">Contraseña</label>
                 <span>Contraseña</span>
-                <input type="password" id="password" name="password" required>
+                <input type="text" id="password" name="password" required>
                 <span>Confirma contraseña</span>
-                <input type="password" id="confirm_password" name="confirm_password" required>
+                <input type="text" id="confirm_password" name="confirm_password" required>
                 <small id="errorPassword" style="color:#dc3545; display:none;">
                     Las contraseñas no coinciden
                 </small>

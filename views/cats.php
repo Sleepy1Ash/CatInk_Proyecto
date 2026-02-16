@@ -1,7 +1,6 @@
 <?php
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
-
 // Obtener todas las categorías y conteo de noticias
 $sql = "
 SELECT c.id_c, c.nombre, COUNT(DISTINCT nc.noticia_id) AS total_noticias
@@ -16,7 +15,9 @@ $result = $con->query($sql);
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Gestión de Categorias</h1>
     </div>
-    <button id="btnCrear" class="btn btn-success"><i class="bi bi-plus-lg"></i> Crear categoría</button>
+    <?php if($ACL['crear']): ?>
+        <button id="btnCrear" class="btn btn-success"><i class="bi bi-plus-lg"></i> Crear categoría</button>
+    <?php endif; ?>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Lista de Categorías</h5>
@@ -25,7 +26,9 @@ $result = $con->query($sql);
                     <tr>
                         <th>Nombre</th>
                         <th>Total Noticias</th>
-                        <th>Acciones</th>
+                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                            <th>Acciones</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,14 +36,20 @@ $result = $con->query($sql);
                     <tr>
                         <td><?= htmlspecialchars($row['nombre']) ?></td>
                         <td><?= $row['total_noticias'] ?></td>
-                        <td>
-                            <button class="btn btn-secondary btn-editar" 
-                                data-id="<?= $row['id_c'] ?>" 
-                                data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-delete btn-eliminar"
-                                data-id="<?= $row['id_c'] ?>" 
-                                data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-trash3"></i></button>
-                        </td>
+                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                            <td>
+                                <?php if($ACL['editar']): ?>
+                                    <button class="btn btn-secondary btn-editar" 
+                                        data-id="<?= $row['id_c'] ?>" 
+                                        data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-pencil"></i></button>
+                                <?php endif; ?>
+                                <?php if($ACL['eliminar']): ?>
+                                    <button class="btn btn-delete btn-eliminar"
+                                        data-id="<?= $row['id_c'] ?>" 
+                                        data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-trash3"></i></button>
+                                <?php endif; ?>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -73,40 +82,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalNombre = document.getElementById('modalNombre');
     const modalSubmit = document.getElementById('modalSubmit');
     const modalClose = document.getElementById('modalClose');
-    // Abrir modal de crear
-    document.getElementById('btnCrear').addEventListener('click', () => {
-        modalTitle.textContent = "Crear Categoría";
-        modalSubmit.textContent = "Crear";
-        modalForm.dataset.action = "crear";
-        modalId.value = "";
-        modalNombre.value = "";
-        modalNombre.parentElement.style.display = "block"; // reset
-        modal.style.display = "flex";
-    });
-    // Abrir modal de editar
-    document.querySelectorAll('.btn-editar').forEach(btn => {
-        btn.addEventListener('click', () => {
-            modalTitle.textContent = "Editar Categoría";
-            modalSubmit.textContent = "Actualizar";
-            modalForm.dataset.action = "editar";
-            modalId.value = btn.dataset.id;
-            modalNombre.value = btn.dataset.nombre;
+    const btnCrear = document.getElementById('btnCrear');
+    if(btnCrear && ACL.crear){
+        // Abrir modal de crear
+        document.getElementById('btnCrear').addEventListener('click', () => {
+            modalTitle.textContent = "Crear Categoría";
+            modalSubmit.textContent = "Crear";
+            modalForm.dataset.action = "crear";
+            modalId.value = "";
+            modalNombre.value = "";
             modalNombre.parentElement.style.display = "block"; // reset
             modal.style.display = "flex";
         });
-    });
-    // Abrir modal de eliminar
-    document.querySelectorAll('.btn-eliminar').forEach(btn => {
-        btn.addEventListener('click', () => {
-            modalTitle.textContent = "Eliminar Categoría";
-            modalSubmit.textContent = "Eliminar";
-            modalForm.dataset.action = "eliminar";
-            modalId.value = btn.dataset.id;
-            modalNombre.value = btn.dataset.nombre;
-            modalNombre.parentElement.style.display = "none"; // ocultar input
-            modal.style.display = "flex";
+    }
+    if(ACL.editar){
+        // Abrir modal de editar
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+            btn.addEventListener('click', () => {
+                modalTitle.textContent = "Editar Categoría";
+                modalSubmit.textContent = "Actualizar";
+                modalForm.dataset.action = "editar";
+                modalId.value = btn.dataset.id;
+                modalNombre.value = btn.dataset.nombre;
+                modalNombre.parentElement.style.display = "block"; // reset
+                modal.style.display = "flex";
+                });
         });
-    });
+    }
+    if(ACL.eliminar){
+        // Abrir modal de eliminar
+        document.querySelectorAll('.btn-eliminar').forEach(btn => {
+            btn.addEventListener('click', () => {
+                modalTitle.textContent = "Eliminar Categoría";
+                modalSubmit.textContent = "Eliminar";
+                modalForm.dataset.action = "eliminar";
+                modalId.value = btn.dataset.id;
+                modalNombre.value = btn.dataset.nombre;
+                modalNombre.parentElement.style.display = "none"; // ocultar input
+                modal.style.display = "flex";
+            });
+        });
+    }
     // Cerrar modal
     modalClose.addEventListener('click', () => {
         modal.style.display = "none";
@@ -114,13 +130,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     // Enviar formulario
     modalForm.addEventListener('submit', (e) => {
-        e.preventDefault();
         const action = modalForm.dataset.action;
+        if(!ACL[action]){
+            alert("No tienes permisos para realizar esta acción");
+            return;
+        }
+        e.preventDefault();
         const formData = new FormData(modalForm);
         let url = "";
-        if(action === "crear") url = "./../controllers/crearc.php";
-        if(action === "editar") url = "./../controllers/editarc.php";
-        if(action === "eliminar") url = "./../controllers/eliminarc.php";
+        if(action === "crear") url = "./../../controllers/crearc.php";
+        if(action === "editar") url = "./../../controllers/editarc.php";
+        if(action === "eliminar") url = "./../../controllers/eliminarc.php";
         fetch(url, { method: "POST", body: formData })
             .then(r => {
                 if (!r.ok) throw new Error("Error HTTP");
