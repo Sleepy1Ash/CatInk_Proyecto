@@ -30,11 +30,18 @@ html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Rob
   --indicator-stroke: rgba(255,255,255,0.9);
   --footer-bottom-bg: rgba(255,255,255,0.03);
 }
+[data-bs-theme="dark"] #logo{
+  content: url('/CatInk_Proyecto/img/logo_alt.png');
+}
 /* Layout general: cuerpo como columna flex para sticky footer */
 body { display:flex; flex-direction:column; min-height:100vh; background: var(--bg); color: var(--text); overflow-x: hidden; }
 .site-main {
   padding: 16px;
   flex: 1;
+}
+h2 {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 /* anular padding lateral en carrusel para que ocupe todo el ancho */
 .site-main .carousel {
@@ -73,6 +80,7 @@ body { display:flex; flex-direction:column; min-height:100vh; background: var(--
   margin-right: 0;
 }
 #logo {
+  content: url('/CatInk_Proyecto/img/logo.png');
   max-height: 50px;
   width: auto;
   object-fit: contain;
@@ -298,7 +306,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 /* left image for card */
 .card-img-left { width:100%; height:100%; object-fit:cover; display:block; }
 /* text muted */
-.text-muted { color: var(--muted); }
+.text-muted { color: var(--muted); font-size: 10px; }
 /* Utility replacements for some Bootstrap helpers used in markup */
 .d-none { display: none !important; }
 @media (min-width: 768px) {
@@ -362,6 +370,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     font-size: 0.85rem; /* Smaller text */
     -webkit-box-orient: vertical;
     overflow: hidden;
+    color:#fff
   }
   /* Login responsive adjustments */
   .login-wrapper {
@@ -563,14 +572,14 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   object-fit: cover;
   display: block;
 }
-.news-link {display:inline-block; text-decoration:none; color: #fff; position: relative; z-index: 3;}
+.news-link {display: block; text-decoration:none; color: #fff; position: relative; z-index: 3;}
 .news-link:hover { text-decoration: underline; color:#EF3363; }
 /* Gradiente oscuro */
 .news-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.6) 35%, rgba(0,0,0,.25) 65%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.6) 35%, rgba(0,0,0,.25) 55%, rgba(0,0,0,0) 100%);
   z-index: 1;
 }
 /* Overlay de noticias */
@@ -579,17 +588,17 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   inset: 0;
   padding: 12px;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-content: space-between;
-  gap: 0;
+  flex-direction: column;
   color: #fff;
   z-index: 2;
+  min-height: 0;
 }
 .news-overlay .news-tag { order: 0; }
 .news-overlay .news-link,
-.news-overlay p { order: 2; flex: 1 0 100%; margin-top: 2px; }
+.news-overlay p { order: 2;}
+.news-overlay p, .news-overlay h3 {
+  margin: 0;
+}
 /* TAG */
 .news-tag {
   background: var(--accent);
@@ -602,6 +611,26 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   display: inline-block;
   margin-right: 6px;
   z-index: 3;
+}
+.tag-news {
+  background: var(--accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: .65rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: #fff;
+  display: inline-block;
+  margin-right: 4px;
+  z-index: 3;
+  line-height: 1;
+}
+.news-content{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: auto;
 }
 /* En overlay: forzar que los tags queden arriba y visibles */
 .news-overlay .news-tag {
@@ -688,12 +717,15 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.2;
+  min-height: 0;
 }
 .title-limit-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 0;
 }
 /* DESCRIPCIONES */
 .desc-limit-1 {
@@ -702,18 +734,26 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
+  min-height: 0;
 }
 .desc-limit-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  min-height: 0;
 }
 .desc-limit-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  min-height: 0;
 }
 /* ===============================
    HORIZONTAL CARDS
@@ -781,4 +821,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 }
 .btn-success:hover {
     background: #218838;
+}
+.bi{
+  color: var(--accent)
 }

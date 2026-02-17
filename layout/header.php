@@ -24,7 +24,7 @@ $categorias = $resultCats->fetch_all(MYSQLI_ASSOC);
 <nav class="navbar">
   <div class="container-fluid">
     <a class="navbar-brand" href="/CatInk_Proyecto/index.php">
-      <img id="logo" src="/CatInk_Proyecto/img/logo.png" alt="CatInk Logo">
+      <img id="logo" src="" alt="CatInk Logo">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
       data-bs-target="#navbarNav">
