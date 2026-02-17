@@ -87,7 +87,7 @@
         $mail->Host = 'smtp.gmail.com';   // Cambia por tu SMTP
         $mail->SMTPAuth = true;
         $mail->Username = 'faustoperezortega15@gmail.com'; // Tu email
-        $mail->Password = 'aiunnaqifeqwjrrx';               // Tu contraseña
+        $mail->Password = '';               // Tu contraseña
         $mail->SMTPSecure = 'tls';                    // o 'ssl'
         $mail->Port = 587;                            // o 465 si SSL
 
