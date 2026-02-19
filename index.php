@@ -67,7 +67,17 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
     <div class="carousel-inner">
         <?php foreach($slider as $i => $row): ?>
             <div class="carousel-item <?= $i==0?'active':'' ?>">
-                <img src="./<?= htmlspecialchars($row['crop2'] ?? $row['crop1'] ?? 'img/placeholder.jpg') ?>" class="carousel-img">
+                <picture>
+                    <!-- MÓVIL usa crop2 -->
+                    <source 
+                        media="(max-width:768px)" 
+                        srcset="./<?= htmlspecialchars($row['crop1'] ?? $row['crop2'] ?? 'img/placeholder.jpg') ?>">
+                    <!-- DESKTOP usa crop1 -->
+                    <img 
+                        src="./<?= htmlspecialchars($row['crop2'] ?? 'img/placeholder.jpg') ?>" 
+                        class="carousel-img"
+                        alt="<?= htmlspecialchars($row['titulo']) ?>">
+                </picture>
                 <div class="carousel-caption caption-md">
                     <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
                         <span class="carousel-tag"><?= htmlspecialchars($cat) ?></span>

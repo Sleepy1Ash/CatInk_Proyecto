@@ -277,10 +277,10 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .social-links a:hover { opacity:1; transform: translateY(-3px); }
 .footer-bottom { background: var(--footer-bottom-bg); padding: 15px 0; }
 /* Carousel specific styles (extracted) */
-.carousel, .carousel-inner, .carousel-item { max-height: 60vh; position:relative; overflow:hidden; }
+.carousel, .carousel-inner, .carousel-item { position:relative; height: 65vh; min-height: 320px; overflow:hidden; }
 .carousel-inner { position: relative; }
 .carousel-item { position: absolute; inset: 0; opacity: 0; transform: translateX(6%); transition: opacity .6s ease, transform .6s ease; pointer-events: none; visibility: hidden;}
-.carousel-item img { height:60vh; object-fit:cover; width:100%; display:block; }
+.carousel-item picture, .carousel-item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;}
 .carousel-item.active { opacity:1; transform: translateX(0); position: relative; pointer-events: auto; visibility: visible;}
 .carousel-item::before { content: ""; position:absolute; inset:0; z-index:1; background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.05) 80%, rgba(0,0,0,0) 100%); pointer-events: none;}
 .carousel-caption { z-index:2; position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding-left:6%; padding-right:50%; text-align:left; color:#fff; pointer-events: none;}
@@ -332,7 +332,10 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 /* responsive tweaks */
 @media (max-width: 768px) {
   .container, .container-fluid { padding-left: 12px; padding-right:12px; }
-  .carousel-caption { padding-right: 12%; padding-left: 6%; }
+  .carousel-caption { 
+    padding: 32px 16px 80px;
+    max-width: 100%;
+   }
   /* Forzar columnas a 100% en pantallas pequeñas (apilar) */
   .col { flex-basis: 100%; max-width: 100%; }
   /* Ensure col-md-* also stack on mobile */
@@ -478,21 +481,34 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     display: block;
     width: 100%;
   }
-  /* Carousel height adjustment for mobile */
-  .carousel, .carousel-inner, .carousel-item, .carousel-item img {
-    max-height: 50vh; /* Ajustado a 50vh segun solicitud */
+  .carousel, .carousel-inner, .carousel-item {
+    height: 65vh;
+    min-height: 420px;
+  }
+  .carousel-item {
+    position: relative;
+    overflow: hidden;
   }
   .carousel-item img {
-    height: 50vh;
-    object-position: center;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
   }
   /* Caption adjustments for mobile */
   .carousel-caption {
     display: flex !important; /* Force show on mobile overriding caption-md */
-    padding-right: 6%; /* Quitar el margen derecho grande */
+    padding: 24px 16px 80px;
+    padding-right: 16px; /* Quitar el margen derecho grande */
     padding-bottom: 80px; /* Espacio para indicadores */
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0) 100%);
     align-items: flex-start; /* Alinea los elementos (incluyendo tags) a la izquierda */
+    justify-content: flex-end;
+  }
+  .carousel-caption, .carousel-tag.news-tag::not(:first-of-type){
+    display: none !important;
   }
   /* Ajuste específico para que el tag no se expanda al 100% en flex column */
   .carousel-tag {
@@ -502,7 +518,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     margin-bottom: 8px;
   }
   .carousel-caption h5 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     margin-bottom: 8px;
   }
   .carousel-caption p {
@@ -526,6 +542,14 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   .indicator-avatar {
     width: 48px;
     height: 48px;
+  }
+  .card-body .news-tag::not(:first-of-type){
+    display: none !important;
+  }
+  .carousel-tag,
+  .news-tag{
+    font-size:.65rem;
+    padding:2px 6px;
   }
 }
 /* md+ responsive utilities and card column sizes */

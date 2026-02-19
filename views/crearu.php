@@ -80,6 +80,19 @@
                     <div class="col">
                         <div class="card">
                             <div class="card-header">
+                                <h5 class="card-title">Permisos Correo</h5>
+                            </div>
+                            <div class="card-body form-group">
+                                <label><input type="checkbox" name="correos[]" value="1"> Crear</label>
+                                <label><input type="checkbox" name="correos[]" value="2"> Ver</label>   
+                                <label><input type="checkbox" name="correos[]" value="4"> Editar</label>
+                                <label><input type="checkbox" name="correos[]" value="8"> Eliminar</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
                                 <h5 class="card-title">Permisos Suscripciones</h5>
                             </div>
                             <div class="card-body form-group">

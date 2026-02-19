@@ -15,7 +15,8 @@ $mapVistaModulo = [
     'contenidos' => 'noticias',
     'publicidad' => 'publicidad',
     'suscripciones' => 'suscripciones',
-    'usuarios' => 'usuarios'
+    'usuarios' => 'usuarios',
+    'correos' => 'correos'
 ];
 $superadmin = $_SESSION['superadmin'];
 // cargar acl globalmente
@@ -108,6 +109,11 @@ if (!$fila) {
         <?php if (($_SESSION['ACL']['publicidad']['leer']?? false)): ?>
             <li class="sidebar-menu-item">
                 <a href="./publicidad.php" class="sidebar-menu-link">Publicidad</a>
+            </li>
+        <?php endif; ?>
+        <?php if (($_SESSION['ACL']['correos']['leer']?? false)): ?>
+            <li class="sidebar-menu-item">
+                <a href="./correos.php" class="sidebar-menu-link">Correos</a>
             </li>
         <?php endif; ?>
         <?php if (($_SESSION['ACL']['suscripciones']['leer']?? false)): ?>

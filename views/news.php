@@ -93,21 +93,21 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
               <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="card-img-top">
             </a>
             <div class="card-body">
-              <h5>🆕 Lo más nuevo</h5>
+              <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
               <ul class="list-group list-group-flush mb-3">
                 <?php while ($row = $ultimas->fetch_assoc()): ?>
                   <li class="list-group-item">
-                    <a href="./views/news.php?id=<?= $row['id'] ?>">
+                    <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
                       <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>
                 <?php endwhile; ?>
               </ul>
-              <h5>🔥 Lo más popular</h5>
+              <h3><i class="bi bi-fire"></i> Lo más popular</h3>
               <ul class="list-group list-group-flush">
                 <?php while ($row = $populares->fetch_assoc()): ?>
                   <li class="list-group-item">
-                    <a href="./views/news.php?id=<?= $row['id'] ?>">
+                    <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
                       <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>

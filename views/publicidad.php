@@ -22,13 +22,8 @@
         <h1>Gestión de Publicidad</h1>
     </div>
     <?php if($ACL['crear']): ?>
-        <div class="row">
-            <div class="col">
-                <a href="crearp.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Agregar Publicidad</a>
-            </div>
-            <div class="col">
-                <a href="correo_pub.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Agregar Correo Publicitario</a>
-            </div>
+        <div class="col">
+            <a href="crearp.php" class="btn btn-success"><i class="bi bi-plus-lg"></i>Agregar Publicidad</a>
         </div>
     <?php endif; ?>
     <div class="row">

@@ -58,6 +58,7 @@ $perm_noticias      = calcPerm($_POST['noticias'] ?? []);
 $perm_categorias    = calcPerm($_POST['categorias'] ?? []);
 $perm_suscripciones = calcPerm($_POST['suscripciones'] ?? []);
 $perm_usuarios      = calcPerm($_POST['usuarios'] ?? []);
+$perm_correos = calcPerm($_POST['correos'] ?? []);
 
 // ========================
 // Hash seguro de contraseña
@@ -69,12 +70,12 @@ $passHash = password_hash($password, PASSWORD_BCRYPT);
 // ========================
 $alt = $con->prepare("
 INSERT INTO usuarios 
-(nombre, usuario, correo, pass, perm_publicidad, perm_noticias, perm_categorias, perm_suscripciones, perm_usuarios)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+(nombre, usuario, correo, pass, perm_publicidad, perm_noticias, perm_categorias, perm_suscripciones, perm_usuarios, perm_correos)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 
 $alt->bind_param(
-    "ssssiiiii",
+    "ssssiiiiii",
     $nombre,
     $usuario,
     $email,
@@ -83,7 +84,8 @@ $alt->bind_param(
     $perm_noticias,
     $perm_categorias,
     $perm_suscripciones,
-    $perm_usuarios
+    $perm_usuarios,
+    $perm_correos
 );
 
 if($alt->execute()){
@@ -94,7 +96,8 @@ if($alt->execute()){
             'noticias' => $perm_noticias,
             'categorias' => $perm_categorias,
             'suscripciones' => $perm_suscripciones,
-            'usuarios' => $perm_usuarios
+            'usuarios' => $perm_usuarios,
+            'correos' => $perm_correos
         ]
     ]);
     header("Location: ./../views/usuarios.php");

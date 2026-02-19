@@ -56,6 +56,12 @@ function mapearPermisos($user){
             'leer'     => ($user['perm_suscripciones'] & 2) === 2,
             'editar'   => ($user['perm_suscripciones'] & 4) === 4,
             'eliminar' => ($user['perm_suscripciones'] & 8) === 8
-        ]
+        ],
+        'correos' => [
+            'crear'    => ($user['perm_correos'] & 1) === 1,
+            'leer'     => ($user['perm_correos'] & 2) === 2,
+            'editar'   => ($user['perm_correos'] & 4) === 4,
+            'eliminar' => ($user['perm_correos'] & 8) === 8
+        ],
     ];
 }
