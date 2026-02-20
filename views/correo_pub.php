@@ -29,6 +29,10 @@ proteger('publicidad','crear');
                 <label for="url">Url:</label>
                 <input type="url" id="url" name="url" class="form-control" required>
             </div>
+            <div class="form-group">
+                <label for="programacion">Hora de envio:</label>
+                <input type="datetime-Local" name="envio" class="btn-calendar">
+            </div>
             <div class="form-actions">
                 <?php if($ACl['crear']): ?>
                     <button type="submit" class="btn btn-success">Guardar</button>

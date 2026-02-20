@@ -45,9 +45,13 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="publicidad[]" value="1"> Crear</label>
+                                <span>Capacidad de agregar nueva publicidad</span>
                                 <label><input type="checkbox" name="publicidad[]" value="2"> Ver</label>
+                                <span>Capacidad de acceder y ver en la seccion de publicidad</span>
                                 <label><input type="checkbox" name="publicidad[]" value="4"> Editar</label>
+                                <span>Capacidad de modificar la publicidad existente</span>
                                 <label><input type="checkbox" name="publicidad[]" value="8"> Eliminar</label>
+                                <span>Capacidad de eliminar alguna publicidad</span>
                             </div>
                         </div>
                     </div>
@@ -58,9 +62,13 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="noticias[]" value="1"> Crear</label>
+                                <span>Capacidad de crear nuevas publicaciones</span>
                                 <label><input type="checkbox" name="noticias[]" value="2"> Ver</label>
+                                <span>Capacidad de acceder y ver en la seccion de contenidos</span>
                                 <label><input type="checkbox" name="noticias[]" value="4"> Editar</label>
+                                <span>Capacidad de modificar las publicaciones</span>
                                 <label><input type="checkbox" name="noticias[]" value="8"> Eliminar</label>
+                                <span>Capacidad de eliminar las publicaciones</span>
                             </div>
                         </div>
                     </div>
@@ -71,12 +79,18 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="categorias[]" value="1"> Crear</label>
-                                <label><input type="checkbox" name="categorias[]" value="2"> Ver</label>   
+                                <span>Capacidad de agregar una nueva categoría</span>
+                                <label><input type="checkbox" name="categorias[]" value="2"> Ver</label>
+                                <span>Capacidad de acceder y ver en la seccion de categorías</span>  
                                 <label><input type="checkbox" name="categorias[]" value="4"> Editar</label>
+                                <span>Capacidad de editar el nombre de la categoría</span>
                                 <label><input type="checkbox" name="categorias[]" value="8"> Eliminar</label>
+                                <span>Capacidad de eliminar categorias</span>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col">
                         <div class="card">
                             <div class="card-header">
@@ -84,9 +98,13 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="correos[]" value="1"> Crear</label>
-                                <label><input type="checkbox" name="correos[]" value="2"> Ver</label>   
+                                <span>Capacidad de generar nuevos correos</span>
+                                <label><input type="checkbox" name="correos[]" value="2"> Ver</label>
+                                <span>Capacidad de acceder y ver en la seccion de Correos (publicitarios)</span>  
                                 <label><input type="checkbox" name="correos[]" value="4"> Editar</label>
+                                <span>Capacidad de editar los corros (reenvio)</span>
                                 <label><input type="checkbox" name="correos[]" value="8"> Eliminar</label>
+                                <span>Capacidad de eliminar correos</span>
                             </div>
                         </div>
                     </div>
@@ -97,9 +115,13 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="suscripciones[]" value="1"> Crear</label>
+                                <span>La suscripcion la hacen los usuarios</span>
                                 <label><input type="checkbox" name="suscripciones[]" value="2"> Ver</label>
+                                <span>Capacidad de acceder y ver en la seccion de suscripciones</span>
                                 <label><input type="checkbox" name="suscripciones[]" value="4"> Editar</label>
+                                <span>Los usuarios activan o desactivan su suscripcion</span>
                                 <label><input type="checkbox" name="suscripciones[]" value="8"> Eliminar</label>
+                                <span>Capacidad de eliminar las suscripciones</span>
                             </div>
                         </div>
                     </div>
@@ -110,11 +132,16 @@
                             </div>
                             <div class="card-body form-group">
                                 <label><input type="checkbox" name="usuarios[]" value="1"> Crear</label>
+                                <span>Capacidad de añadir usuarios al sistema</span>
                                 <label><input type="checkbox" name="usuarios[]" value="2"> Ver</label>
+                                <span>Capacidad de acceder y ver en la seccion de Usuarios</span>
                                 <label><input type="checkbox" name="usuarios[]" value="4"> Editar</label>
+                                <span>Capacidad de ediar los usuarios (permisos)</span>
                                 <label><input type="checkbox" name="usuarios[]" value="8"> Eliminar</label>
+                                <span>Capacidad de eliminar usuarios del sistema</span>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
             <div class="form-actions">
