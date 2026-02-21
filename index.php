@@ -1,6 +1,7 @@
 <?php
 include(__DIR__ . "/layout/header.php");
 include(__DIR__ . "/data/conexion.php");
+include(__DIR__ . "/views/helpers/videoEmbed.php");
 // =====================
 // Obtener todas las noticias con sus categorías
 // =====================
@@ -276,6 +277,14 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <div class="row">
+                    <div class="col">
+                        <?php echo renderizarVideo("https://www.tiktok.com/@herreratzzz/video/7580105791315643669?is_from_webapp=1&sender_device=pc") ?>
+                    </div>
+                    <div class="col">
+                        <?php echo renderizarVideo("https://www.tiktok.com/@angelurdaneta80/video/7601583740598504711?is_from_webapp=1&sender_device=pc") ?>
+                    </div>
+                </div>
                 <a href="<?php echo htmlspecialchars($publicidadInferior['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadInferior['id_pub']); ?>">
                     <img src="<?php echo htmlspecialchars($publicidadInferior['imagen']); ?>" alt="" class="banner">
                 </a>

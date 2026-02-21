@@ -846,6 +846,16 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .btn-success:hover {
     background: #218838;
 }
-.bi{
-  color: var(--accent)
+.video-responsive{
+    position: relative;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+}
+.video-responsive iframe{
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
 }
