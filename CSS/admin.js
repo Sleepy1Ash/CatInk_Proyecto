@@ -58,7 +58,7 @@
    PREVISUALIZACIÓN DE IMÁGENES
 ================================ */
 (() => {
-  const input = document.getElementById('imagen');
+  const input = document.getElementById('imagenCorreo');
   const preview = document.getElementById('preview');
   if (!input || !preview) return;
   let archivosTemporales;
@@ -84,7 +84,7 @@
       reader.readAsDataURL(file);
     });
     input.files = archivosTemporales.files;
-    input.name = "imagenes[]";
+    input.name = "imagenCorreo";
   });
 })();
 /* ===============================

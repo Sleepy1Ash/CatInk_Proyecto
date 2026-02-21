@@ -11,7 +11,7 @@ proteger('publicidad','crear');
 ?>
 <div class="container-fluid">
     <h1>Alta de correo publicitario</h1>
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="./../controllers/crearCorreoPub.php" method="POST" enctype="multipart/form-data">
         <div class="form-card card">
             <div class="form-group">
                 <label for="titulo">Titulo:</label>
@@ -23,7 +23,8 @@ proteger('publicidad','crear');
             </div>
             <div class="form-group">
                 <label for="imagen">Imagen:</label>
-                <input type="file" id="imagen" name="imagen" class="form-control" required>
+                <input type="file" id="imagenCorreo" name="imagenCorreo" class="form-control" required>
+                <div id="preview"></div>
             </div>
             <div class="form-group">
                 <label for="url">Url:</label>

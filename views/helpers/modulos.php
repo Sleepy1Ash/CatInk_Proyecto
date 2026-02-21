@@ -13,6 +13,10 @@ function getModulosACL($u){
             'permiso' => $u['perm_publicidad'],
             'vista'   => '../views/publicidad.php'
         ],
+        'correos' => [
+            'permiso' => $u['perm_correos'],
+            'vista'   => '../views/correo_pub.php'
+        ],
         'suscripciones' => [
             'permiso' => $u['perm_suscripciones'],
             'vista'   => '../views/suscripciones.php'

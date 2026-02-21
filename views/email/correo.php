@@ -7,7 +7,7 @@
     require("./../../PHPMailer/src/SMTP.php");
     include("./../../data/conexion.php");
     $hoy = date("Y-m-d");
-    $sql = "SELECT * FROM noticias WHERE DATE(fecha_publicacion) = ?";
+    $sql = "SELECT * FROM noticias WHERE DATE(fecha_publicacion) <= ?";
     $stmt = $con->prepare($sql);
     $stmt->bind_param("s", $hoy);
     $stmt->execute();
@@ -23,8 +23,13 @@
     }
     $mail = new PHPMailer(true);
     $contenidoNoticias = '';
+    $mail->addEmbeddedImage(
+        __DIR__ . '/logo_alt.png',
+        'banner',
+        'logo_alt.png'
+    );
     foreach ($noticias as $index => $noticia) {
-        $webp = 'http://192.168.1.24/CatInk_Proyecto/' . $noticia['crop3'];
+        $webp = 'http://192.168.100.17/CatInk_Proyecto/' . $noticia['crop3'];
         $png = __DIR__ . "/logo_temp_{$index}.png"; // archivos temporales únicos
         // Convertir WebP a PNG
         $image = imagecreatefromwebp($webp);
@@ -33,21 +38,17 @@
 
         // Adjuntar imagen convertida al objeto PHPMailer
         $mail->addEmbeddedImage($png, "logo{$index}", "logo.png"); // cid único
-        $mail->addEmbeddedImage(
-            __DIR__ . '/logo_alt.png',
-            'banner',
-            'logo_alt.png'
-        );
         // Concatenar HTML, referenciando la cid única
         $contenidoNoticias .= "
                                 <table width='100%' cellpadding='0' cellspacing='0' border='0' 
-                                style='background:#ffffff; margin-bottom:15px; border-radius:10px;'>
-                                <tr>
+                                    style='background:#ffffff;margin-bottom:15px;border-radius:10px;overflow:hidden;'>
+                                <tr class='stack-column'>
                                 <!-- IMAGEN -->
-                                <td width='240' valign='top' style='padding:10px;'>
+                                <td width='240' valign='top' class='card-padding'>
                                 <img 
                                 src='cid:logo{$index}' 
                                 width='220'
+                                class='stack-img'
                                 style='
                                 width:100%;
                                 max-width:220px;
@@ -58,8 +59,8 @@
                                 '>
                                 </td>
                                 <!-- TEXTO -->
-                                <td valign='top' style='padding:10px; font-family:Arial, sans-serif; color:#000;'>
-                                <a href='http://192.168.1.24/CatInk_Proyecto/views/news.php?id={$noticia['id']}'
+                                <td valign='top' class='card-padding' style='font-family:Arial,sans-serif;color:#000;'>
+                                <a href='http://192.168.100.17/CatInk_Proyecto/views/news.php?id={$noticia['id']}'
                                 style='
                                 background:#EF3363;
                                 color:#EF3363;
@@ -87,7 +88,7 @@
         $mail->Host = 'smtp.gmail.com';   // Cambia por tu SMTP
         $mail->SMTPAuth = true;
         $mail->Username = 'faustoperezortega15@gmail.com'; // Tu email
-        $mail->Password = '';               // Tu contraseña
+        $mail->Password = 'aiunnaqifeqwjrrx';               // Tu contraseña
         $mail->SMTPSecure = 'tls';                    // o 'ssl'
         $mail->Port = 587;                            // o 465 si SSL
 
@@ -105,6 +106,13 @@
         $mail->Body = $plantilla;
 
         $mail->send();
+        // Eliminar archivos temporales
+        foreach ($noticias as $index => $noticia) {
+            $png = __DIR__ . "/logo_temp_{$index}.png";
+            if (file_exists($png)) {
+                unlink($png);
+            }
+        }
         echo "Correo enviado correctamente a todos los usuarios suscritos.";
         header("Location: ./../../index.php?msg=enviado");
 
