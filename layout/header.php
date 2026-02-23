@@ -19,6 +19,7 @@ $categorias = $resultCats->fetch_all(MYSQLI_ASSOC);
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
+  <script async src="https://www.instagram.com/embed.js"></script>
 </head>
 <body>
 <nav class="navbar">

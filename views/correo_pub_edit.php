@@ -19,7 +19,10 @@ if($id){
 }
 ?>
 <div class="container-fluid">
-    <h1>Alta de correo publicitario</h1>
+    <h1>Edición de correo publicitario</h1>
+    <div class="mt-3">
+        <a href="./../views/correos.php" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i> Volver</a>
+    </div>
     <form action="./../controllers/editCorreoPub.php" method="POST" enctype="multipart/form-data">
         <div class="form-card card">
             <input type="hidden" value="<?= $id ?>" name="id">
@@ -45,7 +48,7 @@ if($id){
                 <input type="url" id="url" name="url" class="form-control" required value="<?= $correo['url_c'] ?>">
             </div>
             <div class="form-group">
-                <label for="programacion">Hora de envio:</label>
+                <label for="programacion">Hora de reenvio:</label>
                 <input type="datetime-local" name="envio" class="btn-calendar" value="<?= $correo['envio'] ?>">
             </div>
             <div class="form-actions">

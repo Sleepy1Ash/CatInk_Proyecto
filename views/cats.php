@@ -62,6 +62,7 @@ $result = $con->query($sql);
     <div class="modal-content">
         <span id="modalClose" class="modal-close">&times;</span>
         <h3 id="modalTitle"></h3>
+        <p id="modalConfirmText" style="display:none;"></p>
         <br>
         <form id="modalForm">
             <input type="hidden" name="id_c" id="modalId">
@@ -110,15 +111,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     if(ACL.eliminar){
-        // Abrir modal de eliminar
         document.querySelectorAll('.btn-eliminar').forEach(btn => {
             btn.addEventListener('click', () => {
                 modalTitle.textContent = "Eliminar Categoría";
                 modalSubmit.textContent = "Eliminar";
                 modalForm.dataset.action = "eliminar";
                 modalId.value = btn.dataset.id;
-                modalNombre.value = btn.dataset.nombre;
-                modalNombre.parentElement.style.display = "none"; // ocultar input
+
+                // Mostrar mensaje de confirmación
+                modalConfirmText.style.display = "block";
+                modalConfirmText.textContent = 
+                    `¿Estás seguro de eliminar la categoría "${btn.dataset.nombre}"?`;
+
+                modalNombre.parentElement.style.display = "none";
                 modal.style.display = "flex";
             });
         });

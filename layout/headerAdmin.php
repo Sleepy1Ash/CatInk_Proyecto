@@ -126,6 +126,9 @@ if (!$fila) {
                 <a href="./usuarios.php" class="sidebar-menu-link">Usuarios</a>
             </li>
         <?php endif; ?>
+        <li class="sidebar-menu-item">
+            <a href="./videos.php" class="sidebar-menu-link">Videos</a>
+        </li>
     </ul>
     <div class="sidebar-footer">
       <button id="themeToggle" class="btn btn-icon" title="Cambiar tema">🌙</button>

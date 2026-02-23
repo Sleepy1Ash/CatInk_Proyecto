@@ -3,20 +3,27 @@
 <!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
 <script src="/CatInk_Proyecto/CSS/scripts.js"></script>
 <script>
-let searchTimeout = null;
-const input = document.getElementById('searchInput');
-if (input) {
-  input.addEventListener('keyup', function () {
-    clearTimeout(searchTimeout);
-    const q = this.value.trim();
-    searchTimeout = setTimeout(() => {
-      if (q.length >= 2) {
-        // Redirige al controlador de búsqueda/categoría
-        window.location.href = `/CatInk_Proyecto/views/categoria.php?q=${encodeURIComponent(q)}`;
+  let searchTimeout = null;
+  const input = document.getElementById('searchInput');
+  if (input) {
+    input.addEventListener('keyup', function () {
+      clearTimeout(searchTimeout);
+      const q = this.value.trim();
+      searchTimeout = setTimeout(() => {
+        if (q.length >= 2) {
+          // Redirige al controlador de búsqueda/categoría
+          window.location.href = `/CatInk_Proyecto/views/categoria.php?q=${encodeURIComponent(q)}`;
+        }
+      }, 400);
+    });
+  }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+      if(window.instgrm){
+          window.instgrm.Embeds.process();
       }
-    }, 400);
   });
-}
 </script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
 <footer class="site-footer mt-5">

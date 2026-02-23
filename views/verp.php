@@ -47,7 +47,7 @@ $pubId = $row['id_pub'];
                     <p>🖱 Clicks: <?= number_format($row['clicks']) ?></p>
                     <div class="row">
                         <div class="col">
-                            <a href="editar.php?id=<?= $row['id_pub'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                            <a href="editarp.php?id=<?= $row['id_pub'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
                         </div>
                         <div class="col">
                             <a href="publicidad.php?id=<?= $row['id_pub'] ?>" class="btn btn-edit" title="Ver"><i class="bi bi-eye"></i></a>

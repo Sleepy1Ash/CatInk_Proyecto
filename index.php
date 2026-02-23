@@ -282,7 +282,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                         <?php echo renderizarVideo("https://www.tiktok.com/@herreratzzz/video/7580105791315643669?is_from_webapp=1&sender_device=pc") ?>
                     </div>
                     <div class="col">
-                        <?php echo renderizarVideo("https://www.tiktok.com/@angelurdaneta80/video/7601583740598504711?is_from_webapp=1&sender_device=pc") ?>
+                        <?php echo renderizarVideo("https://www.instagram.com/reel/DQDSGPpidH8/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==") ?>
                     </div>
                 </div>
                 <a href="<?php echo htmlspecialchars($publicidadInferior['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadInferior['id_pub']); ?>">
