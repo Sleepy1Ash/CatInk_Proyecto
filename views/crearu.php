@@ -37,8 +37,8 @@
                 </small>
             </div>
             <div class="form-group">
-                <div class="row">
-                    <div class="col">
+                <div class="row-permisos">
+                    <div class="col-permiso">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">Permisos Publicidad</h5>
@@ -55,7 +55,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-permiso">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">Permisos Noticias</h5>
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-permiso">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">Permisos Categoría</h5>
@@ -89,9 +89,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
+                    <div class="col-permiso">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">Permisos Correo</h5>
@@ -108,7 +106,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-permiso">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">Permisos Suscripciones</h5>
@@ -125,7 +123,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-permiso">
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="card-title">Permisos Usuarios</h5>
@@ -139,6 +137,23 @@
                                 <span>Capacidad de ediar los usuarios (permisos)</span>
                                 <label><input type="checkbox" name="usuarios[]" value="8"> Eliminar</label>
                                 <span>Capacidad de eliminar usuarios del sistema</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-permiso">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Permisos Videos</h5>
+                            </div>
+                            <div class="card-body form-group">
+                                <label><input type="checkbox" name="videos[]" value="1"> Crear</label>
+                                <span>Capacidad de agregar nuevos videos</span>
+                                <label><input type="checkbox" name="videos[]" value="2"> Ver</label>
+                                <span>Capacidad de acceder y ver en la seccion de videos</span>  
+                                <label><input type="checkbox" name="videos[]" value="4"> Editar</label>
+                                <span>Capacidad de editar los videos (reemplazar)</span>
+                                <label><input type="checkbox" name="videos[]" value="8"> Eliminar</label>
+                                <span>Capacidad de eliminar videos existentes</span>
                             </div>
                         </div>
                     </div>

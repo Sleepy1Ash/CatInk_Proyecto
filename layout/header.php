@@ -5,6 +5,16 @@ $stmtCats = $con->prepare("SELECT nombre FROM categorias");
 $stmtCats->execute();
 $resultCats = $stmtCats->get_result();
 $categorias = $resultCats->fetch_all(MYSQLI_ASSOC);
+// =====================
+// obetener estado de secciones
+// =====================
+$stmt = $con->prepare("SELECT * FROM secciones");
+$stmt->execute();
+$result = $stmt->get_result();
+$secciones = [];
+while($row = $result->fetch_assoc()) {
+    $secciones[$row['nombre']] = $row;
+}
 ?>
 <!doctype html>
 <html lang="es" data-bs-theme="light">

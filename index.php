@@ -50,6 +50,10 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
 $stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 ORDER BY RAND() LIMIT 1");
 $stmt->execute();
 $publicidadInferior = $stmt->get_result()->fetch_assoc();
+// obtener videos
+$stmt = $con->prepare("SELECT * FROM videos WHERE activo = 1 LIMIT 4");
+$stmt->execute();
+$vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
 <!-- ===================== -->
 <!-- SLIDER PRINCIPAL -->
@@ -83,7 +87,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                     <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
                         <span class="carousel-tag"><?= htmlspecialchars($cat) ?></span>
                     <?php endforeach; ?>
-                    <h5><a href="./views/news.php?id=<?= $row['id'] ?>" class="carousel-link"><?= htmlspecialchars($row['titulo']) ?></a></h5>
+                    <h5><a href="/CatInk_Proyecto/views/news.php?id=<?= $row['id'] ?>" class="carousel-link"><?= htmlspecialchars($row['titulo']) ?></a></h5>
                     <p><?= htmlspecialchars($row['descripcion']) ?></p>
                 </div>
             </div>
@@ -108,7 +112,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[0]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[0]['id'] ?>" class="news-link">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[0]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[0]['descripcion']) ?></p>
@@ -127,7 +131,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[1]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[1]['id'] ?>" class="news-link">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[1]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[1]['descripcion']) ?></p>
@@ -147,7 +151,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[2]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[2]['id'] ?>" class="news-link">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[2]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[2]['descripcion']) ?></p>
@@ -165,7 +169,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[3]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[3]['id'] ?>" class="news-link">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[3]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[3]['descripcion']) ?></p>
@@ -183,7 +187,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[4]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[4]['id'] ?>" class="news-link">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[4]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[4]['descripcion']) ?></p>
@@ -203,7 +207,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[5]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[5]['id'] ?>" class="news-link">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[5]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[5]['descripcion']) ?></p>
@@ -221,7 +225,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="./views/news.php?id=<?= $ultimasNoticias[6]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[6]['id'] ?>" class="news-link">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[6]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[6]['descripcion']) ?></p>
@@ -235,9 +239,11 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
         <!-- ===================== -->
         <div class="row mt-5">
             <div class="col-md-8">
-                <a href="<?php echo htmlspecialchars($publicidad['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidad['id_pub']); ?>">
-                    <img src="<?php echo htmlspecialchars($publicidad['imagen']); ?>" alt="" class="banner">
-                </a>
+                <?php if($secciones['publicidad']['estado'] == 1) : ?>
+                    <a href="<?php echo htmlspecialchars($publicidad['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidad['id_pub']); ?>">
+                        <img src="<?php echo htmlspecialchars($publicidad['imagen']); ?>" alt="" class="banner">
+                    </a>
+                <?php endif; ?>
                 <h2><i class="bi bi-newspaper"></i>  Lo más recientes</h2>
                 <?php foreach($noticiasMasRecientes as $row): ?>
                     <div class="card mb-3">
@@ -251,7 +257,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                                         <span class="tag-news"><?= htmlspecialchars($cat) ?></span>
                                     <?php endforeach; ?>
                                     <h4 class="card-title">
-                                        <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="/CatInk_Proyecto/views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </h4>
                                     <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
                                     <span class="text-muted">Publicado: 
@@ -277,30 +283,40 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <div class="row">
-                    <div class="col">
-                        <?php echo renderizarVideo("https://www.tiktok.com/@herreratzzz/video/7580105791315643669?is_from_webapp=1&sender_device=pc") ?>
-                    </div>
-                    <div class="col">
-                        <?php echo renderizarVideo("https://www.instagram.com/reel/DQDSGPpidH8/?utm_source=ig_web_copy_link&igsh=NTc4MTIwNjQ2YQ==") ?>
-                    </div>
-                </div>
-                <a href="<?php echo htmlspecialchars($publicidadInferior['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadInferior['id_pub']); ?>">
-                    <img src="<?php echo htmlspecialchars($publicidadInferior['imagen']); ?>" alt="" class="banner">
-                </a>
+                <?php if($secciones['videos']['estado'] == 1) : ?>
+                    <?php 
+                        $chunkedVideos = array_chunk($vid, 2); // divide en grupos de 2
+                        foreach($chunkedVideos as $videosFila): 
+                    ?>
+                        <div class="row mb-3">
+                            <?php foreach($videosFila as $video): ?>
+                                <div class="col-md-6">
+                                    <?php echo renderizarVideo($video['url_v']); ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if($secciones['publicidad']['estado'] == 1) : ?>
+                    <a href="<?php echo htmlspecialchars($publicidadInferior['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadInferior['id_pub']); ?>">
+                        <img src="<?php echo htmlspecialchars($publicidadInferior['imagen']); ?>" alt="" class="banner">
+                    </a>
+                <?php endif; ?>
             </div>
             <div class="col-md-4">
                 <div class="sidebar-wrapper">
                     <div class="card sidebar-card">
-                        <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
-                            <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="card-img-top">
-                        </a>
+                        <?php if($secciones['publicidad']['estado'] == 1) : ?>
+                            <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
+                                <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="card-img-top">
+                            </a>
+                        <?php endif; ?>
                         <div class="card-body">
                             <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
                             <ul class="list-group list-group-flush mb-3">
                                 <?php foreach($ultimasNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">
-                                        <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="/CatInk_Proyecto/views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -308,7 +324,7 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
                             <ul class="list-group list-group-flush">
                                 <?php foreach($popularesNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">
-                                        <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="/CatInk_Proyecto/views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

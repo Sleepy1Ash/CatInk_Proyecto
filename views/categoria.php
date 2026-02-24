@@ -69,6 +69,10 @@ $stmtPopulares = $con->prepare("
 ");
 $stmtPopulares->execute();
 $populares = $stmtPopulares->get_result();
+//Obtener cuadro publicitario
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 2 ORDER BY RAND() LIMIT 1");
+$stmt->execute();
+$publicidadCuadro = $stmt->get_result()->fetch_assoc();
 ?>
 <div class="container mt-5">
   <div class="container-fluid">
@@ -132,9 +136,11 @@ $populares = $stmtPopulares->get_result();
       <div class="col-md-4">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">
-            <button>
-              <img src="./../img/publicidad.jpeg" class="card-img-top">
-            </button>
+            <?php if($secciones['publicidad']['estado'] == 1) : ?>
+                <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
+                    <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="card-img-top">
+                </a>
+            <?php endif; ?>
             <div class="card-body">
               <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
               <ul class="list-group list-group-flush mb-3">

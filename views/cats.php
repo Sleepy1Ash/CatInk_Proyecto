@@ -117,12 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalSubmit.textContent = "Eliminar";
                 modalForm.dataset.action = "eliminar";
                 modalId.value = btn.dataset.id;
-
-                // Mostrar mensaje de confirmación
                 modalConfirmText.style.display = "block";
-                modalConfirmText.textContent = 
+                modalConfirmText.textContent =
                     `¿Estás seguro de eliminar la categoría "${btn.dataset.nombre}"?`;
-
+                modalNombre.required = false; // CLAVE
                 modalNombre.parentElement.style.display = "none";
                 modal.style.display = "flex";
             });
@@ -143,9 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const formData = new FormData(modalForm);
         let url = "";
-        if(action === "crear") url = "./../../controllers/crearc.php";
-        if(action === "editar") url = "./../../controllers/editarc.php";
-        if(action === "eliminar") url = "./../../controllers/eliminarc.php";
+        if(action === "crear") url = "./../controllers/crearc.php";
+        if(action === "editar") url = "./../controllers/editarc.php";
+        if(action === "eliminar") url = "./../controllers/eliminarc.php";
         fetch(url, { method: "POST", body: formData })
             .then(r => {
                 if (!r.ok) throw new Error("Error HTTP");

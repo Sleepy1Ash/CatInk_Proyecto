@@ -29,6 +29,8 @@ $perm_noticias      = calcPerm($_POST['noticias'] ?? []);
 $perm_categorias    = calcPerm($_POST['categorias'] ?? []);
 $perm_suscripciones = calcPerm($_POST['suscripciones'] ?? []);
 $perm_usuarios      = calcPerm($_POST['usuarios'] ?? []);
+$perm_correos       = calcPerm($_POST['correos'] ?? []);
+$perm_videos       = calcPerm($_POST['videos'] ?? []);
 // ========================
 // SI NO CAMBIA CONTRASEÑA
 // ========================
@@ -36,13 +38,13 @@ if(empty($password)){
     $stmt = $con->prepare("
         UPDATE usuarios SET
         nombre=?, usuario=?, correo=?,
-        perm_publicidad=?, perm_noticias=?, perm_categorias=?, perm_suscripciones=?, perm_usuarios=?
+        perm_publicidad=?, perm_noticias=?, perm_categorias=?, perm_suscripciones=?, perm_usuarios=?, perm_correos=?, perm_videos=?
         WHERE id_u=?
     ");
     $stmt->bind_param(
-        "sssiiiiii",
+        "sssiiiiiiii",
         $nombre, $usuario, $email,
-        $perm_publicidad, $perm_noticias, $perm_categorias, $perm_suscripciones, $perm_usuarios,
+        $perm_publicidad, $perm_noticias, $perm_categorias, $perm_suscripciones, $perm_usuarios, $perm_correos, $perm_videos,
         $id
     );
 // ========================
@@ -57,13 +59,13 @@ if(empty($password)){
     $stmt = $con->prepare("
         UPDATE usuarios SET
         nombre=?, usuario=?, correo=?, pass=?,
-        perm_publicidad=?, perm_noticias=?, perm_categorias=?, perm_suscripciones=?, perm_usuarios=?
+        perm_publicidad=?, perm_noticias=?, perm_categorias=?, perm_suscripciones=?, perm_usuarios=?, perm_correos=?, perm_videos=?
         WHERE id_u=?
     ");
     $stmt->bind_param(
-        "sssssiiiii i",
+        "sssssiiiiiii",
         $nombre, $usuario, $email, $passHash,
-        $perm_publicidad, $perm_noticias, $perm_categorias, $perm_suscripciones, $perm_usuarios,
+        $perm_publicidad, $perm_noticias, $perm_categorias, $perm_suscripciones, $perm_usuarios, $perm_correos, $perm_videos,
         $id
     );
 }

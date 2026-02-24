@@ -80,18 +80,22 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
           <div class="ql-editor">
             <?= $noticia['contenido'] ?>
           </div>
-          <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
-            <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
-          </a>
+          <?php if ($secciones['publicidad']['estado'] == 1) : ?>
+              <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
+                <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
+              </a>
+          <?php endif; ?>
         </div>
       </div>
       <!-- SIDEBAR -->
       <div class="col-md-4">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">
-            <a href="<?= $publicidadCuadro['url'] ?>" class="banner-button" data-pub="<?= $publicidadCuadro['id_pub'] ?>">
-              <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="card-img-top">
-            </a>
+            <?php if($secciones['publicidad']['estado'] == 1) : ?>
+                <a href="<?= $publicidadCuadro['url'] ?>" class="banner-button" data-pub="<?= $publicidadCuadro['id_pub'] ?>">
+                  <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="card-img-top">
+                </a>
+            <?php endif; ?>
             <div class="card-body">
               <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
               <ul class="list-group list-group-flush mb-3">

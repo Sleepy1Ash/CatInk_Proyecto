@@ -1334,3 +1334,78 @@ h4 {
     font-size: 24px;
     cursor: pointer;
 }
+/* formulario de usuarios area de permisos */
+.row-permisos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* centra cards si no llenan el row */
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.col-permiso {
+    flex: 1 1 220px; /* mínimo ancho, se adapta */
+    max-width: 300px; /* ancho máximo de cada card */
+}
+/* 1 card en móvil */
+@media (max-width: 576px) {
+    .col-permiso {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+/* 2 cards en tablets pequeñas */
+@media (min-width: 577px) and (max-width: 768px) {
+    .col-permiso {
+        flex: 1 1 45%;
+        max-width: 45%;
+    }
+}
+/* 3 cards en pantallas medianas */
+@media (min-width: 769px) and (max-width: 1199px) {
+    .col-permiso {
+        flex: 1 1 30%;
+        max-width: 30%;
+    }
+}
+/* 4 cards en pantallas grandes */
+@media (min-width: 1200px) {
+    .col-permiso {
+        flex: 1 1 22%;
+        max-width: 22%;
+    }
+}
+/* Fondo del modal */
+.modal-nativo {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5);
+}
+/* Contenido */
+.modal-content-nativo {
+    background-color: var(--card-bg);
+    margin: 10% auto; 
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+/* Header */
+.modal-header-nativo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+/* Botón cerrar */
+.cerrar {
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}

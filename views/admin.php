@@ -1,6 +1,16 @@
 <?php 
 include(__DIR__ . "/../layout/headerAdmin.php");
 include(__DIR__ . "/../data/conexion.php");
+if(isset($_POST['actualizarEstado']) && isset($_POST['secciones'])){
+    foreach($_POST['secciones'] as $id => $datos){
+        $estado = $datos['estado'] == '1' ? 1 : 0;
+        $stmt = $con->prepare("UPDATE secciones SET estado = ? WHERE id_s = ?");
+        $stmt->bind_param("ii", $estado, $id);
+        $stmt->execute();
+    }
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
+}
 // ====================================
 // ACL GLOBAL
 // ====================================
@@ -66,6 +76,11 @@ $ultimasNoticias = [];
 while($row = $resultNoticias->fetch_assoc()){
     $ultimasNoticias[] = $row;
 }
+$configResult = $con->query("SELECT * FROM secciones");
+$config = [];
+while($row = $configResult->fetch_assoc()){
+    $config[] = $row;
+}
 ?>
 <div class="container-fluid">
     <!-- SALUDO -->
@@ -76,6 +91,10 @@ while($row = $resultNoticias->fetch_assoc()){
     <?php if($ACLNoticias['crear']): ?>
     <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
     <?php endif; ?> 
+    <!-- Botón para abrir el modal -->
+    <button id="btnAbrirModal" class="btn btn-success">
+        <i class="bi bi-gear"></i> Gestionar Estado de Secciones
+    </button>
     <!-- KPIs -->
      <div class="card">
         <div class="card-body">
@@ -183,6 +202,33 @@ while($row = $resultNoticias->fetch_assoc()){
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div id="modalSecciones" class="modal-nativo">
+        <div class="modal-content-nativo">
+            <div class="modal-header-nativo">
+                <h5>Estado de Secciones</h5>
+                <span id="cerrarModal" class="cerrar">&times;</span>
+            </div>
+            <div class="modal-body-nativo">
+                <form action="" method="POST">
+                    <?php foreach($config as $sec): ?>
+                        <div class="mb-2">
+                            <label for="sec_<?= $sec['id_s'] ?>"><?= htmlspecialchars($sec['nombre']) ?></label>
+                            <input type="hidden" name="secciones[<?= $sec['id_s'] ?>][id]" value="<?= $sec['id_s'] ?>">
+                            <select name="secciones[<?= $sec['id_s'] ?>][estado]" id="sec_<?= $sec['id_s'] ?>">
+                                <option value="1" <?= $sec['estado'] == '1' ? 'selected' : '' ?>>Activo</option>
+                                <option value="0" <?= $sec['estado'] == '0' ? 'selected' : '' ?>>Inactivo</option>
+                            </select>
+                        </div>
+                    <?php endforeach; ?>
+                    <div class="mt-3" style="text-align:right;">
+                        <button type="button" id="btnCancelarModal" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-success" name="actualizarEstado">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 <script>
     const charts = {};
     document.addEventListener("DOMContentLoaded", ()=>{ loadGlobalStats(); loadLikesStats(); });
@@ -250,5 +296,20 @@ while($row = $resultNoticias->fetch_assoc()){
             options:{responsive:true,plugins:{title:{display:true,text:title}},scales:{y:{beginAtZero:true}}}
         });
     }
+</script>
+<script>
+const modal = document.getElementById('modalSecciones');
+const btnAbrir = document.getElementById('btnAbrirModal');
+const btnCerrar = document.getElementById('cerrarModal');
+const btnCancelar = document.getElementById('btnCancelarModal');
+// Abrir modal
+btnAbrir.addEventListener('click', ()=> modal.style.display = 'block');
+// Cerrar modal
+btnCerrar.addEventListener('click', ()=> modal.style.display = 'none');
+btnCancelar.addEventListener('click', ()=> modal.style.display = 'none');
+// Cerrar si se da click fuera del contenido
+window.addEventListener('click', e => {
+    if(e.target === modal) modal.style.display = 'none';
+});
 </script>
 <?php include(__DIR__ . "/../layout/footerAdmin.php"); ?>

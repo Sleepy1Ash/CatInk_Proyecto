@@ -24,6 +24,10 @@ function getModulosACL($u){
         'usuarios' => [
             'permiso' => $u['perm_usuarios'],
             'vista'   => '../views/usuarios.php'
+        ],
+        'videos' => [
+            'permiso' => $u['perm_videos'],
+            'vista'   => '../views/videos.php'
         ]
     ];
 

@@ -44,6 +44,8 @@ function mostrarPermisos($perm) {
                     <p><strong>Publicidad:</strong> <?= mostrarPermisos($usuario['perm_publicidad']) ?></p>
                     <p><strong>Suscripciones:</strong> <?= mostrarPermisos($usuario['perm_suscripciones']) ?></p>
                     <p><strong>Usuarios:</strong> <?= mostrarPermisos($usuario['perm_usuarios']) ?></p>
+                    <p><strong>Correos:</strong> <?= mostrarPermisos($usuario['perm_correos']) ?></p>
+                    <p><strong>Videos:</strong> <?= mostrarPermisos($usuario['perm_videos']) ?></p>
                 </div>
             </div>
         </div>

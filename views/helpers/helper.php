@@ -63,5 +63,11 @@ function mapearPermisos($user){
             'editar'   => ($user['perm_correos'] & 4) === 4,
             'eliminar' => ($user['perm_correos'] & 8) === 8
         ],
+        'videos' => [
+            'crear'    => ($user['perm_videos'] & 1) === 1,
+            'leer'     => ($user['perm_videos'] & 2) === 2,
+            'editar'   => ($user['perm_videos'] & 4) === 4,
+            'eliminar' => ($user['perm_videos'] & 8) === 8
+        ]
     ];
 }
