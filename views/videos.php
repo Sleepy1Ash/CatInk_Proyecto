@@ -13,7 +13,7 @@ const ACL = <?= json_encode($ACL) ?>;
 <?php
 include(__DIR__ . "/helpers/videoEmbed.php");
 include(__DIR__ . "/../data/conexion.php");
-$stmt = $con->prepare("SELECT * FROM videos");
+$stmt = $con->prepare("SELECT * FROM videos order by id_v desc");
 $stmt->execute();
 $videos = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>

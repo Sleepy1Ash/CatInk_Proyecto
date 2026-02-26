@@ -16,7 +16,8 @@ function obtenerEmbedVideo($url){
         if(isset($matches[1])){
             return [
                 "src" => "https://www.tiktok.com/embed/v2/".$matches[1],
-                "ratio" => "9:16"
+                "ratio" => "9:16",
+                "type" => "tiktok" // <-- agregamos tipo especial
             ];
         }
     }
@@ -73,6 +74,19 @@ function renderizarVideo($url){
         </script>
         ';
     }
+    // TIKTOK estilo app
+    if(isset($embed['type']) && $embed['type'] == "tiktok"){
+        return '
+        <div class="tiktok-app-wrapper">
+            <iframe 
+                src="'.$embed['src'].'" 
+                frameborder="0"
+                allowfullscreen
+                scrolling="no"
+                allow="encrypted-media;"
+            ></iframe>
+        </div>';
+    }
     // NORMAL (YouTube, TikTok, Facebook, Vimeo)
     $ratio = $embed['ratio'] == "9:16"
         ? "padding-bottom:177.77%; max-width:400px; margin:auto;"
@@ -87,4 +101,34 @@ function renderizarVideo($url){
             </iframe>
         </div>
     ';
+}
+function bloquearEmbeds($html){
+    $consentimiento = isset($_COOKIE['cookies_aceptadas']);
+    if($consentimiento){
+        return $html;
+    }
+    // BLOQUEAR IFRAMES
+    $html = preg_replace_callback(
+        '/<iframe.*?src="(.*?)".*?<\/iframe>/is',
+        function($match){
+            $url = htmlspecialchars($match[1]);
+            return '
+                <div class="embed-placeholder" data-src="'.$url.'">
+                Debes aceptar cookies para ver este contenido externo.
+                <button onclick="aceptarCookies()">Aceptar Cookies</button>
+                </div>';
+        },
+        $html
+    );
+
+    // BLOQUEAR INSTAGRAM BLOCKQUOTE
+    $html = preg_replace(
+        '/<blockquote class="instagram-media".*?<\/blockquote>/is',
+        '<div class="embed-placeholder">
+        Debes aceptar cookies para ver este contenido externo.
+        <button onclick="aceptarCookies()">Aceptar Cookies</button>
+        </div>',
+        $html
+    );
+    return $html;
 }

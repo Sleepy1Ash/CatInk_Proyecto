@@ -1,6 +1,7 @@
 <?php
 include("./../layout/header.php");
 include("./../data/conexion.php");
+include("./helpers/videoEmbed.php");
 $id = intval($_GET['id'] ?? 1);
 // ==============================
 // Obtener noticia con autor y categorías
@@ -78,7 +79,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
           </button>
           <!-- Contenido completo de la noticia -->
           <div class="ql-editor">
-            <?= $noticia['contenido'] ?>
+            <?= bloquearEmbeds($noticia['contenido']) ?>
           </div>
           <?php if ($secciones['publicidad']['estado'] == 1) : ?>
               <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
@@ -135,6 +136,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             <?php endif; ?>
             <div class="card-body">
               <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
+              <hr>
               <ul class="list-group list-group-flush mb-3">
                 <?php while ($row = $ultimas->fetch_assoc()): ?>
                   <li class="list-group-item">
@@ -145,6 +147,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <?php endwhile; ?>
               </ul>
               <h3><i class="bi bi-fire"></i> Lo más popular</h3>
+              <hr>
               <ul class="list-group list-group-flush">
                 <?php while ($row = $populares->fetch_assoc()): ?>
                   <li class="list-group-item">

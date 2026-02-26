@@ -336,7 +336,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 /* List group minimal */
 .list-group { list-style: none; padding: 0; margin: 0; }
 .list-group-flush { border-top: none; }
-.list-group-item { padding: 10px 16px; border-top: 1px solid var(--border); }
+.list-group-item {margin-left: 30px;}
 /* Uso de Bootstrap Icons: las reglas específicas se obtienen desde
   la hoja de estilos de Bootstrap Icons importada en los headers.
   Se mantiene la clase .bi por compatibilidad visual. */
@@ -854,6 +854,15 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .form-group textarea {
     resize: vertical;
 }
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text);
+}
 /* Ajuste del botón */
 .form-actions {
     margin-top: 30px;
@@ -872,6 +881,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .btn-success:hover {
     background: #218838;
 }
+/* enbebido de videos */
 .video-responsive{
     position: relative;
     width: 100%;
@@ -907,6 +917,20 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
     width: 100%;
     height: 100%;
 }
+.tiktok-app-wrapper{
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: 580px; /* altura suficiente para mostrar video + descripción */
+    overflow: hidden;
+    border-radius: 12px;
+    margin: auto;
+}
+.tiktok-app-wrapper iframe{
+    width: 100%;
+    height: 100%;
+    border: none;
+}
 /* menu de compartir */
 .share-wrapper{
   width:100%;
@@ -929,7 +953,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 .menus li{
   position:absolute;
   top:50%;
-  left:50%;
+  left:48%;
   list-style:none;
   transform:
     translate(-50%, -50%)
@@ -986,4 +1010,43 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
       translate(50px)
       rotate(calc(-360deg/6 * var(--i)));
   }
+}
+/* banner de cookies */
+.cookie-banner{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:#111;
+color:#fff;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:9999;
+}
+.cookie-banner button{
+background:#ff3c3c;
+border:none;
+padding:8px 15px;
+color:#fff;
+cursor:pointer;
+}
+/* politicas de cookies */
+ol{
+  margin-left:20px;
+  margin-bottom:20px;
+}
+li{
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+ul{
+  margin-left:20px;
+  margin-bottom:20px;
+}
+hr{
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
 }
