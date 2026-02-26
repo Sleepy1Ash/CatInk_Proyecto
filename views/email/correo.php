@@ -6,7 +6,7 @@
     require("./../../PHPMailer/src/Exception.php");
     require("./../../PHPMailer/src/SMTP.php");
     include("./../../data/conexion.php");
-    $hoy = date("Y-m-d");
+    $hoy = "2026-02-06";
     $sql = "SELECT * FROM noticias WHERE DATE(fecha_publicacion) <= ?";
     $stmt = $con->prepare($sql);
     $stmt->bind_param("s", $hoy);
@@ -29,6 +29,8 @@
         'logo_alt.png'
     );
     foreach ($noticias as $index => $noticia) {
+        $descripcion = strip_tags($noticia['descripcion']); // quitar HTML
+        $descripcion = mb_strimwidth($descripcion, 0, 100, '...');
         $webp = 'http://192.168.100.17/CatInk_Proyecto/' . $noticia['crop3'];
         $png = __DIR__ . "/logo_temp_{$index}.png"; // archivos temporales únicos
         // Convertir WebP a PNG
@@ -68,8 +70,8 @@
                                 '>
                                 <h3 style='margin:0;'>{$noticia['titulo']}</h3>
                                 </a>
-                                <p style='margin-top:10px;'>
-                                {$noticia['descripcion']}
+                                <p style='margin:10px; '>
+                                {$descripcion}
                                 </p>
                                 </td>
                                 </tr>

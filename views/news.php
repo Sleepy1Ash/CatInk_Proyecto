@@ -59,6 +59,10 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
       <!-- COLUMNA PRINCIPAL -->
       <div class="col-md-8">
         <div class="container-noticia">
+          <?php
+            $img = !empty($noticia['crop1']) ? "./../" . htmlspecialchars($noticia['crop1']) : "./../img/placeholder.jpg";
+          ?>
+          <img src="<?= $img ?>" alt="" class="img-titular">
           <!-- Categorías -->
           <?php foreach ($cats as $cat): ?>
             <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
@@ -72,10 +76,6 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
           <button id="likeBtn" class="like-btn" data-id="<?= $id ?>">
             ❤️ Like <span id="likeCount"><?= $noticia['likes'] ?></span>
           </button>
-          <?php
-            $img = !empty($noticia['crop1']) ? "./../" . htmlspecialchars($noticia['crop1']) : "./../img/placeholder.jpg";
-          ?>
-          <img src="<?= $img ?>" alt="" class="img-titular">
           <!-- Contenido completo de la noticia -->
           <div class="ql-editor">
             <?= $noticia['contenido'] ?>
@@ -85,6 +85,43 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
               </a>
           <?php endif; ?>
+          <div class="share-wrapper">
+            <div class="menus" id="shareMenu">
+              <div class="toggles" onclick="toggleShareMenu()">
+                <i class="bi bi-share-fill"></i>
+              </div>
+              <li style="--i: 0; --clr: var(--facebook)">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                  <i class="bi bi-facebook"></i>
+                </a>
+              </li>
+              <li style="--i: 1; --clr: var(--instagram)">
+                <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                  <i class="bi bi-instagram"></i>
+                </a>
+              </li>
+              <li style="--i: 2; --clr: var(--whatsapp)">
+                <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                  <i class="bi bi-whatsapp"></i>
+                </a>
+              </li>
+              <li style="--i: 3; --clr: var(--twitter)">
+                <a href="https://twitter.com/intent/tweet?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                  <i class="bi bi-twitter-x"></i>
+                </a>
+              </li>
+              <li style="--i: 4; --clr: var(--linkedin)">
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                  <i class="bi bi-linkedin"></i>
+                </a>
+              </li>
+              <li style="--i: 5; --clr: var(--messenger)">
+                <a href="https://www.facebook.com/dialog/send?link=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>&app_id=TU_APP_ID" target="_blank">
+                  <i class="bi bi-messenger"></i>
+                </a>
+              </li>
+            </div>
+          </div>
         </div>
       </div>
       <!-- SIDEBAR -->
@@ -168,5 +205,10 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
       this.disabled = true;
     }
   });
+</script>
+<script>
+  function toggleShareMenu(){
+    document.getElementById("shareMenu").classList.toggle("active");
+  }
 </script>
 <?php include("./../layout/footer.php"); ?>

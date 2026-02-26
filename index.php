@@ -112,7 +112,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[0]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[0]['id'] ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[0]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[0]['descripcion']) ?></p>
@@ -131,7 +131,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[1]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[1]['id'] ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[1]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[1]['descripcion']) ?></p>
@@ -151,7 +151,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[2]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[2]['id'] ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[2]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[2]['descripcion']) ?></p>
@@ -169,7 +169,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[3]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[3]['id'] ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[3]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[3]['descripcion']) ?></p>
@@ -187,7 +187,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[4]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[4]['id'] ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[4]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[4]['descripcion']) ?></p>
@@ -207,7 +207,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[5]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[5]['id'] ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[5]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[5]['descripcion']) ?></p>
@@ -225,7 +225,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[6]['id'] ?>" class="news-link">
+                            <a href="/CatInk_Proyecto/views/news.php?id=<?= $ultimasNoticias[6]['id'] ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[6]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[6]['descripcion']) ?></p>
