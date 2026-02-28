@@ -16,7 +16,9 @@ function primerModuloLectura($acl){
         'noticias'       => '../views/contenidos.php',
         'publicidad'     => '../views/publicidad.php',
         'suscripciones'  => '../views/suscripciones.php',
-        'usuarios'       => '../views/usuarios.php'
+        'usuarios'       => '../views/usuarios.php',
+        'correos'        => '../views/correos.php',
+        'videos'         => '../views/videos.php'
     ];
     foreach($acl as $modulo => $permisos){
         if($permisos['leer']){
@@ -70,4 +72,37 @@ function mapearPermisos($user){
             'eliminar' => ($user['perm_videos'] & 8) === 8
         ]
     ];
+}
+function getModulosACL($u){
+    return [
+        'categorias' => [
+            'permiso' => $u['perm_categorias'],
+            'vista'   => '../views/cats.php'
+        ],
+        'noticias' => [
+            'permiso' => $u['perm_noticias'],
+            'vista'   => '../views/contenidos.php'
+        ],
+        'publicidad' => [
+            'permiso' => $u['perm_publicidad'],
+            'vista'   => '../views/publicidad.php'
+        ],
+        'correos' => [
+            'permiso' => $u['perm_correos'],
+            'vista'   => '../views/correo_pub.php'
+        ],
+        'suscripciones' => [
+            'permiso' => $u['perm_suscripciones'],
+            'vista'   => '../views/suscripciones.php'
+        ],
+        'usuarios' => [
+            'permiso' => $u['perm_usuarios'],
+            'vista'   => '../views/usuarios.php'
+        ],
+        'videos' => [
+            'permiso' => $u['perm_videos'],
+            'vista'   => '../views/videos.php'
+        ]
+    ];
+
 }

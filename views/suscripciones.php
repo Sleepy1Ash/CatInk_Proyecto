@@ -1,6 +1,16 @@
 <?php 
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
+$ACL = $_SESSION['ACL']['suscripciones']??[
+    "crear" => false,
+    "leer" => false,
+    "editar" => false,
+    "eliminar" => false
+];
+if (!$ACL['leer']) {
+    header("Location: admin.php");
+    exit();
+}
 $sql = "SELECT * FROM suscripciones";
 $resultado = mysqli_query($con, $sql);
 $suscripciones = mysqli_fetch_all($resultado, MYSQLI_ASSOC);

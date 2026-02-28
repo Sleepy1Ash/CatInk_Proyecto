@@ -1,6 +1,16 @@
 <?php
 include("./../layout/headerAdmin.php");
 include("./../controllers/aclcontroller.php");
+$ACL = $_SESSION['ACL']['usuarios']??[
+    'crear' => false,
+    'leer' => false,
+    'editar' => false,
+    'eliminar' => false,
+];
+if (!$ACL['editar']) {
+    header("Location: admin.php");
+    exit();
+}
 proteger('usuarios', 'editar');
 include("./../data/conexion.php");
 $id = $_GET['id'];
@@ -163,7 +173,9 @@ $user = $stmt->get_result()->fetch_assoc();
                 </div>
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn btn-success">Actualizar Usuario</button>
+                <?php if($ACL['editar']): ?>
+                    <button type="submit" class="btn btn-success">Actualizar Usuario</button>
+                <?php endif; ?>
             </div>
         </div>
     </form>

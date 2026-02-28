@@ -7,6 +7,10 @@ $ACl = $_SESSION['ACL']['publicidad']??[
     "editar" => false,
     "eliminar" => false
 ];
+if(!$ACl['crear']) {
+    header("Location: admin.php");
+    exit();
+}
 proteger('publicidad','crear');
 ?>
 <div class="container-fluid">

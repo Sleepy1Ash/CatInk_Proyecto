@@ -1,21 +1,6 @@
 <?php
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
-// ============================
-// ACL GLOBAL PARA NOTICIAS
-// ============================
-$ACL = $_SESSION['ACL']['noticias'] ?? [
-    "crear" => false,
-    "leer" => false,
-    "editar" => false,
-    "eliminar" => false
-];
-// JS global ACL
-?>
-<script>
-    const ACL = <?= json_encode($ACL) ?>;
-</script>
-<?php
 if (empty($ACL['leer'])) {
     header("Location: admin.php");
     exit();

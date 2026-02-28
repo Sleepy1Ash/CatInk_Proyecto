@@ -7,6 +7,10 @@
         "editar" => false,
         "eliminar" => false
     ];
+    if(!$ACL['leer']) {
+        header("Location: admin.php");
+        exit();
+    }
 ?>
 <script>
     const ACL = <?= json_encode($ACL) ?>;

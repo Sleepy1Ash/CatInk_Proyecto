@@ -6,6 +6,10 @@ $ACL = $_SESSION['ACL']['usuarios']??[
     'editar' => 4,
     'eliminar' => 8,
 ];
+if (!($ACL['leer'])) {
+    header("Location: admin.php");
+    exit();
+}
 include("./../data/conexion.php");
 $id = $_GET['id'];
 $stmt = $con->prepare("SELECT * FROM usuarios WHERE id_u = $id");
@@ -52,10 +56,10 @@ function mostrarPermisos($perm) {
         <div class="card-footer">
             <a href="./../views/usuarios.php" class="btn btn-secondary">Volver</a>
             <?php if ($ACL['editar']) : ?>
-            <a href="./../views/editaru.php?id=<?= $usuario['id_u'] ?>" class="btn btn-secondary">Editar</a>
+                <a href="./../views/editaru.php?id=<?= $usuario['id_u'] ?>" class="btn btn-secondary">Editar</a>
             <?php endif; ?>
             <?php if ($ACL['eliminar']) : ?>
-            <button class="btn btn-delete-usuario" data-id="<?= $usuario['id_u'] ?>" data-nombre="<?= $usuario['nombre'] ?>" title="Eliminar Usuario">Eliminar</button>
+                <button class="btn btn-delete-usuario" data-id="<?= $usuario['id_u'] ?>" data-nombre="<?= $usuario['nombre'] ?>" title="Eliminar Usuario">Eliminar</button>
             <?php endif; ?>
         </div>
     </div>

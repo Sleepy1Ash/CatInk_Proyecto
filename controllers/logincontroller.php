@@ -1,6 +1,5 @@
 <?php
 include("../data/conexion.php");
-include("../views/helpers/modulos.php");
 include("../views/helpers/helper.php");
 // ============================
 // OBTENER DATOS DEL FORMULARIO

@@ -61,7 +61,7 @@ try {
             ];
         }
         $dataCategorias[$cat]['vistas'][$label] = (int)$row['vistas'];
-        $dataCategorias[$cat]['tiempo'][$label] = (int)$row['tiempo'];
+        $dataCategorias[$cat]['tiempo'][$label] = (float)$row['tiempo']/60;
     }
     // ============================
     // Normalizar arrays (rellenar ceros)

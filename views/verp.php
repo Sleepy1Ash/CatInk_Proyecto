@@ -1,18 +1,28 @@
 <?php
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
+$ACL = $_SESSION['ACL']['publicidad'] ?? [
+    "crear" => false,
+    "leer" => false,
+    "editar" => false,
+    "eliminar" => false
+];
+if (!$ACL['leer']) {
+    header("Location: publicidad.php");
+    exit;
+}
 
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
     header("Location: ./../views/publicidad.php");
     exit;
 }
-
 // ===================== PUBLICIDAD + TOTALES =====================
 $stmt = $con->prepare("
     SELECT 
         p.*,
         (SELECT COUNT(*) FROM publicidad_views WHERE publicidad_id = p.id_pub) AS vistas,
+        (SELECT COALESCE(AVG(tiempo_segundos),0) FROM publicidad_views WHERE publicidad_id = p.id_pub) AS tiempo_promedio,
         (SELECT COALESCE(SUM(tiempo_segundos),0) FROM publicidad_views WHERE publicidad_id = p.id_pub) AS tiempo_total,
         (SELECT COUNT(*) FROM publicidad_clicks WHERE publicidad_id = p.id_pub) AS clicks
     FROM publicidad p
@@ -22,7 +32,6 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $res = $stmt->get_result();
 $row = $res->fetch_assoc();
-
 if (!$row) {
     header("Location: ./../views/publicidad.php");
     exit;
@@ -30,6 +39,9 @@ if (!$row) {
 
 $pubId = $row['id_pub'];
 ?>
+<script>
+    const ACL = <?= json_encode($ACL) ?>;
+</script>
 <div class="container-fluid">
     <h1>Publicidad: <?= htmlspecialchars($row['titulo']) ?></h1>
     <div class="row mt-3">
@@ -42,16 +54,16 @@ $pubId = $row['id_pub'];
                     <p>URL: <a href="<?= htmlspecialchars($row['url']) ?>" target="_blank"><?= htmlspecialchars($row['url']) ?></a></p>
                 </div>
                 <div class="card-footer">
-                    <p>👁 Vistas: <?= number_format($row['vistas']) ?></p>
-                    <p>⏱ Tiempo total: <?= number_format($row['tiempo_total']) ?> s</p>
-                    <p>🖱 Clicks: <?= number_format($row['clicks']) ?></p>
+                    <p><i class="bi bi-eye"></i> Vistas: <?= number_format($row['vistas']) ?></p>
+                    <p><i class="bi bi-stopwatch"></i> Tiempo promedio: <?= number_format($row['tiempo_promedio']) ?> s</p>
+                    <p><i class="bi bi-stopwatch-fill"></i> Tiempo total: <?= number_format($row['tiempo_total']) ?> s</p>
+                    <p><i class="bi bi-mouse"></i> Clicks: <?= number_format($row['clicks']) ?></p>
                     <div class="row">
-                        <div class="col">
-                            <a href="editarp.php?id=<?= $row['id_pub'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
-                        </div>
-                        <div class="col">
-                            <a href="publicidad.php?id=<?= $row['id_pub'] ?>" class="btn btn-edit" title="Ver"><i class="bi bi-eye"></i></a>
-                        </div>
+                        <?php if($ACL['editar']): ?>
+                            <div class="col">
+                                <a href="editarp.php?id=<?= $row['id_pub'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

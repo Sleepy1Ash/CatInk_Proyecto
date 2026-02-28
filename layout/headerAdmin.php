@@ -16,7 +16,8 @@ $mapVistaModulo = [
     'publicidad' => 'publicidad',
     'suscripciones' => 'suscripciones',
     'usuarios' => 'usuarios',
-    'correos' => 'correos'
+    'correos' => 'correos',
+    'videos' => 'videos'
 ];
 $superadmin = $_SESSION['superadmin'];
 // cargar acl globalmente
@@ -94,7 +95,6 @@ if (!$fila) {
             <li class="sidebar-menu-item">
                 <a href="./admin.php" class="sidebar-menu-link"><i class="bi bi-house"></i> Inicio</a>
             </li>
-            <hr>
         <?php endif; ?>
         <?php if (($_SESSION['ACL']['categorias']['leer']?? false)): ?>
             <li class="sidebar-menu-item">
@@ -126,9 +126,11 @@ if (!$fila) {
                 <a href="./usuarios.php" class="sidebar-menu-link">Usuarios</a>
             </li>
         <?php endif; ?>
-        <li class="sidebar-menu-item">
-            <a href="./videos.php" class="sidebar-menu-link">Videos</a>
-        </li>
+        <?php if (($_SESSION['ACL']['videos']['leer']?? false)): ?>
+            <li class="sidebar-menu-item">
+                <a href="./videos.php" class="sidebar-menu-link">Videos</a>
+            </li>
+        <?php endif; ?>
     </ul>
     <div class="sidebar-footer">
       <button id="themeToggle" class="btn btn-icon" title="Cambiar tema">🌙</button>

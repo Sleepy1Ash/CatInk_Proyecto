@@ -1,6 +1,16 @@
 <?php
     include("./../layout/headerAdmin.php");
     include("./../controllers/aclcontroller.php");
+    $ACL = $_SESSION['ACL']['usuarios']??[
+        'crear' => false,
+        'leer' => false,
+        'editar' => false,
+        'eliminar' => false,
+    ];
+    if (!$ACL['crear']) {
+        header("Location: admin.php");
+        exit();
+    }
     proteger('usuarios', 'crear');
     include("./../data/conexion.php");
 ?>
@@ -160,7 +170,9 @@
                 </div>
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn btn-success">Crear Usuario</button>
+                <?php if($ACL['crear']): ?>
+                    <button type="submit" class="btn btn-success">Crear Usuario</button>
+                <?php endif; ?>
             </div>
         </div>
     </form>

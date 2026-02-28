@@ -1,6 +1,16 @@
 <?php
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
+$ACL = $_SESSION['ACL']['noticias'] ?? [
+    "crear" => false,
+    "leer" => false,
+    "editar" => false,
+    "eliminar" => false
+];
+if (empty($ACL['leer'])) {
+    header("Location: admin.php");
+    exit();
+}
 
 $id = intval($_GET['id'] ?? 0);
 if ($id <= 0) {
@@ -35,6 +45,9 @@ function quillPreview($html, $limit = 500) {
     return mb_strlen($text) > $limit ? mb_substr($text, 0, $limit) . '...' : $text;
 }
 ?>
+<script>
+    const ACL = <?= json_encode($ACL) ?>;
+</script>
 <div class="container-fluid">
     <h1>Noticia: <?= htmlspecialchars($row['titulo']) ?></h1>
     <div class="row mt-3">
@@ -47,17 +60,23 @@ function quillPreview($html, $limit = 500) {
                     <p><small><?= htmlspecialchars(quillPreview($row['contenido'])) ?></small></p>
                 </div>
                 <div class="card-footer">
-                    <p>👁 Vistas: <?= number_format($row['vistas']) ?></p>
-                    <p>👍 Likes: <?= number_format($row['likes']) ?></p>
-                    <p>⏱ Tiempo total: <?= number_format($row['tiempo_total']) ?> s</p>
-                    <div class="row">
-                        <div class="col">
-                            <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                    <p><i class="bi bi-eye"></i> Vistas: <?= number_format($row['vistas']) ?></p>
+                    <p><i class="bi bi-heart"></i> Likes: <?= number_format($row['likes']) ?></p>
+                    <p><i class="bi bi-clock"></i>  Tiempo total: <?= number_format($row['tiempo_total']) ?> s</p>
+                    <?php if ($ACL['editar']): ?>
+                        <div class="row">
+                            <?php if ($ACL['editar']): ?>
+                                <div class="col">
+                                    <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                                </div>
+                            <?php endif; ?>
+                            <?php if ($ACL['leer']): ?>
+                                <div class="col">
+                                    <a href="newsAdmin.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Ver"><i class="bi bi-eye"></i></a>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                        <div class="col">
-                            <a href="newsAdmin.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Ver"><i class="bi bi-eye"></i></a>
-                        </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -1,6 +1,16 @@
 <?php
     include("./../layout/headerAdmin.php");
     include("./../controllers/aclcontroller.php");
+    $ACL = $_SESSION['ACL']['publicidad'] ?? [
+        "crear" => false,
+        "leer" => false,
+        "editar" => false,
+        "eliminar" => false
+    ];
+    if (!$ACL['editar']) {
+        header("Location: publicidad.php");
+        exit;
+    }
     proteger('publicidad','editar');
     include("./../data/conexion.php");
     if (!isset($_GET['id'])) {
@@ -35,6 +45,9 @@
         $categorias[] = $row;
     }
 ?>
+<script>
+    const ACL = <?= json_encode($ACL) ?>;
+</script>
 <div class="container">
     <h2>Editar Publicidad</h2>
     <div class="mt-3">
@@ -122,9 +135,11 @@
                 <input type="datetime-local" id="fechaFin" name="fechaFin" value="<?= date('Y-m-d\TH:i', strtotime($publicidad['fecha_fin'])) ?>" required>
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn btn-success" name="actualizarPublicidad">
-                    Actualizar publicidad
-                </button>
+                <?php if ($ACL['editar']): ?>
+                    <button type="submit" class="btn btn-success" name="actualizarPublicidad">
+                        Actualizar publicidad
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </form>

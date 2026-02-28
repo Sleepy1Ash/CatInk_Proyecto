@@ -1,6 +1,16 @@
 <?php
 include("./../layout/headerAdmin.php");
 include("./../data/conexion.php");
+$ACL = $_SESSION['ACL']['noticias'] ?? [
+    "crear" => false,
+    "leer" => false,
+    "editar" => false,
+    "eliminar" => false
+];
+if (empty($ACL['leer'])) {
+    header("Location: admin.php");
+    exit();
+}
 $id = intval($_GET['id'] ?? 1);
 // ==============================
 // Obtener noticia con autor y categorías

@@ -89,12 +89,15 @@ while($row = $configResult->fetch_assoc()){
     </div>
     <!-- BOTÓN NUEVA NOTICIA -->
     <?php if($ACLNoticias['crear']): ?>
-    <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
+        <a href="crear.php" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva Noticia</a>
     <?php endif; ?> 
     <!-- Botón para abrir el modal -->
-    <button id="btnAbrirModal" class="btn btn-success">
-        <i class="bi bi-gear"></i> Gestionar Estado de Secciones
-    </button>
+     <?php if($superadmin): ?>
+        <a href="paginas.php" class="btn btn-success"><i class="bi bi-card-text"></i> Editar "Nosotros" y "Terminos y condiciciones"</a>
+        <button id="btnAbrirModal" class="btn btn-success">
+            <i class="bi bi-gear"></i> Gestionar Estado de Secciones
+        </button>
+    <?php endif; ?>
     <!-- KPIs -->
      <div class="card">
         <div class="card-body">
@@ -191,9 +194,9 @@ while($row = $configResult->fetch_assoc()){
                                 <p class="small text-muted"><?= htmlspecialchars($desc) ?></p>
                             </div>
                             <div class="card-footer d-flex justify-content-between small text-muted">
-                                <span><i class="bi bi-eye"></i> <?= $n['vistas'] ?></span>
-                                <span><i class="bi bi-clock"></i> <?= number_format($n['tiempo_total_stats']/60,0) ?>m</span>
-                                <span><i class="bi bi-heart"></i> <?= $n['likes'] ?></span>
+                                <span><i class="bi bi-eye"></i> <?= $n['vistas'] ?> </span>
+                                <span><i class="bi bi-clock"></i> <?= number_format($n['tiempo_total_stats']/60,0) ?>m </span>
+                                <span><i class="bi bi-heart"></i> <?= $n['likes'] ?> </span>
                             </div>
                         </div>
                     </div>
@@ -241,7 +244,7 @@ while($row = $configResult->fetch_assoc()){
         fetch(`./../controllers/obtener_estadisticas_globales.php?fecha_inicio=${f1}&fecha_fin=${f2}`)
             .then(r=>r.json()).then(d=>{
                 renderAreaChart('globalChartVistas', d, 'vistas', 'Vistas por categoría');
-                renderAreaChart('globalChartTiempo', d, 'tiempo', 'Tiempo de lectura (s)');
+                renderAreaChart('globalChartTiempo', d, 'tiempo', 'Tiempo de lectura por categoría (Min)');
             });
     }
     // ================================

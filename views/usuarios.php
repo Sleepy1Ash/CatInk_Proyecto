@@ -6,6 +6,10 @@ $ACL = $_SESSION['ACL']['usuarios'] ?? [
     'editar' => true,
     'eliminar' => true,
 ];
+if (!$ACL['leer']) {
+    header("Location: admin.php");
+    exit();
+}
 ?>
 <script>
     ACL = <?= json_encode($ACL) ?>;

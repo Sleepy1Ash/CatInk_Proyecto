@@ -7,6 +7,10 @@ $ACl = $_SESSION['ACL']['publicidad']??[
     "editar" => false,
     "eliminar" => false
 ];
+if(!$ACl['editar']) {
+    header("Location: admin.php");
+    exit();
+}
 proteger('publicidad','crear');
 $id = $_GET['id'] ?? null;
 if($id){
@@ -52,7 +56,7 @@ if($id){
                 <input type="datetime-local" name="envio" class="btn-calendar" value="<?= $correo['envio'] ?>">
             </div>
             <div class="form-actions">
-                <?php if($ACl['crear']): ?>
+                <?php if($ACl['editar']): ?>
                     <button type="submit" class="btn btn-success">Guardar</button>
                 <?php endif; ?>
             </div>
