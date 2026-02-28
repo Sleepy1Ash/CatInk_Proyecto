@@ -1,3 +1,8 @@
+<div id="cookie-banner" class="cookie-banner">
+  Utilizamos cookies para publicidad, análisis y contenido embebido.
+  <a href="./views/politica-cookies.php">Leer más</a>
+  <button onclick="aceptarCookies()">Aceptar</button>
+</div>
 <!-- Fin del contenido principal -->
 </main>
 <!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
@@ -24,6 +29,34 @@
           window.instgrm.Embeds.process();
       }
   });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        const banner = document.getElementById("cookie-banner");
+        // Si ya aceptó, ocultar banner
+        if(document.cookie.includes("cookies_aceptadas=true")){
+            if(banner) banner.style.display="none";
+            cargarCookies();
+        }
+    });
+    function aceptarCookies(){
+        document.cookie = "cookies_aceptadas=true; path=/; max-age=" + (60*60*24*365);
+        const banner = document.getElementById("cookie-banner");
+        if(banner) banner.style.display="none";
+        cargarCookies();
+        // Recargar para que PHP deje pasar embeds bloqueados
+        location.reload();
+    }
+    function cargarCookies(){
+        // GOOGLE ADSENSE
+        if(!document.getElementById("adsense-script")){
+            var ads = document.createElement('script');
+            ads.id="adsense-script";
+            ads.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+            ads.async=true;
+            document.body.appendChild(ads);
+        }
+    }
 </script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
 <footer class="site-footer mt-5">

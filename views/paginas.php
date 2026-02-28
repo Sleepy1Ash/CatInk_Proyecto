@@ -57,7 +57,7 @@
             </div>
             <div class="form-group">
                 <label>Contenido</label>
-                <div id="editorpag" style="height:200px;"></div>
+                <div id="editorpag" class="editor-content"></div>
                 <!-- AQUI SE GUARDA QUILL -->
                 <input type="hidden" name="contenido" id="contenido">
             </div>
