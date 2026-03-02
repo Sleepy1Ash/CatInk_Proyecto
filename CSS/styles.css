@@ -43,12 +43,12 @@ html,body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Rob
   --messenger: #0084ff;
 }
 [data-bs-theme="dark"] #logo{
-  content: url('/CatInk_Proyecto/img/logo_alt.png');
+  content: url('https://www.catink.com.mx//img/logo_alt.png');
 }
 /* Layout general: cuerpo como columna flex para sticky footer */
 body { display:flex; flex-direction:column; min-height:100vh; background: var(--bg); color: var(--text); overflow-x: hidden; }
 .site-main {
-  padding: 16px;
+  padding: 10px;
   flex: 1;
 }
 h2 {
@@ -64,7 +64,7 @@ h2 {
 }
 /* Basic container utilities */
 .container { width: 100%; max-width: 1140px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
-.container-fluid { width: 100%; padding-left: 16px; padding-right: 16px; }
+.container-fluid { width: 100%; padding-left: 10px; padding-right: 10px; }
 .container-noticia { width: 100%; max-width: 800px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
 /* =========================
    Navbar & Header Styles
@@ -92,10 +92,11 @@ h2 {
   margin-right: 0;
 }
 #logo {
-  content: url('/CatInk_Proyecto/img/logo.png');
+  content: url('https://www.catink.com.mx/img/logo.png');
   max-height: 50px;
   width: auto;
   object-fit: contain;
+  display: block;
 }
 /* Toggler (Mobile) */
 .navbar-toggler {
@@ -985,7 +986,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   width:60px;
   height:60px;
   background:var(--bg);
-  color:white;
+  color:var(--text);
   border-radius:50%;
   display:flex;
   align-items:center;
@@ -1017,8 +1018,8 @@ position:fixed;
 bottom:0;
 left:0;
 width:100%;
-background:#111;
-color:#fff;
+background:var(--bg);
+color:var(--text);
 padding:15px;
 display:flex;
 justify-content:space-between;
@@ -1026,8 +1027,9 @@ align-items:center;
 z-index:9999;
 }
 .cookie-banner button{
-background:#ff3c3c;
+background:#dc2a74;
 border:none;
+border-radius: 15px;
 padding:8px 15px;
 color:#fff;
 cursor:pointer;
@@ -1049,4 +1051,34 @@ hr{
   border: none;
   border-top: 1px solid var(--border);
   margin: 20px 0;
+}
+/* Carrucel de videos */
+.video-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* Para “encajar” en cada slide */
+    -webkit-overflow-scrolling: touch; /* Suaviza el scroll en móviles */
+    gap: 1rem; /* espacio entre videos */
+    padding-bottom: 0.5rem;
+}
+.video-carousel::-webkit-scrollbar {
+    height: 8px;
+}
+.video-carousel::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 4px;
+}
+.video-slide {
+    flex: 0 0 auto; /* que no se estire, mantener su tamaño */
+    scroll-snap-align: start;
+    width: 300px; /* tamaño de cada video, ajustable */
+    max-width: 90vw; /* que no se salga en móviles */
+}
+.video-responsive iframe,
+.video-responsive blockquote.instagram-media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
 }

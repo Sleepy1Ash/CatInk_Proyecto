@@ -1,6 +1,6 @@
 <div id="cookie-banner" class="cookie-banner">
   Utilizamos cookies para publicidad, análisis y contenido embebido.
-  <a href="./views/politica-cookies.php">Leer más</a>
+  <a href="./views/politica-cookies.php" class="news-link">Leer más</a>
   <button onclick="aceptarCookies()">Aceptar</button>
 </div>
 <!-- Fin del contenido principal -->

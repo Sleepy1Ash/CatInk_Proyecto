@@ -58,20 +58,16 @@ function renderizarVideo($url){
         return "<p>No se puede mostrar el video</p>";
     }
     // INSTAGRAM
-    if(isset($embed['type']) && $embed['type'] == "instagram"){
+    if(isset($embed['type']) && $embed['type'] === "instagram"){
+        // Solo el blockquote oficial + script async
         return '
-        <div class="video-responsive-vertical">
-            <blockquote 
-                class="instagram-media"
-                data-instgrm-permalink="'.$embed['src'].'"
-                data-instgrm-version="14">
+        <div class="video-slide">
+            <blockquote class="instagram-media" 
+                        data-instgrm-permalink="'.$embed['src'].'" 
+                        data-instgrm-version="14">
             </blockquote>
         </div>
-        <script>
-        if(window.instgrm){
-            window.instgrm.Embeds.process();
-        }
-        </script>
+        <script async src="https://www.instagram.com/embed.js"></script>
         ';
     }
     // TIKTOK estilo app

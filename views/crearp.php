@@ -11,7 +11,7 @@
 ?>
 <div class="container">
     <h2>Crear Publicidad</h2>
-    <form action="./../../CatInk_Proyecto/controllers/guardar_publicidad.php" method="POST" enctype="multipart/form-data">
+    <form action="./../../controllers/guardar_publicidad.php" method="POST" enctype="multipart/form-data">
         <div class="form-card card">
             <input type="hidden" name="autor" value="<?= $fila['id_u'] ?>">
             <div class="form-group">

@@ -6,7 +6,14 @@
     require("./../../PHPMailer/src/Exception.php");
     require("./../../PHPMailer/src/SMTP.php");
     include("./../../data/conexion.php");
-    $hoy = "2026-02-06";
+    $hora = "SELECT hora FROM programacion_correos LIMIT 1";
+    $stmtHora = $con->prepare($hora);
+    $stmtHora->execute();
+    $resultHora = $stmtHora->get_result();
+    $rowHora = $resultHora->fetch_assoc();
+    $horaProgramada = $rowHora['hora'];
+    if (abs(strtotime(date("H:i:s")) - strtotime($horaProgramada)) <= 60) {
+    $hoy = date("Y-m-d H:i:s");
     $sql = "SELECT * FROM noticias WHERE DATE(fecha_publicacion) <= ?";
     $stmt = $con->prepare($sql);
     $stmt->bind_param("s", $hoy);
@@ -31,7 +38,7 @@
     foreach ($noticias as $index => $noticia) {
         $descripcion = strip_tags($noticia['descripcion']); // quitar HTML
         $descripcion = mb_strimwidth($descripcion, 0, 100, '...');
-        $webp = 'http://192.168.100.17/CatInk_Proyecto/' . $noticia['crop3'];
+        $webp = 'https://catink.com.mx/' . $noticia['crop3'];
         $png = __DIR__ . "/logo_temp_{$index}.png"; // archivos temporales únicos
         // Convertir WebP a PNG
         $image = imagecreatefromwebp($webp);
@@ -62,7 +69,7 @@
                                 </td>
                                 <!-- TEXTO -->
                                 <td valign='top' class='card-padding' style='font-family:Arial,sans-serif;color:#000;'>
-                                <a href='http://192.168.100.17/CatInk_Proyecto/views/news.php?id={$noticia['id']}'
+                                <a href='https://catink.com.mx/views/news.php?id={$noticia['id']}'
                                 style='
                                 background:#EF3363;
                                 color:#EF3363;
@@ -90,7 +97,7 @@
         $mail->Host = 'smtp.gmail.com';   // Cambia por tu SMTP
         $mail->SMTPAuth = true;
         $mail->Username = 'faustoperezortega15@gmail.com'; // Tu email
-        $mail->Password = '';               // Tu contraseña
+        $mail->Password = 'aiunnaqifeqwjrrx';               // Tu contraseña
         $mail->SMTPSecure = 'tls';                    // o 'ssl'
         $mail->Port = 587;                            // o 465 si SSL
 
@@ -99,15 +106,15 @@
         // Lista de destinatarios (puede ser dinámica)
         $sqlUsuarios = "SELECT correo, nombre_completo FROM suscripciones";
         $resUsuarios = $con->query($sqlUsuarios);
-        while($user = $resUsuarios->fetch_assoc()){
-            $mail->addAddress($user['correo'], $user['nombre_completo']);
-        }
 
         $mail->isHTML(true);
         $mail->Subject = 'Resumen diario de noticias';
         $mail->Body = $plantilla;
-
-        $mail->send();
+        while($user = $resUsuarios->fetch_assoc()){
+            $mail->clearAddresses();
+            $mail->addAddress($user['correo'], $user['nombre_completo']);
+            $mail->send();
+        }
         // Eliminar archivos temporales
         foreach ($noticias as $index => $noticia) {
             $png = __DIR__ . "/logo_temp_{$index}.png";
@@ -120,4 +127,5 @@
 
     } catch (Exception $e) {
         echo "Error al enviar: {$mail->ErrorInfo}";
+    }
     }

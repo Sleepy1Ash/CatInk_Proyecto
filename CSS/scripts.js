@@ -102,3 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
     startProgress(0);
   }
 });
+const carousel = document.querySelector(".video-carousel");
+document.querySelector(".next-slide").addEventListener("click", () => {
+    carousel.scrollBy({ left: carousel.offsetWidth, behavior: "smooth" });
+});
+document.querySelector(".prev-slide").addEventListener("click", () => {
+    carousel.scrollBy({ left: -carousel.offsetWidth, behavior: "smooth" });
+});
