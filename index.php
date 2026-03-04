@@ -87,7 +87,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
                         <span class="carousel-tag"><?= htmlspecialchars($cat) ?></span>
                     <?php endforeach; ?>
-                    <h5><a href="/views/news.php?id=<?= $row['id'] ?>" class="carousel-link"><?= htmlspecialchars($row['titulo']) ?></a></h5>
+                    <h5><a href="./views/news.php?id=<?= $row['id'] ?>" class="carousel-link"><?= htmlspecialchars($row['titulo']) ?></a></h5>
                     <p><?= htmlspecialchars($row['descripcion']) ?></p>
                 </div>
             </div>
@@ -257,7 +257,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         <span class="tag-news"><?= htmlspecialchars($cat) ?></span>
                                     <?php endforeach; ?>
                                     <h4 class="card-title">
-                                        <a href="/views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </h4>
                                     <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
                                     <span class="text-muted">Publicado: 

@@ -60,7 +60,7 @@
 </script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
 <footer class="site-footer mt-5">
-  <div class="container py-5">
+  <div class="container">
     <div class="row">
       <!-- Logo / descripción -->
       <div class="col">

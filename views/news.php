@@ -54,108 +54,125 @@ $stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 2 OR
 $stmt->execute();
 $publicidadCuadro = $stmt->get_result()->fetch_assoc();
 ?>
-<div class="container-fluid">
-  <div class="row">
-    <!-- COLUMNA PRINCIPAL -->
-    <div class="col-md-8">
-      <div class="container-noticia">
-        <?php
-          $img = !empty($noticia['crop1']) ? "./../" . htmlspecialchars($noticia['crop1']) : "./../img/placeholder.jpg";
-        ?>
-        <img src="<?= $img ?>" alt="" class="img-titular">
-        <!-- Categorías -->
-        <?php foreach ($cats as $cat): ?>
-          <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
-        <?php endforeach; ?>
-        <h1><?= htmlspecialchars($noticia['titulo']) ?></h1>
-        <p class="descripcion"><?= nl2br(htmlspecialchars($noticia['descripcion'])) ?></p>
-        <p class="meta">
-          Por <strong><?= htmlspecialchars($noticia['autor_nombre'] ?? 'Desconocido') ?></strong> —
-          <?= date("d/m/Y H:i", strtotime($noticia['fecha_publicacion'])) ?>
-        </p>
-        <button id="likeBtn" class="like-btn" data-id="<?= $id ?>">
-          ❤️ Like <span id="likeCount"><?= $noticia['likes'] ?></span>
-        </button>
-        <!-- Contenido completo de la noticia -->
-        <div class="ql-editor">
-          <?= bloquearEmbeds($noticia['contenido']) ?>
-        </div>
-        <?php if ($secciones['publicidad']['estado'] == 1) : ?>
-            <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
-              <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
-            </a>
-        <?php endif; ?>
-        <div class="share-wrapper">
-          <div class="menus" id="shareMenu">
-            <div class="toggles" onclick="toggleShareMenu()">
-              <i class="bi bi-share-fill"></i>
+<style>
+  @media (max-width: 768px) {
+    /* Eliminar padding de contenedores */
+    .noticias > .container {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    .container > .container-fluid, .container-noticia {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+</style>
+<div class="noticias">
+  <div class="container">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- COLUMNA PRINCIPAL -->
+        <div class="col-md-8">
+          <div class="container-noticia">
+            <?php
+              $img = !empty($noticia['crop1']) ? "./../" . htmlspecialchars($noticia['crop1']) : "./../img/placeholder.jpg";
+            ?>
+            <img src="<?= $img ?>" alt="" class="img-titular">
+            <!-- Categorías -->
+            <?php foreach ($cats as $cat): ?>
+              <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+            <?php endforeach; ?>
+            <h1><?= htmlspecialchars($noticia['titulo']) ?></h1>
+            <p class="descripcion"><?= nl2br(htmlspecialchars($noticia['descripcion'])) ?></p>
+            <p class="meta">
+              Por <strong><?= htmlspecialchars($noticia['autor_nombre'] ?? 'Desconocido') ?></strong> —
+              <?= date("d/m/Y H:i", strtotime($noticia['fecha_publicacion'])) ?>
+            </p>
+            <button id="likeBtn" class="like-btn" data-id="<?= $id ?>">
+              ❤️ Like <span id="likeCount"><?= $noticia['likes'] ?></span>
+            </button>
+            <!-- Contenido completo de la noticia -->
+            <div class="ql-editor">
+              <?= bloquearEmbeds($noticia['contenido']) ?>
             </div>
-            <li style="--i: 0; --clr: var(--facebook)">
-              <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                <i class="bi bi-facebook"></i>
-              </a>
-            </li>
-            <li style="--i: 1; --clr: var(--instagram)">
-              <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                <i class="bi bi-instagram"></i>
-              </a>
-            </li>
-            <li style="--i: 2; --clr: var(--whatsapp)">
-              <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                <i class="bi bi-whatsapp"></i>
-              </a>
-            </li>
-            <li style="--i: 3; --clr: var(--twitter)">
-              <a href="https://twitter.com/intent/tweet?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                <i class="bi bi-twitter-x"></i>
-              </a>
-            </li>
-            <li style="--i: 4; --clr: var(--linkedin)">
-              <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                <i class="bi bi-linkedin"></i>
-              </a>
-            </li>
-            <li style="--i: 5; --clr: var(--messenger)">
-              <a href="https://www.facebook.com/dialog/send?link=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>&app_id=TU_APP_ID" target="_blank">
-                <i class="bi bi-messenger"></i>
-              </a>
-            </li>
+            <?php if ($secciones['publicidad']['estado'] == 1) : ?>
+                <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
+                  <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
+                </a>
+            <?php endif; ?>
+            <div class="share-wrapper">
+              <div class="menus" id="shareMenu">
+                <div class="toggles" onclick="toggleShareMenu()">
+                  <i class="bi bi-share-fill"></i>
+                </div>
+                <li style="--i: 0; --clr: var(--facebook)">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                    <i class="bi bi-facebook"></i>
+                  </a>
+                </li>
+                <li style="--i: 1; --clr: var(--instagram)">
+                  <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                    <i class="bi bi-instagram"></i>
+                  </a>
+                </li>
+                <li style="--i: 2; --clr: var(--whatsapp)">
+                  <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                    <i class="bi bi-whatsapp"></i>
+                  </a>
+                </li>
+                <li style="--i: 3; --clr: var(--twitter)">
+                  <a href="https://twitter.com/intent/tweet?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                    <i class="bi bi-twitter-x"></i>
+                  </a>
+                </li>
+                <li style="--i: 4; --clr: var(--linkedin)">
+                  <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
+                    <i class="bi bi-linkedin"></i>
+                  </a>
+                </li>
+                <li style="--i: 5; --clr: var(--messenger)">
+                  <a href="https://www.facebook.com/dialog/send?link=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>&app_id=TU_APP_ID" target="_blank">
+                    <i class="bi bi-messenger"></i>
+                  </a>
+                </li>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <!-- SIDEBAR -->
-    <div class="col-md-4">
-      <div class="sidebar-wrapper">
-        <div class="card sidebar-card">
-          <?php if($secciones['publicidad']['estado'] == 1) : ?>
-              <a href="<?= $publicidadCuadro['url'] ?>" class="banner-button" data-pub="<?= $publicidadCuadro['id_pub'] ?>">
-                <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="card-img-top">
-              </a>
-          <?php endif; ?>
-          <div class="card-body">
-            <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
-            <hr>
-            <ul class="list-group list-group-flush mb-3">
-              <?php while ($row = $ultimas->fetch_assoc()): ?>
-                <li class="list-group-item">
-                  <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
-                    <?= htmlspecialchars($row['titulo']) ?>
+        <!-- SIDEBAR -->
+        <div class="col-md-4">
+          <div class="sidebar-wrapper">
+            <div class="card sidebar-card">
+              <?php if($secciones['publicidad']['estado'] == 1) : ?>
+                  <a href="<?= $publicidadCuadro['url'] ?>" class="banner-button" data-pub="<?= $publicidadCuadro['id_pub'] ?>">
+                    <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="card-img-top">
                   </a>
-                </li>
-              <?php endwhile; ?>
-            </ul>
-            <h3><i class="bi bi-fire"></i> Lo más popular</h3>
-            <hr>
-            <ul class="list-group list-group-flush">
-              <?php while ($row = $populares->fetch_assoc()): ?>
-                <li class="list-group-item">
-                  <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
-                    <?= htmlspecialchars($row['titulo']) ?>
-                  </a>
-                </li>
-              <?php endwhile; ?>
-            </ul>
+              <?php endif; ?>
+              <div class="card-body">
+                <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
+                <hr>
+                <ul class="list-group list-group-flush mb-3">
+                  <?php while ($row = $ultimas->fetch_assoc()): ?>
+                    <li class="list-group-item">
+                      <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
+                        <?= htmlspecialchars($row['titulo']) ?>
+                      </a>
+                    </li>
+                  <?php endwhile; ?>
+                </ul>
+                <h3><i class="bi bi-fire"></i> Lo más popular</h3>
+                <hr>
+                <ul class="list-group list-group-flush">
+                  <?php while ($row = $populares->fetch_assoc()): ?>
+                    <li class="list-group-item">
+                      <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
+                        <?= htmlspecialchars($row['titulo']) ?>
+                      </a>
+                    </li>
+                  <?php endwhile; ?>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

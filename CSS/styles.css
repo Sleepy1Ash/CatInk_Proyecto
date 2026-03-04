@@ -64,7 +64,7 @@ h2 {
 }
 /* Basic container utilities */
 .container { width: 100%; max-width: 1140px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
-.container-fluid { width: 100%; padding-left: 10px; padding-right: 10px; }
+.container-fluid { width: 100%; padding-left: 16px; padding-right: 16px; }
 .container-noticia { width: 100%; max-width: 800px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
 /* =========================
    Navbar & Header Styles

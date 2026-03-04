@@ -11,13 +11,23 @@ function obtenerEmbedVideo($url){
         }
     }
     // TIKTOK
-    if(preg_match('/tiktok\.com/i', $url)){
+    if (preg_match('/tiktok\.com/i', $url)) {
+        // Si es vt.tiktok.com, resolver redirección
+        if (preg_match('/vt\.tiktok\.com/i', $url)) {
+            $headers = get_headers($url, 1);
+            if (isset($headers['Location'])) {
+                $url = is_array($headers['Location'])
+                    ? end($headers['Location'])
+                    : $headers['Location'];
+            }
+        }
+        // Extraer ID del video
         preg_match('/video\/(\d+)/', $url, $matches);
-        if(isset($matches[1])){
+        if (isset($matches[1])) {
             return [
-                "src" => "https://www.tiktok.com/embed/v2/".$matches[1],
+                "src" => "https://www.tiktok.com/embed/v2/" . $matches[1],
                 "ratio" => "9:16",
-                "type" => "tiktok" // <-- agregamos tipo especial
+                "type" => "tiktok"
             ];
         }
     }
