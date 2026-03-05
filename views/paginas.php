@@ -16,30 +16,32 @@
     <?php endif; ?>
     <div class="card">
         <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Sección</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while($row = $result->fetch_assoc()): ?>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td><?= htmlspecialchars($row['nombre_pag']) ?></td>
-                            <td>
-                                <button 
-                                    class="btn btn-secondary btnEditar" 
-                                    data-id="<?= $row['id_pag'] ?>" 
-                                    data-nombre="<?= $row['nombre_pag'] ?>"
-                                    data-contenido="<?= base64_encode($row['contenido_pag']) ?>">
-                                    <i class="bi bi-pencil-square"></i>Editar
-                                </button>
-                            </td>
+                            <th>Sección</th>
+                            <th>Acciones</th>
                         </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php while($row = $result->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['nombre_pag']) ?></td>
+                                <td>
+                                    <button 
+                                        class="btn btn-secondary btnEditar" 
+                                        data-id="<?= $row['id_pag'] ?>" 
+                                        data-nombre="<?= $row['nombre_pag'] ?>"
+                                        data-contenido="<?= base64_encode($row['contenido_pag']) ?>">
+                                        <i class="bi bi-pencil-square"></i>Editar
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

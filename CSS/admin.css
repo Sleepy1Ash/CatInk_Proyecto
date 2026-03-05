@@ -1418,3 +1418,79 @@ h4 {
     font-weight: bold;
     cursor: pointer;
 }
+/* ===== Mejoras globales mobile admin ===== */
+body.sidebar-open {
+  overflow: hidden;
+}
+.sidebar-backdrop {
+  display: none;
+}
+@media (max-width: 768px) {
+  .sidebar-toggle-mobile {
+    position: sticky;
+    top: 10px;
+    left: 0;
+    z-index: 1050;
+    width: max-content;
+    background: var(--card-bg);
+  }
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 99;
+  }
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  body.has-sidebar .site-main,
+  body.has-sidebar .site-main .container,
+  body.has-sidebar .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+  .card {
+    overflow: hidden;
+  }
+  .table {
+    min-width: 640px;
+    font-size: 0.9rem;
+  }
+  .table td,
+  .table th {
+    white-space: nowrap;
+  }
+  .btn,
+  .btn-success,
+  .btn-secondary,
+  .btn-delete,
+  .btn-delete-publicidad,
+  .btn-delete-usuario {
+    min-height: 38px;
+  }
+  .crop-modal-content,
+  .modal-content,
+  .modal-content-nativo,
+  .modal-content-nativo-special {
+    width: calc(100% - 1rem);
+    margin: 1rem auto;
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+  }
+  .ql-editor iframe,
+  .video-preview iframe,
+  .video-preview video {
+    min-height: 200px;
+    height: 200px;
+  }
+}

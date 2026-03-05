@@ -105,9 +105,9 @@ while ($row = $result->fetch_assoc()) {
                 <?php endforeach; ?>
             </div>
             <div class="botonesSemana d-flex justify-content-between align-items-center mt-4">
-                <a href="?week=<?= $weekOffset - 1 ?>" class="btn btn-outline-secondary">← Semana anterior</a>
+                <a href="?week=<?= $weekOffset - 1 ?>" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Semana anterior</a>
                 <h4>Semana del <?= $startOfWeek->format('d/m') ?> al <?= $endOfWeek->format('d/m/Y') ?></h4>
-                <a href="?week=<?= $weekOffset + 1 ?>" class="btn btn-outline-secondary">Semana siguiente →</a>
+                <a href="?week=<?= $weekOffset + 1 ?>" class="btn btn-outline-secondary">Semana siguiente <i class="bi bi-arrow-right"></i></a>
             </div>
         </div>
     </div>

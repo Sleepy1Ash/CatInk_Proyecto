@@ -21,39 +21,41 @@ $result = $con->query($sql);
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Lista de Categorías</h5>
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Total Noticias</th>
-                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
-                            <th>Acciones</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while($row = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['nombre']) ?></td>
-                        <td><?= $row['total_noticias'] ?></td>
-                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
-                            <td>
-                                <?php if($ACL['editar']): ?>
-                                    <button class="btn btn-secondary btn-editar" 
-                                        data-id="<?= $row['id_c'] ?>" 
-                                        data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-pencil"></i></button>
-                                <?php endif; ?>
-                                <?php if($ACL['eliminar']): ?>
-                                    <button class="btn btn-delete btn-eliminar"
-                                        data-id="<?= $row['id_c'] ?>" 
-                                        data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-trash3"></i></button>
-                                <?php endif; ?>
-                            </td>
-                        <?php endif; ?>
-                    </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Total Noticias</th>
+                            <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                                <th>Acciones</th>
+                            <?php endif; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['nombre']) ?></td>
+                            <td><?= $row['total_noticias'] ?></td>
+                            <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                                <td>
+                                    <?php if($ACL['editar']): ?>
+                                        <button class="btn btn-secondary btn-editar" 
+                                            data-id="<?= $row['id_c'] ?>" 
+                                            data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-pencil"></i></button>
+                                    <?php endif; ?>
+                                    <?php if($ACL['eliminar']): ?>
+                                        <button class="btn btn-delete btn-eliminar"
+                                            data-id="<?= $row['id_c'] ?>" 
+                                            data-nombre="<?= htmlspecialchars($row['nombre']) ?>"><i class="bi bi-trash3"></i></button>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

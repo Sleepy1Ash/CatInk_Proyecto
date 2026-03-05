@@ -138,7 +138,8 @@ if (!$fila) {
       <a href="./../controllers/logoutcontroller.php" class="sidebar-menu-link"><i class="bi bi-box-arrow-right"></i> Salir</a>
     </div>
 </div>
+<div id="sidebarBackdrop" class="sidebar-backdrop"></div>
 <main class="site-main">
-  <button id="sidebarToggle" class="btn btn-outline-secondary d-md-none mb-3">
+  <button id="sidebarToggle" class="btn btn-outline-secondary d-md-none mb-3 siderbar-toggle-mobile">
     <i class="bi bi-list"></i> Menú
   </button>

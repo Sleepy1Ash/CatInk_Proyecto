@@ -30,40 +30,42 @@ $usuarios = $stmt->get_result();
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Lista de Usuarios</h5>
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Usuario</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Fecha Registro</th>
-                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
-                            <th scope="col">Acciones</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($usuarios as $u): ?>
-                    <tr>
-                        <td><?= $u['nombre'] ?></td>
-                        <td><?= $u['usuario'] ?></td>
-                        <td><?= $u['correo'] ?></td>
-                        <td><?= $u['registro'] ?></td>
-                        <?php if($ACL['editar'] || $ACL['eliminar']): ?>
-                            <td>
-                                <?php if($ACL['editar']): ?>
-                                    <a href="./editaru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
-                                <?php endif; ?>
-                                <a href="./veru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Ver Usuario"><i class="bi bi-eye"></i></a>
-                                <?php if($ACL['eliminar']): ?>
-                                    <button class="btn btn-delete-usuario" data-id="<?= $u['id_u'] ?>" data-nombre="<?= $u['nombre'] ?>" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
-                                <?php endif; ?>
-                            </td>
-                        <?php endif; ?>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Fecha Registro</th>
+                            <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                                <th scope="col">Acciones</th>
+                            <?php endif; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($usuarios as $u): ?>
+                        <tr>
+                            <td><?= $u['nombre'] ?></td>
+                            <td><?= $u['usuario'] ?></td>
+                            <td><?= $u['correo'] ?></td>
+                            <td><?= $u['registro'] ?></td>
+                            <?php if($ACL['editar'] || $ACL['eliminar']): ?>
+                                <td>
+                                    <?php if($ACL['editar']): ?>
+                                        <a href="./editaru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Editar Usuario"><i class="bi bi-pencil"></i></a>
+                                    <?php endif; ?>
+                                    <a href="./veru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Ver Usuario"><i class="bi bi-eye"></i></a>
+                                    <?php if($ACL['eliminar']): ?>
+                                        <button class="btn btn-delete-usuario" data-id="<?= $u['id_u'] ?>" data-nombre="<?= $u['nombre'] ?>" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
+                                    <?php endif; ?>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

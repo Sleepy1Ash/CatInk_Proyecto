@@ -39,10 +39,17 @@
   // Toggle Sidebar (Mobile)
   const sidebarToggle = document.getElementById('sidebarToggle');
   const sidebar = document.querySelector('.sidebar');
+   const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+  const setSidebarState = (isOpen) => {
+    sidebar.classList.toggle('active', isOpen);
+    sidebarBackdrop?.classList.toggle('active', isOpen);
+    document.body.classList.toggle('sidebar-open', isOpen);
+  };
   if (sidebarToggle && sidebar) {
     sidebarToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('active');
+      setSidebarState(!sidebar.classList.contains('active'));
     });
+    sidebarBackdrop?.addEventListener('click', () => setSidebarState(false));
     // Close sidebar when clicking outside (optional but good for UX)
     document.addEventListener('click', (e) => {
         if (window.innerWidth < 768 && 
@@ -50,8 +57,13 @@
             !sidebar.contains(e.target) && 
             e.target !== sidebarToggle &&
             !sidebarToggle.contains(e.target)) {
-            sidebar.classList.remove('active');
+            setSidebarState(false);
         }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        setSidebarState(false);
+      }
     });
   }
 /* ===============================

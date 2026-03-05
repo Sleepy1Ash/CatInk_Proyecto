@@ -102,7 +102,7 @@ while($row = $configResult->fetch_assoc()){
      <div class="card">
         <div class="card-body">
             <h5 class="card-title">KPIs</h5>
-            <div class="row mb-4">
+            <div class="row mb-4 kpi-row-mobile-fix">
                 <?php 
                     $cards = [
                         ['Noticias', $kpis['total_noticias'], 'bi-newspaper', 'bg-primary'],
@@ -114,8 +114,8 @@ while($row = $configResult->fetch_assoc()){
                     ];
                     foreach($cards as $c):
                 ?>
-                <div class="col-md-2 mb-3">
-                    <div class="card text-center shadow-sm">
+                <div class="col-md-2 col-6 mb-3 kpi-col-mobile-fix">
+                    <div class="card text-center shadow-sm h-100">
                         <div class="card-body">
                             <i class="bi <?= $c[2] ?> fs-3 <?= $c[3] ?>"></i>
                             <h4 class="mb-0"><?= $c[1] ?></h4>
@@ -130,11 +130,11 @@ while($row = $configResult->fetch_assoc()){
                 <div class="card-body">
                     <h5>Filtros de Estadísticas</h5>
                     <div class="row g-3">
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-12">
                             <label>Fecha Inicio</label>
                             <input type="date" id="filterFechaInicio" class="form-control" value="<?= date('Y-m-d', strtotime('-30 days')) ?>">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 col-12">
                             <label>Fecha Fin</label>
                             <input type="date" id="filterFechaFin" class="form-control" value="<?= date('Y-m-d') ?>">
                         </div>
@@ -155,16 +155,16 @@ while($row = $configResult->fetch_assoc()){
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-4">
-                        <div class="col-md-6"><canvas id="globalChartVistas"></canvas></div>
-                        <div class="col-md-6"><canvas id="globalChartTiempo"></canvas></div>
+                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartVistas"></canvas></div>
+                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartTiempo"></canvas></div>
                     </div>
                 </div>
             </div>
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-4">
-                        <div class="col-md-6"><canvas id="globalChartLikes"></canvas></div>
-                        <div class="col-md-6"><canvas id="globalChartLikesRegion"></canvas></div>
+                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartLikes"></canvas></div>
+                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartLikesRegion"></canvas></div>
                     </div>
                 </div>
             </div>
@@ -262,6 +262,22 @@ while($row = $configResult->fetch_assoc()){
     // ================================
     // CHART AREA
     // ================================
+    function getChartOptions(title){
+        const mobile = window.matchMedia('(max-width: 768px)').matches;
+        return {
+            responsive: true,
+            maintainAspectRatio: !mobile,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                title: { display: true, text: title },
+                legend: { position: mobile ? 'bottom' : 'top' }
+            },
+            scales: {
+                x: { ticks: { maxRotation: mobile ? 45 : 0, minRotation: mobile ? 45 : 0 } },
+                y: { beginAtZero: true }
+            }
+        };
+    }
     function renderAreaChart(id,data,metric,title){
         if(!data || !data.categorias) return;
         const ctx=document.getElementById(id);
@@ -282,8 +298,7 @@ while($row = $configResult->fetch_assoc()){
         charts[id]=new Chart(ctx,{
             type:'line',
             data:{labels:data.labels,datasets},
-            options:{responsive:true,interaction:{mode:'index',intersect:false},
-            plugins:{title:{display:true,text:title}},scales:{y:{beginAtZero:true}}}
+            options:getChartOptions(title)
         });
     }
     // ================================
@@ -296,20 +311,68 @@ while($row = $configResult->fetch_assoc()){
         charts[id]=new Chart(ctx,{
             type:'bar',
             data:{labels:geo.labels.slice(0,10),datasets:[{label:title,data:geo.values.slice(0,10)}]},
-            options:{responsive:true,plugins:{title:{display:true,text:title}},scales:{y:{beginAtZero:true}}}
+            options:getChartOptions(title)
         });
     }
+    window.addEventListener('resize', () => {
+        loadGlobalStats();
+        loadLikesStats();
+    });
 </script>
+<style>
+@media (max-width: 768px){
+    .kpi-row-mobile-fix{
+        flex-wrap: wrap;
+        display: flex;
+    }
+    .kpi-col-mobile-fix{
+        flex: 1 1 60px;
+    }
+    .kpi-col-mobile-fix .card-body{
+        padding: 0.75rem;
+    }
+    .kpi-col-mobile-fix h4{
+        font-size: 1.05rem;
+        padding: 0;
+    }
+    .chart-col-mobile-fix{
+        margin-bottom: 1rem;
+        min-height: 250px;
+    }
+    #globalChartVistas,
+    #globalChartTiempo,
+    #globalChartLikes,
+    #globalChartLikesRegion{
+        width: 100% !important;
+        height: 250px !important;
+    }
+    #filterFechaInicio,
+    #filterFechaFin{
+        min-height: 42px;
+    }
+    #btnAbrirModal,
+    a.btn.btn-success{
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
 <script>
 const modal = document.getElementById('modalSecciones');
 const btnAbrir = document.getElementById('btnAbrirModal');
 const btnCerrar = document.getElementById('cerrarModal');
 const btnCancelar = document.getElementById('btnCancelarModal');
 // Abrir modal
-btnAbrir.addEventListener('click', ()=> modal.style.display = 'block');
+if(btnAbrir){
+    btnAbrir.addEventListener('click', ()=> modal.style.display = 'block');
+}
 // Cerrar modal
-btnCerrar.addEventListener('click', ()=> modal.style.display = 'none');
-btnCancelar.addEventListener('click', ()=> modal.style.display = 'none');
+if(btnCerrar){
+    btnCerrar.addEventListener('click', ()=> modal.style.display = 'none');
+}
+if(btnCancelar){
+    btnCancelar.addEventListener('click', ()=> modal.style.display = 'none');
+}
 // Cerrar si se da click fuera del contenido
 window.addEventListener('click', e => {
     if(e.target === modal) modal.style.display = 'none';
