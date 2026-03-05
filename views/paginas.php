@@ -59,6 +59,55 @@
             </div>
             <div class="form-group">
                 <label>Contenido</label>
+                <!-- TOOLBAR -->
+                <div class="editor-toolbar ql-toolbar ql-snow">
+                    <!-- Fuente -->
+                    <select class="ql-font" title="Fuente">
+                        <option value="arial" selected>Arial</option>
+                        <option value="times">Times New Roman</option>
+                        <option value="roboto">Roboto</option>
+                        <option value="courier">Courier</option>
+                    </select>
+                    <!-- Tamaño -->
+                    <select class="ql-size" title="Tamaño">
+                        <option value="small">Pequeño</option>
+                        <option selected>Normal</option>
+                        <option value="large">Grande</option>
+                        <option value="huge">Muy grande</option>
+                    </select>
+                    <!-- Estilos -->
+                    <button class="ql-bold" title="Negritas"></button>
+                    <button class="ql-italic" title="Cursiva"></button>
+                    <button class="ql-underline" title="Subrayado"></button>
+                    <button class="ql-strike" title="Tachado"></button>
+
+                    <!-- Color -->
+                    <select class="ql-color" title="Color"></select>
+                    <select class="ql-background" title="Fondo"></select>
+
+                    <!-- Alineación -->
+                    <select class="ql-align" title="Alineación"></select>
+                    <!-- Interlineado -->
+                    <select class="ql-lineheight" title="Interlineado">
+                        <option value="0">0</option>
+                        <option value="0.85">0.85</option>
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="2.5">2.5</option>
+                        <option value="3">3</option>
+                    </select>
+                    <!-- Listas -->
+                    <button class="ql-list" value="ordered" title="Lista ordenada"></button>
+                    <button class="ql-list" value="bullet" title="Lista desordenada"></button>
+
+                    <!-- Sangría -->
+                    <button class="ql-indent" value="-1" title="Reducir sangría"></button>
+                    <button class="ql-indent" value="+1" title="Aumentar sangría"></button>
+
+                    <!-- Limpiar formato -->
+                    <button class="ql-clean" title="Limpiar formato"></button>
+                </div>
                 <div id="editorpag" class="editor-content"></div>
                 <!-- AQUI SE GUARDA QUILL -->
                 <input type="hidden" name="contenido" id="contenido">
@@ -71,7 +120,13 @@
 </div>
 <script>
     var quillpag = new Quill('#editorpag', {
-        theme: 'snow'
+        theme: 'snow',
+        placeholder: 'Escribe el contenido aquí...',
+        modules: {
+            toolbar: {
+                container: '.editor-toolbar'
+            }
+        }
     });
     const modalPagina = document.getElementById("modalPagina");
     document.querySelectorAll(".btnEditar").forEach(btn => {

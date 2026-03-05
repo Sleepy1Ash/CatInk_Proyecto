@@ -604,7 +604,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 /* Contenidos */
 .img-adicional { width:100%; height:auto; object-fit:cover; display:block; margin-top:12px; margin-bottom:12px; }
 .sidebar-card {
-  width: 100%;
+  width: 75%;
 }
 /* Cards especiales */
 .news-card {
@@ -742,25 +742,10 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   padding: 0;
   border-radius: 8px;
 }
-/* Login styles */
-.login-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh; /* Centers vertically */
-  padding: 20px 0;
-}
-.login-card {
-  width: 100%;
-  max-width: 22rem;
-  background: transparent;
-  border: 0;
-}
-.login-card-body {
-  min-height: 18rem;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  padding: 2 rem;
+.banner-card-img-top {
+  width: 100%; 
+  height: 250px; 
+  object-fit: cover;
 }
 /* TÍTULOS */
 .title-limit-1 {

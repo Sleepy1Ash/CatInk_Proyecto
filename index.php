@@ -87,7 +87,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
                         <span class="carousel-tag"><?= htmlspecialchars($cat) ?></span>
                     <?php endforeach; ?>
-                    <h5><a href="./views/news.php?id=<?= $row['id'] ?>" class="carousel-link"><?= htmlspecialchars($row['titulo']) ?></a></h5>
+                    <h5><a href="./<?= newsUrl($row['id']) ?>" class="carousel-link"><?= htmlspecialchars($row['titulo']) ?></a></h5>
                     <p><?= htmlspecialchars($row['descripcion']) ?></p>
                 </div>
             </div>
@@ -112,7 +112,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/views/news.php?id=<?= $ultimasNoticias[0]['id'] ?>" class="news-link-card">
+                            <a href="./<?= newsUrl($ultimasNoticias[0]['id']) ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[0]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[0]['descripcion']) ?></p>
@@ -131,7 +131,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/views/news.php?id=<?= $ultimasNoticias[1]['id'] ?>" class="news-link-card">
+                            <a href="./<?= newsUrl($ultimasNoticias[1]['id']) ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[1]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[1]['descripcion']) ?></p>
@@ -151,7 +151,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/views/news.php?id=<?= $ultimasNoticias[2]['id'] ?>" class="news-link-card">
+                            <a href="./<?= newsUrl($ultimasNoticias[2]['id']) ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[2]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[2]['descripcion']) ?></p>
@@ -169,7 +169,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/views/news.php?id=<?= $ultimasNoticias[3]['id'] ?>" class="news-link-card">
+                            <a href="./<?= newsUrl($ultimasNoticias[3]['id']) ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[3]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[3]['descripcion']) ?></p>
@@ -187,7 +187,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/views/news.php?id=<?= $ultimasNoticias[4]['id'] ?>" class="news-link-card">
+                            <a href="./<?= newsUrl($ultimasNoticias[4]['id']) ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[4]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[4]['descripcion']) ?></p>
@@ -207,7 +207,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/views/news.php?id=<?= $ultimasNoticias[5]['id'] ?>" class="news-link-card">
+                            <a href="./<?= newsUrl($ultimasNoticias[5]['id']) ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[5]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[5]['descripcion']) ?></p>
@@ -225,7 +225,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
-                            <a href="/views/news.php?id=<?= $ultimasNoticias[6]['id'] ?>" class="news-link-card">
+                            <a href="./<?= newsUrl($ultimasNoticias[6]['id']) ?>" class="news-link-card">
                                 <h3 class="title-limit-2"><?= htmlspecialchars($ultimasNoticias[6]['titulo']) ?></h3>
                             </a>
                             <p class="desc-limit-1"><?= htmlspecialchars($ultimasNoticias[6]['descripcion']) ?></p>
@@ -257,7 +257,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                         <span class="tag-news"><?= htmlspecialchars($cat) ?></span>
                                     <?php endforeach; ?>
                                     <h4 class="card-title">
-                                        <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </h4>
                                     <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
                                     <span class="text-muted">Publicado: 
@@ -303,18 +303,20 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
             <div class="col-md-4">
                 <div class="sidebar-wrapper">
                     <div class="card sidebar-card">
-                        <?php if($secciones['publicidad']['estado'] == 1) : ?>
-                            <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
-                                <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="card-img-top">
-                            </a>
-                        <?php endif; ?>
+                        <div class="card-h">
+                            <?php if($secciones['publicidad']['estado'] == 1) : ?>
+                                <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
+                                    <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
+                                </a>
+                            <?php endif; ?>
+                        </div>
                         <div class="card-body">
                             <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
                             <hr>
                             <ul class="list-group list-group-flush mb-3">
                                 <?php foreach($ultimasNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">
-                                        <a href="/views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -323,7 +325,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <ul class="list-group list-group-flush">
                                 <?php foreach($popularesNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">
-                                        <a href="/views/news.php?id=<?= $row['id'] ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

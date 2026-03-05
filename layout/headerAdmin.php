@@ -92,6 +92,9 @@ if (!$fila) {
         <h4><?= htmlspecialchars($fila['usuario']) ?></h4>
     </div>
     <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+            <a href="./../index.php" class="sidebar-menu-link"><i class="bi bi-house-fill"></i> Home</a>
+        </li>
         <?php if ($superadmin): ?>
             <li class="sidebar-menu-item">
                 <a href="./admin.php" class="sidebar-menu-link"><i class="bi bi-house"></i> Inicio</a>

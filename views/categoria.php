@@ -118,7 +118,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                     <span class="news-tag"><?= htmlspecialchars(trim($cat)) ?></span>
                   <?php endforeach; ?>
                   <h5 class="card-title">
-                    <a href="./../views/news.php?id=<?= $row['id'] ?>" class="news-link">
+                    <a href="<?= newsUrl($row['id']) ?>" class="news-link">
                       <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </h5>
@@ -138,7 +138,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
           <div class="card sidebar-card">
             <?php if($secciones['publicidad']['estado'] == 1) : ?>
                 <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
-                    <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="card-img-top">
+                    <img src="./../<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
                 </a>
             <?php endif; ?>
             <div class="card-body">
@@ -146,7 +146,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
               <ul class="list-group list-group-flush mb-3">
                 <?php while ($row = $ultimas->fetch_assoc()): ?>
                   <li class="list-group-item">
-                    <a href="./../views/news.php?id=<?= $row['id'] ?>" class="news-link">
+                    <a href="<?= newsUrl($row['id']) ?>" class="news-link">
                       <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>
@@ -156,7 +156,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
               <ul class="list-group list-group-flush">
                 <?php while ($row = $populares->fetch_assoc()): ?>
                   <li class="list-group-item">
-                    <a href="./../views/news.php?id=<?= $row['id'] ?>" class="news-link">
+                    <a href="<?= newsUrl($row['id']) ?>" class="news-link">
                       <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>

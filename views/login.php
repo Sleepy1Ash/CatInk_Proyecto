@@ -1,5 +1,12 @@
 <?php
+if(session_status() === PHP_SESSION_NONE){
+    session_start();
+}
 include("./../layout/header.php");
+if (isset($_SESSION['usuario'])) {
+    header("Location: admin.php");
+    exit();
+}
 ?>
 <div class="container-fluid">
     <div style="display:flex; justify-content:center; margin-top: 5%;">

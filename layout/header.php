@@ -1,5 +1,6 @@
 <?php
 include(__DIR__ . "/../data/conexion.php");
+include(__DIR__ . "/../views/helpers/urlHelper.php");
 // Obtenemos todas las categorías únicas
 $stmtCats = $con->prepare("SELECT nombre FROM categorias");
 $stmtCats->execute();
@@ -30,6 +31,14 @@ while($row = $result->fetch_assoc()) {
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
   <script async src="https://www.instagram.com/embed.js"></script>
+  <style>
+    @media (max-width: 768px) {
+      #logo{
+        max-width: 80px;
+        max-height: auto;
+      }
+    }
+  </style>
 </head>
 <body>
 <nav class="navbar">

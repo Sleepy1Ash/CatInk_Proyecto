@@ -2,7 +2,11 @@
 include("./../layout/header.php");
 include("./../data/conexion.php");
 include("./helpers/videoEmbed.php");
-$id = intval($_GET['id'] ?? 1);
+if(isset($_GET['hash'])){
+    $id = decodeId($_GET['hash']);
+}else{
+    $id = intval($_GET['id'] ?? 1);
+}
 // ==============================
 // Obtener noticia con autor y categorías
 // ==============================
@@ -145,7 +149,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             <div class="card sidebar-card">
               <?php if($secciones['publicidad']['estado'] == 1) : ?>
                   <a href="<?= $publicidadCuadro['url'] ?>" class="banner-button" data-pub="<?= $publicidadCuadro['id_pub'] ?>">
-                    <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="card-img-top">
+                    <img src="./../<?= $publicidadCuadro['imagen'] ?>" class="banner-card-img-top">
                   </a>
               <?php endif; ?>
               <div class="card-body">
