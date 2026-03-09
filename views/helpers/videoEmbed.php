@@ -109,19 +109,22 @@ function renderizarVideo($url){
     ';
 }
 function bloquearEmbeds($html){
-    $consentimiento = isset($_COOKIE['cookies_aceptadas']);
+    // Verifica si el usuario aceptó cookies
+    $consentimiento = isset($_COOKIE['cookies_decision']) && $_COOKIE['cookies_decision'] === 'aceptadas';
+    
     if($consentimiento){
-        return $html;
+        return $html; // ya aceptó, mostrar contenido normalmente
     }
-    // BLOQUEAR IFRAMES
+
+    // BLOQUEAR IFRAME
     $html = preg_replace_callback(
         '/<iframe.*?src="(.*?)".*?<\/iframe>/is',
         function($match){
             $url = htmlspecialchars($match[1]);
             return '
                 <div class="embed-placeholder" data-src="'.$url.'">
-                Debes aceptar cookies para ver este contenido externo.
-                <button onclick="aceptarCookies()">Aceptar Cookies</button>
+                    Debes aceptar cookies para ver este contenido externo.
+                    <button onclick="aceptarCookies()">Aceptar Cookies</button>
                 </div>';
         },
         $html
@@ -131,10 +134,11 @@ function bloquearEmbeds($html){
     $html = preg_replace(
         '/<blockquote class="instagram-media".*?<\/blockquote>/is',
         '<div class="embed-placeholder">
-        Debes aceptar cookies para ver este contenido externo.
-        <button onclick="aceptarCookies()">Aceptar Cookies</button>
+            Debes aceptar cookies para ver este contenido externo.
+            <button onclick="aceptarCookies()">Aceptar Cookies</button>
         </div>',
         $html
     );
+
     return $html;
 }

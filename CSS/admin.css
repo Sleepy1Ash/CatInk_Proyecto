@@ -142,8 +142,9 @@ hr {
    Estilos para Calendario (Contenidos)
    ============================ */
 .calendar-days {
+  background: var(--bg);
   display: flex;
-  gap: 16px;
+  gap: 24px;
   overflow-x: auto;
   padding-bottom: 16px; /* espacio para scrollbar */
   scroll-snap-type: x mandatory;
@@ -152,42 +153,55 @@ hr {
 
 .day-column {
   min-width: 300px;
-  flex: 0 0 auto;
+  flex: 0 0 200px;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   scroll-snap-align: start;
+  padding: 16px;
 }
 
 .day-header {
-  padding: 12px;
-  background: rgba(0,0,0,0.03);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 10px;
+  background: var(--bg);
   font-weight: 700;
   text-align: center;
   border-bottom: 1px solid var(--border);
   color: var(--text);
+  margin-bottom: 16px;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.3);
 }
 
 .day-news {
   padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   flex: 1;
 }
 
 .noticias-card {
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 10px;
-  background: var(--bg);
+  background: var(--card-bg);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0,0,0,.3);
+  transition: transform .2s ease;
+  width: 100%;
 }
-
+.noticias-card:hover {
+    transform: translateY(-4px);
+}
 .noticias-card img {
   width: 100%;
   height: 140px;
@@ -201,19 +215,32 @@ hr {
   margin: 0;
   color: var(--text);
   line-height: 1.4;
+  padding: 10px 12px 0;
 }
-
+.noticias-card small {
+    padding: 0 12px;
+    display: block;
+    margin-bottom: 8px;
+}
 .noticias-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: auto;
+  padding: 10px 12px;
 }
 
 .noticias-actions .btn {
   padding: 4px 8px;
   font-size: 0.85rem;
 }
-
+.botonesSemana {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+h4 {
+  padding: 12px 12px;
+}
 /* Ajustes Mobile específicos para Calendario */
 @media (max-width: 768px) {
   .day-column {
@@ -1077,81 +1104,6 @@ select, input[type="datetime-local"] {
   display: flex;
   flex-wrap: wrap; /* permite salto de línea */
   gap: 6px;        /* separación entre tags */
-}
-.calendar-days {
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  padding-bottom: 16px;
-  scroll-snap-type: x mandatory;
-}
-.day-column {
-  flex: 0 0 200px;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(180deg, #0b1220, #05080f);
-  border-radius: 14px;
-  padding: 16px;
-  scroll-snap-align: start;
-}
-.day-header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  font-weight: 700;
-  text-align: center;
-  padding: 10px;
-  margin-bottom: 16px;
-  background: rgba(255,255,255,.08);
-  border-radius: 10px;
-  color: #fff;
-}
-.day-news {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.noticias-card {
-    background: #0d1628;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 6px 15px rgba(0,0,0,.3);
-    transition: transform .2s ease;
-    width: 100%;
-}
-.noticias-card:hover {
-    transform: translateY(-4px);
-}
-.noticias-card img {
-    width: 100%;
-    height: 100px;
-    object-fit: cover;
-}
-
-.noticias-card h6 {
-    padding: 10px 12px 0;
-    font-weight: 600;
-}
-
-.noticias-card small {
-    padding: 0 12px;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.noticias-actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 12px;
-}
-
-.botonesSemana {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-h4 {
-  padding: 12px 12px;
 }
 
 /* ===============================

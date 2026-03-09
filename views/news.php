@@ -76,7 +76,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
     <div class="container-fluid">
       <div class="row">
         <!-- COLUMNA PRINCIPAL -->
-        <div class="col-md-8">
+        <div class="col-md-9">
           <div class="container-noticia">
             <?php
               $img = !empty($noticia['crop1']) ? "./../" . htmlspecialchars($noticia['crop1']) : "./../img/placeholder.jpg";
@@ -99,52 +99,35 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             <div class="ql-editor">
               <?= bloquearEmbeds($noticia['contenido']) ?>
             </div>
+            <div class="share-bar">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn facebook">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://www.instagram.com/?url=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn instagram">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://wa.me/?text=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn whatsapp">
+                    <i class="bi bi-whatsapp"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?text=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn twitter">
+                    <i class="bi bi-twitter-x"></i>
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn linkedin">
+                    <i class="bi bi-linkedin"></i>
+                </a>
+                <a href="https://www.facebook.com/dialog/send?link=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>&app_id=TU_APP_ID" target="_blank" class="share-btn messenger">
+                    <i class="bi bi-messenger"></i>
+                </a>
+            </div>
             <?php if ($secciones['publicidad']['estado'] == 1) : ?>
                 <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
                   <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
                 </a>
             <?php endif; ?>
-            <div class="share-wrapper">
-              <div class="menus" id="shareMenu">
-                <div class="toggles" onclick="toggleShareMenu()">
-                  <i class="bi bi-share-fill"></i>
-                </div>
-                <li style="--i: 0; --clr: var(--facebook)">
-                  <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                    <i class="bi bi-facebook"></i>
-                  </a>
-                </li>
-                <li style="--i: 1; --clr: var(--instagram)">
-                  <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                    <i class="bi bi-instagram"></i>
-                  </a>
-                </li>
-                <li style="--i: 2; --clr: var(--whatsapp)">
-                  <a href="https://wa.me/?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                    <i class="bi bi-whatsapp"></i>
-                  </a>
-                </li>
-                <li style="--i: 3; --clr: var(--twitter)">
-                  <a href="https://twitter.com/intent/tweet?text=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                    <i class="bi bi-twitter-x"></i>
-                  </a>
-                </li>
-                <li style="--i: 4; --clr: var(--linkedin)">
-                  <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>" target="_blank">
-                    <i class="bi bi-linkedin"></i>
-                  </a>
-                </li>
-                <li style="--i: 5; --clr: var(--messenger)">
-                  <a href="https://www.facebook.com/dialog/send?link=<?= urlencode("https://tusitio.com/views/news.php?id=$id") ?>&app_id=TU_APP_ID" target="_blank">
-                    <i class="bi bi-messenger"></i>
-                  </a>
-                </li>
-              </div>
-            </div>
           </div>
         </div>
         <!-- SIDEBAR -->
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="sidebar-wrapper">
             <div class="card sidebar-card">
               <?php if($secciones['publicidad']['estado'] == 1) : ?>
@@ -154,23 +137,21 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
               <?php endif; ?>
               <div class="card-body">
                 <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
-                <hr>
                 <ul class="list-group list-group-flush mb-3">
                   <?php while ($row = $ultimas->fetch_assoc()): ?>
                     <li class="list-group-item">
-                      <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
-                        <?= htmlspecialchars($row['titulo']) ?>
+                      <a href="<?= newsUrl($row['id']) ?>" class="news-link">
+                        <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
                       </a>
                     </li>
                   <?php endwhile; ?>
                 </ul>
                 <h3><i class="bi bi-fire"></i> Lo más popular</h3>
-                <hr>
                 <ul class="list-group list-group-flush">
                   <?php while ($row = $populares->fetch_assoc()): ?>
                     <li class="list-group-item">
-                      <a href="./views/news.php?id=<?= $row['id'] ?>" class="news-link">
-                        <?= htmlspecialchars($row['titulo']) ?>
+                      <a href="<?= newsUrl($row['id']) ?>" class="news-link">
+                        <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
                       </a>
                     </li>
                   <?php endwhile; ?>

@@ -36,8 +36,10 @@ usort($popularesNoticiasSidebar, fn($a,$b)=>$b['likes']-$a['likes']);
 $popularesNoticiasSidebar = array_slice($popularesNoticiasSidebar, 0, 3);
 // Noticias principales para slider y últimas
 $slider = array_slice($noticias, 0, 5);
-$ultimasNoticias = array_slice($noticias, 0, 7);
-$noticiasMasRecientes = array_slice($noticias, 7, 11);
+$ultimasNoticias = $noticias;
+usort($ultimasNoticias, fn($a,$b)=>$b['likes']-$a['likes']);
+$ultimasNoticias = array_slice($ultimasNoticias, 0, 7);
+$noticiasMasRecientes = array_slice($noticias, 5, 11);
 //Obtener banner publicidad
 $stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 ORDER BY RAND() LIMIT 1");
 $stmt->execute();
@@ -238,7 +240,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <!-- SIDEBAR -->
         <!-- ===================== -->
         <div class="row mt-5">
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <?php if($secciones['publicidad']['estado'] == 1) : ?>
                     <a href="<?php echo htmlspecialchars($publicidad['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidad['id_pub']); ?>">
                         <img src="<?php echo htmlspecialchars($publicidad['imagen']); ?>" alt="" class="banner">
@@ -300,7 +302,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </a>
                 <?php endif; ?>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="sidebar-wrapper">
                     <div class="card sidebar-card">
                         <div class="card-h">
@@ -316,7 +318,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <ul class="list-group list-group-flush mb-3">
                                 <?php foreach($ultimasNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">
-                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -325,7 +327,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <ul class="list-group list-group-flush">
                                 <?php foreach($popularesNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">
-                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

@@ -88,7 +88,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
     <?php endif; ?>
     <div class="row">
       <!-- ================== COLUMNA PRINCIPAL ================== -->
-      <div class="col-md-8">
+      <div class="col-md-9">
         <?php if ($result->num_rows === 0): ?>
           <p>No se encontraron resultados.</p>
         <?php endif; ?>
@@ -133,7 +133,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
         <?php endwhile; ?>
       </div>
       <!-- ================== SIDEBAR ================== -->
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">
             <?php if($secciones['publicidad']['estado'] == 1) : ?>
@@ -147,7 +147,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <?php while ($row = $ultimas->fetch_assoc()): ?>
                   <li class="list-group-item">
                     <a href="<?= newsUrl($row['id']) ?>" class="news-link">
-                      <?= htmlspecialchars($row['titulo']) ?>
+                      <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>
                 <?php endwhile; ?>
@@ -157,7 +157,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <?php while ($row = $populares->fetch_assoc()): ?>
                   <li class="list-group-item">
                     <a href="<?= newsUrl($row['id']) ?>" class="news-link">
-                      <?= htmlspecialchars($row['titulo']) ?>
+                      <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>
                 <?php endwhile; ?>

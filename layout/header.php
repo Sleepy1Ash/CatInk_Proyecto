@@ -1,6 +1,6 @@
 <?php
 include(__DIR__ . "/../data/conexion.php");
-include(__DIR__ . "/../views/helpers/urlHelper.php");
+include(__DIR__ . "/../views/helpers/urlhelper.php");
 // Obtenemos todas las categorías únicas
 $stmtCats = $con->prepare("SELECT nombre FROM categorias");
 $stmtCats->execute();
@@ -24,7 +24,8 @@ while($row = $result->fetch_assoc()) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CatInk News</title>
   <!-- Local CSS-->
-  <link rel="stylesheet" href="/CatInk_Proyecto/CSS/styles.css">
+  <link rel="stylesheet" href="/CSS/styles.css">
+  <link rel="icon" type="image/png" href="./../img/catink-icon.png">
   <!-- Iconos: Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -43,7 +44,7 @@ while($row = $result->fetch_assoc()) {
 <body>
 <nav class="navbar">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/CatInk_Proyecto/index.php">
+    <a class="navbar-brand" href="/index.php">
       <img id="logo" src="" alt="CatInk Logo">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -52,10 +53,10 @@ while($row = $result->fetch_assoc()) {
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav nav-left">
-        <li class="nav-item"><a class="nav-link" href="/CatInk_Proyecto/index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/index.php">Home</a></li>
         <?php foreach ($categorias as $cat): ?>
           <li class="nav-item">
-            <a class="nav-link" href="/CatInk_Proyecto/views/categoria.php?cat=<?= urlencode($cat['nombre']) ?>">
+            <a class="nav-link" href="/views/categoria.php?cat=<?= urlencode($cat['nombre']) ?>">
               <?= htmlspecialchars($cat['nombre']) ?>
             </a>
           </li>
@@ -63,7 +64,7 @@ while($row = $result->fetch_assoc()) {
         <li class="nav-item d-flex gap-2 align-items-center">
             <!-- BOTÓN MODO OSCURO -->
             <button id="themeToggle" class="btn btn-outline-secondary">🌙</button>
-            <a href="/CatInk_Proyecto/views/login.php" class="btn btn-outline-secondary"><span class="bi bi-person-fill"></span></a>
+            <a href="/views/login.php" class="btn btn-outline-secondary"><span class="bi bi-person-fill"></span></a>
         </li>
       </ul>
       <form class="nav-search" onsubmit="return false;">
