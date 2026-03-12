@@ -63,7 +63,7 @@ h2 {
   margin-top: -16px;
 }
 /* Basic container utilities */
-.container { width: 100%; max-width: 1140px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
+.container { width: 100%; max-width: 100%; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
 .container-fluid { width: 100%; padding-left: 16px; padding-right: 16px; }
 .container-noticia { width: 100%; max-width: 800px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
 /* =========================
@@ -180,9 +180,9 @@ h2 {
   box-shadow: 0 0 0 2px rgba(239, 51, 99, 0.2);
 }
 /* =========================
-   Desktop Navbar (>768px)
+   Desktop Navbar (>1024px)
    ========================= */
-@media (min-width: 768px) {
+@media (min-width: 1025px) {
   .navbar .container-fluid {
     flex-wrap: nowrap; /* Una sola línea */
     justify-content: flex-start;
@@ -243,6 +243,7 @@ h2 {
 /* card header/footer neutral styles */
 .card-header { padding:12px 16px; background: transparent; }
 .card-footer { padding: 12px 16px; background: transparent;}
+.card-especial{justify-content: space-between;}
 /* Componente Card
   - .card, .card-body, .card-title, .card-text
   - Uso: entradas principales y sidebars
@@ -260,7 +261,7 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
 */
 .collapse { display:none; }
 .collapse.show { display:block; }
-@media (min-width: 768px) {
+@media (min-width: 1025px) {
   .navbar,
   .collapse { display:flex; align-items:center; }
   .navbar-toggler { display: none; }
@@ -533,6 +534,9 @@ a.btn { display:inline-flex; align-items:center; justify-content:center; text-de
   }
   .carousel-tag:not(:first-of-type){
     display: none !important;
+  }
+  .carousel-item::before{
+    display: none;
   }
   /* Ajuste específico para que el tag no se expanda al 100% en flex column */
   .carousel-tag {
@@ -1081,4 +1085,187 @@ hr{
     left: 0;
     width: 100% !important;
     height: 100% !important;
+}
+/* ==================================================
+   SISTEMA RESPONSIVE GLOBAL
+   telefono(<=578) | telefono grande(<=768) | tableta(<=980)
+   laptop(<=1200) | monitor(<=1400) | monitor grande(>1400)
+   ================================================== */
+/* monitor grande (>1400px) */
+@media (min-width: 1401px) {
+  .container {
+    max-width: 1320px;
+  }
+  .container-noticia {
+    max-width: 960px;
+  }
+  .site-main {
+    padding: 16px;
+  }
+  .carousel-caption h5 {
+    font-size: 3.2rem;
+  }
+}
+/* monitor (<=1400px) */
+@media (max-width: 1400px) {
+  .container {
+    max-width: 1200px;
+  }
+  .carousel-caption h5 {
+    font-size: 2.8rem;
+  }
+}
+/* laptop (<=1200px) */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 1040px;
+  }
+  .nav-search {
+    min-width: 220px;
+  }
+  .carousel-caption {
+    padding-right: 40%;
+  }
+  .carousel-caption h5 {
+    font-size: 2.4rem;
+  }
+}
+/* tableta (<=980px) */
+@media (max-width: 980px) {
+  .container,
+  .container-fluid,
+  .container-noticia {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .site-main .carousel {
+    margin-left: -14px;
+    margin-right: -14px;
+    width: calc(100% + 28px);
+  }
+  .carousel-caption {
+    padding-right: 28%;
+  }
+  .carousel-caption h5 {
+    font-size: 2rem;
+  }
+}
+/* telefono grande (<=768px) */
+@media (max-width: 768px) {
+  .container,
+  .container-fluid,
+  .container-noticia {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .site-main {
+    padding: 8px;
+  }
+  .site-main .carousel {
+    margin-left: -12px;
+    margin-right: -12px;
+    width: calc(100% + 24px);
+  }
+}
+/* telefono (<=578px) */
+@media (max-width: 578px) {
+  .container,
+  .container-fluid,
+  .container-noticia {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .site-main {
+    padding: 6px;
+  }
+  .site-main .carousel {
+    margin-left: -10px;
+    margin-right: -10px;
+    width: calc(100% + 20px);
+  }
+  .carousel,
+  .carousel-inner,
+  .carousel-item {
+    min-height: 360px;
+  }
+  .carousel-caption {
+    padding: 18px 12px 72px;
+  }
+  .carousel-caption h5 {
+    font-size: 1.35rem;
+  }
+  .carousel-caption p {
+    font-size: 0.85rem;
+  }
+  .custom-indicators {
+    gap: 6px;
+  }
+  .indicator-avatar {
+    width: 42px;
+    height: 42px;
+  }
+}
+/* Ajuste tablet horizontal/intermedia para evitar áreas vacías entre 768px y 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .carousel,
+  .carousel-inner,
+  .carousel-item {
+    height: 60vh;
+    min-height: 440px;
+  }
+  .carousel-item::before {
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 55%, rgba(0,0,0,0.12) 100%);
+  }
+  .carousel-caption {
+    padding: 26px 18px 84px;
+    padding-right: 18px;
+    max-width: 100%;
+    justify-content: flex-end;
+    align-items: flex-start;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 52%, rgba(0,0,0,0) 100%);
+  }
+  .carousel-caption h5 {
+    font-size: 1.9rem;
+  }
+  .carousel-caption p {
+    font-size: 1rem;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .custom-indicators {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    justify-content: center;
+    padding-left: 0;
+    gap: 8px;
+    bottom: 14px;
+  }
+}
+.pagination-wrapper{
+  display:flex;
+  justify-content:center;
+  margin:30px 0;
+}
+.pagination{
+  list-style:none;
+  display:flex;
+  gap:8px;
+}
+.pagination li a{
+  padding:8px 14px;
+  border:1px solid var(--bg);
+  text-decoration:none;
+  color:var(--text);
+  border-radius:6px;
+}
+.pagination li.active a{
+  background:var(--accent);
+  color:var(--text);
+  border-color:var(--border);
+}
+.pagination li a:hover{
+  background:var(--bg);
 }

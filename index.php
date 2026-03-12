@@ -314,7 +314,6 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         </div>
                         <div class="card-body">
                             <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
-                            <hr>
                             <ul class="list-group list-group-flush mb-3">
                                 <?php foreach($ultimasNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">
@@ -323,7 +322,6 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 <?php endforeach; ?>
                             </ul>
                             <h3><i class="bi bi-fire"></i> Lo más popular</h3>
-                            <hr>
                             <ul class="list-group list-group-flush">
                                 <?php foreach($popularesNoticiasSidebar as $row): ?>
                                     <li class="list-group-item">

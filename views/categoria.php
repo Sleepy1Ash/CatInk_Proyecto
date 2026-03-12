@@ -1,6 +1,11 @@
 <?php
 include("./../layout/header.php");
 include("./../data/conexion.php");
+//Detectar pagina
+$porPagina = 3;
+$pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($pagina < 1) $pagina = 1;
+$offset = ($pagina - 1) * $porPagina;
 $q         = trim($_GET['q'] ?? '');
 $categoria = trim($_GET['cat'] ?? '');
 // ==============================
@@ -17,9 +22,10 @@ if ($q !== '') {
           AND (n.titulo LIKE ? OR n.descripcion LIKE ? OR n.contenido LIKE ?)
         GROUP BY n.id
         ORDER BY n.fecha_publicacion DESC
+        LIMIT ? OFFSET ?
     ");
     $like = "%$q%";
-    $stmt->bind_param("sss", $like, $like, $like);
+    $stmt->bind_param("sssii", $like, $like, $like, $porPagina, $offset);
 } elseif ($categoria !== '') {
     $stmt = $con->prepare("
         SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
@@ -32,8 +38,9 @@ if ($q !== '') {
         WHERE n.fecha_publicacion <= NOW()
         GROUP BY n.id
         ORDER BY n.fecha_publicacion DESC
+        LIMIT ? OFFSET ?
     ");
-    $stmt->bind_param("s", $categoria);
+    $stmt->bind_param("sii", $categoria, $porPagina, $offset);
 } else {
     $stmt = $con->prepare("
         SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
@@ -44,11 +51,43 @@ if ($q !== '') {
         WHERE n.fecha_publicacion <= NOW()
         GROUP BY n.id
         ORDER BY n.fecha_publicacion DESC
-        LIMIT 20
+        LIMIT ? OFFSET ?
     ");
+    $stmt->bind_param("ii", $porPagina, $offset);
 }
 $stmt->execute();
 $result = $stmt->get_result();
+// CONTAR TOTAL DE NOTICIAS
+if ($q !== '') {
+    $stmtTotal = $con->prepare("
+        SELECT COUNT(DISTINCT n.id) as total
+        FROM noticias n
+        LEFT JOIN noticia_categoria nc ON n.id = nc.noticia_id
+        LEFT JOIN categorias c ON nc.categoria_id = c.id_c
+        WHERE n.fecha_publicacion <= NOW()
+        AND (n.titulo LIKE ? OR n.descripcion LIKE ? OR n.contenido LIKE ?)
+    ");
+    $stmtTotal->bind_param("sss", $like, $like, $like);
+} elseif ($categoria !== '') {
+    $stmtTotal = $con->prepare("
+        SELECT COUNT(DISTINCT n.id) as total
+        FROM noticias n
+        INNER JOIN noticia_categoria nc_filter ON n.id = nc_filter.noticia_id
+        INNER JOIN categorias c_filter ON nc_filter.categoria_id = c_filter.id_c
+        WHERE n.fecha_publicacion <= NOW()
+        AND c_filter.nombre = ?
+    ");
+    $stmtTotal->bind_param("s", $categoria);
+} else {
+    $stmtTotal = $con->prepare("
+        SELECT COUNT(*) as total
+        FROM noticias
+        WHERE fecha_publicacion <= NOW()
+    ");
+}
+$stmtTotal->execute();
+$totalNoticias = $stmtTotal->get_result()->fetch_assoc()['total'];
+$totalpaginas = ceil($totalNoticias / $porPagina);
 // ==============================
 // SIDEBAR
 // ==============================
@@ -131,6 +170,31 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             </div>
           </div>
         <?php endwhile; ?>
+        <div class="pagination-wrapper">
+            <ul class="pagination">
+                <?php if ($pagina > 1): ?>
+                    <li>
+                        <a href="?page=<?= $pagina-1 ?>&q=<?= urlencode($q) ?>&cat=<?= urlencode($categoria) ?>">
+                            « Anterior
+                        </a>
+                    </li>
+                <?php endif; ?>
+                <?php for ($i = 1; $i <= $totalpaginas; $i++): ?>
+                    <li class="<?= $i == $pagina ? 'active' : '' ?>">
+                        <a href="?page=<?= $i ?>&q=<?= urlencode($q) ?>&cat=<?= urlencode($categoria) ?>">
+                            <?= $i ?>
+                        </a>
+                    </li>
+                <?php endfor; ?>
+                <?php if ($pagina < $totalpaginas): ?>
+                    <li>
+                        <a href="?page=<?= $pagina+1 ?>&q=<?= urlencode($q) ?>&cat=<?= urlencode($categoria) ?>">
+                            Siguiente »
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
       </div>
       <!-- ================== SIDEBAR ================== -->
       <div class="col-md-3">

@@ -30,6 +30,44 @@ if (!$noticia) die("Noticia no encontrada");
 $cats = !empty($noticia['categorias']) ? explode(',', $noticia['categorias']) : [];
 $cats = array_map('trim', $cats);
 // ==============================
+// NOTICIAS RECOMENDADAS
+// ==============================
+$recomendadas = [];
+if(!empty($cats)){
+    $placeholders = implode(',', array_fill(0, count($cats), '?'));
+    $sqlRec = "
+        SELECT DISTINCT n.id, n.titulo, n.crop3, n.fecha_publicacion
+        FROM noticias n
+        JOIN noticia_categoria nc ON n.id = nc.noticia_id
+        JOIN categorias c ON nc.categoria_id = c.id_c
+        WHERE c.nombre IN ($placeholders)
+        AND n.id != ?
+        AND n.fecha_publicacion <= NOW()
+        ORDER BY n.fecha_publicacion DESC
+        LIMIT 3
+    ";
+    $stmtRec = $con->prepare($sqlRec);
+    $types = str_repeat("s", count($cats)) . "i";
+    $params = array_merge($cats, [$id]);
+    $stmtRec->bind_param($types, ...$params);
+    $stmtRec->execute();
+    $recomendadas = $stmtRec->get_result();
+}
+// ==============================
+// NOTICIAS RECIENTES
+// ==============================
+$stmtRecientes = $con->prepare("
+    SELECT id, titulo, crop3, fecha_publicacion
+    FROM noticias
+    WHERE fecha_publicacion <= NOW()
+    AND id != ?
+    ORDER BY fecha_publicacion DESC
+    LIMIT 4
+");
+$stmtRecientes->bind_param("i", $id);
+$stmtRecientes->execute();
+$recientes = $stmtRecientes->get_result();
+// ==============================
 // Últimas y Populares
 // ==============================
 $stmtUltimas = $con->prepare("
@@ -158,6 +196,62 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 </ul>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="container">
+          <h3>Recomendados para ti</h3>
+          <hr>
+          <div class="row">
+            <?php while($r = $recomendadas->fetch_assoc()): 
+                $img = !empty($r['crop3']) ? "./../".$r['crop3'] : "./../img/placeholder.jpg";
+            ?>
+              <div class="col">
+                  <div class="card h-100">
+                      <img src="<?= htmlspecialchars($img) ?>" class="card-img-top">
+                      <div class="card-body">
+                          <h6>
+                              <a href="<?= newsUrl($r['id']) ?>" class="news-link">
+                                  <?= htmlspecialchars($r['titulo']) ?>
+                              </a>
+                          </h6>
+                          <small class="text-muted">
+                              <?= date('d M Y', strtotime($r['fecha_publicacion'])) ?>
+                          </small>
+                      </div>
+                  </div>
+              </div>
+            <?php endwhile; ?>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="container">
+          <h3>Noticias recientes</h3>
+          <hr>
+          <div class="row">
+            <?php while($r = $recientes->fetch_assoc()): 
+                $img = !empty($r['crop3']) ? "./../".$r['crop3'] : "./../img/placeholder.jpg";
+            ?>
+              <div class="col">
+                  <div class="card h-100">
+                      <img src="<?= htmlspecialchars($img) ?>" class="card-img-top">
+                      <div class="card-body">
+                          <h6>
+                              <a href="<?= newsUrl($r['id']) ?>" class="news-link">
+                                  <?= htmlspecialchars($r['titulo']) ?>
+                              </a>
+                          </h6>
+                          <small class="text-muted">
+                              <?= date('d M Y', strtotime($r['fecha_publicacion'])) ?>
+                          </small>
+                      </div>
+                  </div>
+              </div>
+            <?php endwhile; ?>
           </div>
         </div>
       </div>
