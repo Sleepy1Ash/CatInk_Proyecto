@@ -2,6 +2,7 @@
 include("./../layout/header.php");
 include("./../data/conexion.php");
 include("./helpers/videoEmbed.php");
+include("./helpers/socialEmbed.php");
 if(isset($_GET['hash'])){
     $id = decodeId($_GET['hash']);
 }else{
@@ -134,8 +135,13 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
               ❤️ Like <span id="likeCount"><?= $noticia['likes'] ?></span>
             </button>
             <!-- Contenido completo de la noticia -->
-            <div class="ql-editor">
-              <?= bloquearEmbeds($noticia['contenido']) ?>
+            <div class="post-content">
+              <?php
+                $contenido=$noticia['contenido'];
+                $contenido=procesarEmbedsSociales($contenido);
+                $contenido=bloquearEmbeds($contenido);
+                echo $contenido
+              ?>
             </div>
             <div class="share-bar">
                 <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn facebook">

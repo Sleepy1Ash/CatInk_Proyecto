@@ -256,7 +256,77 @@ const LineHeightStyle = new Parchment.Attributor.Style(
   }
 );
 Quill.register(LineHeightStyle, true);
+
+// ===== Define social embed blot =====
+const BlockEmbed = Quill.import('blots/block/embed');
+class SocialEmbedBlot extends BlockEmbed {
+  static create(value) {
+    const node = super.create();
+    node.setAttribute('data-url', value);
+    node.classList.add('social-embed');
+    // insert preview HTML
+    node.innerHTML = renderizarEmbedSocialJS(value);
+    return node;
+  }
+  static value(node) {
+    return node.getAttribute('data-url');
+  }
+}
+SocialEmbedBlot.blotName = 'socialEmbed';
+SocialEmbedBlot.tagName = 'div';
+SocialEmbedBlot.className = 'social-embed';
+Quill.register(SocialEmbedBlot);
+
+// simple JS mirror of PHP helper, used for preview inside editor
+function renderizarEmbedSocialJS(url) {
+  // twitter/x
+  if (/twitter\.com|x\.com/i.test(url)) {
+    return `
+      <blockquote class="twitter-tweet">
+        <a href="${url}"></a>
+      </blockquote>
+      <script async src="https://platform.twitter.com/widgets.js"></script>
+    `;
+  }
+  if (/instagram\.com/i.test(url)) {
+    const clean = url.split('?')[0];
+    return `
+      <blockquote class="instagram-media" data-instgrm-permalink="${clean}" data-instgrm-version="14"></blockquote>
+      <script async src="https://www.instagram.com/embed.js"></script>
+    `;
+  }
+  if (/facebook\.com/i.test(url)) {
+    return `
+      <iframe src="https://www.facebook.com/plugins/post.php?href=${encodeURIComponent(url)}" width="100%" height="500" frameborder="0"></iframe>
+    `;
+  }
+  if (/youtube\.com|youtu\.be/i.test(url)) {
+    const m = url.match(/(v=|\/)([0-9A-Za-z_-]{11})/);
+    if (m && m[2]) {
+      return `<div class="video-responsive"><iframe src="https://www.youtube.com/embed/${m[2]}" frameborder="0" allowfullscreen></iframe></div>`;
+    }
+  }
+  if (/vimeo\.com/i.test(url)) {
+    const m = url.match(/vimeo\.com\/(\d+)/);
+    if (m && m[1]) {
+      return `<div class="video-responsive"><iframe src="https://player.vimeo.com/video/${m[1]}" frameborder="0" allowfullscreen></iframe></div>`;
+    }
+  }
+  if (/tiktok\.com/i.test(url)) {
+    const m = url.match(/video\/(\d+)/);
+    if (m && m[1]) {
+      return `<iframe src="https://www.tiktok.com/embed/v2/${m[1]}" width="100%" height="600" frameborder="0" allowfullscreen></iframe>`;
+    }
+  }
+  // fallback: just hyperlink
+  return `<a href="${url}" target="_blank">${url}</a>`;
+}
+
 // ====== INICIALIZACIÓN ======
+// clipboard matcher for existing social-embed divs
+const Delta = Quill.import('delta');
+
+// create editor instance
 const quill = new Quill('#editor', {
   theme: 'snow',
   placeholder: 'Escribe aquí...',
@@ -264,7 +334,8 @@ const quill = new Quill('#editor', {
     toolbar: {
       container: '.editor-toolbar',
       handlers: {
-        image: imageHandler
+        image: imageHandler,
+        embed: embedHandler
       }
     },
     imageResize: {
@@ -272,6 +343,16 @@ const quill = new Quill('#editor', {
     }
   }
 });
+
+// convert pasted existing wrapper divs into blot
+quill.clipboard.addMatcher('DIV', function(node, delta) {
+  if (node.classList && node.classList.contains('social-embed')) {
+    const url = node.getAttribute('data-url');
+    return new Delta().insert({ socialEmbed: url });
+  }
+  return delta;
+});
+
 // ====== CARGAR CONTENIDO EXISTENTE ======
 const editorContent = document.getElementById('editorContent');
 if (editorContent && editorContent.textContent.trim().length > 0) {
@@ -295,6 +376,19 @@ function imageHandler() {
     reader.readAsDataURL(file);
   };
 }
+
+// ====== HANDLER PARA EMBEDS SOCIALES ======
+function embedHandler() {
+  const url = prompt("Introduce la URL a embeber (Twitter, Instagram, Facebook, etc.):");
+  if (!url) return;
+  // escape quotes to avoid breaking attributes
+  const safeUrl = url.replace(/"/g, '&quot;');
+  const range = quill.getSelection(true);
+  const html = `<div class="social-embed" data-url="${safeUrl}"><a href="${safeUrl}" target="_blank">${safeUrl}</a></div>`;
+  quill.clipboard.dangerouslyPasteHTML(range.index, html);
+  // move cursor after the inserted block
+  quill.setSelection(range.index + 1);
+}
 /* verifica el contenido del editor antes de enviar el formulario */
 const form = 
             document.getElementById('formPublicacion')
@@ -303,7 +397,11 @@ const form =
 const contenidoInput = document.getElementById('contenido');
 if (form && contenidoInput) {
   form.addEventListener('submit', () => {
-    contenidoInput.value = quill.root.innerHTML;
+    let html = quill.root.innerHTML;
+    // ensure social-embed placeholders are minimal (strip inner HTML/scripts)
+    html = html.replace(/<div class="social-embed"[^>]*data-url="([^"]+)"[^>]*>.*?<\/div>/gi,
+                        '<div class="social-embed" data-url="$1"></div>');
+    contenidoInput.value = html;
   });
 }
 // modal-noticia

@@ -29,6 +29,14 @@ $titulo = $_POST['titulo'] ?? '';
 $descripcion = $_POST['descripcion'] ?? '';
 $categorias = $_POST['categoria'] ?? []; // IDs ahora
 $contenido = $_POST['contenido'] ?? '';
+// sanitize as above
+$contenido = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/i', '', $contenido);
+$contenido = preg_replace_callback(
+    '/<blockquote[^>]*>.*?<a[^>]+href="([^"]+)"[^>]*><\/a>.*?<\/blockquote>/is',
+    function($m){ return '<div class="social-embed" data-url="'.htmlspecialchars($m[1]).'"\></div>'; },
+    $contenido
+);
+
 $fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
 // ============================
 // VALIDACION

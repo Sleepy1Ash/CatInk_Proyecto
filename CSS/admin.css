@@ -133,6 +133,18 @@ hr {
     margin-right: 5px;
   }
 }
+
+/* estilo provisional dentro del editor para bloques sociales */
+.ql-editor .social-embed {
+  border: 1px dashed var(--border);
+  padding: 8px;
+  background: var(--card-bg);
+  text-align: center;
+}
+.ql-editor .social-embed a {
+  color: var(--accent);
+  text-decoration: underline;
+}
 /* ============================
    Estilos para Calendario (Contenidos)
    ============================ */

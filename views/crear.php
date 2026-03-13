@@ -146,6 +146,8 @@ while($row = $categoriasResult->fetch_assoc()){
 
                     <!-- Limpiar formato -->
                     <button class="ql-clean" title="Limpiar formato"></button>
+                    <!-- Embebido -->
+                    <button class="ql-embed" title="Embebido"><i class="bi bi-boxes"></i></button>
                 </div>
 
                 <!-- EDITOR -->
