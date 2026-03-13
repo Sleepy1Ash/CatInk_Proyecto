@@ -147,19 +147,19 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn facebook">
                     <i class="bi bi-facebook"></i>
                 </a>
-                <a href="https://www.instagram.com/?url=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn instagram">
+                <!--<a href="#" onclick="copyLink()" class="share-btn instagram">
                     <i class="bi bi-instagram"></i>
-                </a>
+                </a>-->
                 <a href="https://wa.me/?text=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn whatsapp">
                     <i class="bi bi-whatsapp"></i>
                 </a>
                 <a href="https://twitter.com/intent/tweet?text=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn twitter">
                     <i class="bi bi-twitter-x"></i>
                 </a>
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn linkedin">
+                <!--<a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>" target="_blank" class="share-btn linkedin">
                     <i class="bi bi-linkedin"></i>
-                </a>
-                <a href="https://www.facebook.com/dialog/send?link=<?= urlencode("https://www.catink.com.mx/".newsUrl($id)) ?>&app_id=TU_APP_ID" target="_blank" class="share-btn messenger">
+                </a>-->
+                <a href="#" onclick="shareMessenger()" class="share-btn messenger">
                     <i class="bi bi-messenger"></i>
                 </a>
             </div>
@@ -310,8 +310,25 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
   });
 </script>
 <script>
-  function toggleShareMenu(){
-    document.getElementById("shareMenu").classList.toggle("active");
+  function copyLink(){
+    const link = "https://www.catink.com.mx/<?= newsUrl($id) ?>";
+    navigator.clipboard.writeText(link);
+    window.open("https://www.instagram.com/direct/inbox/", "_blank");
   }
+  function shareMessenger() {
+    const url = "https://www.catink.com.mx/<?= newsUrl($id) ?>";
+    const encoded = encodeURIComponent(url);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(isMobile){
+        // abre messenger en móvil
+        window.open("fb-messenger://share/?link=" + encoded, "_blank");
+    }else{
+        // abre diálogo web en PC
+        window.open(
+            "https://www.facebook.com/dialog/send?link=" + encoded + "&app_id=TU_APP_ID&redirect_uri=" + encoded,
+            "_blank"
+        );
+    }
+}
 </script>
 <?php include("./../layout/footer.php"); ?>
