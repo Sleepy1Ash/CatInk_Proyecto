@@ -1,3 +1,4 @@
+<?php require_once(__DIR__ . "/../views/helpers/urlhelper.php"); ?>
 <!-- Modal de cookies -->
 <div id="cookie-modal" class="cookie-modal">
   <div class="cookie-content">
@@ -7,25 +8,27 @@
     <div class="cookie-buttons">
       <button onclick="aceptarCookies()">Aceptar</button>
       <button onclick="negarCookies()">Negar</button>
-      <a href="./views/politica-cookies.php" class="leer-mas">Leer más</a>
+      <a href="<?= basePath() . '/cookies' ?>" class="leer-mas">Leer más</a>
     </div>
   </div>
 </div>
 <!-- Fin del contenido principal -->
 </main>
 <!-- Script local: reemplaza comportamientos de Bootstrap (colapso, tema, carrusel) -->
-<script src="/CSS/scripts.js"></script>
+<script src="https://www.catink.com.mx/CSS/scripts.js"></script>
+<script async src="https://platform.twitter.com/widgets.js"></script>
 <script>
   let searchTimeout = null;
   const input = document.getElementById('searchInput');
+  const basePath = '<?= basePath() ?>'; // Inyectado desde PHP
   if (input) {
     input.addEventListener('keyup', function () {
       clearTimeout(searchTimeout);
       const q = this.value.trim();
       searchTimeout = setTimeout(() => {
         if (q.length >= 2) {
-          // Redirige al controlador de búsqueda/categoría
-          window.location.href = `/views/categoria.php?q=${encodeURIComponent(q)}`;
+          // Redirige a la búsqueda con URL amigable
+          window.location.href = basePath + `/buscar/${encodeURIComponent(q)}`;
         }
       }, 400);
     });
@@ -81,6 +84,19 @@
       }
   }
 </script>
+<script>
+    document.querySelectorAll(".news-card, .card, .carousel-item").forEach(card => {
+        card.addEventListener("click", function(e) {
+            // Evitar conflicto si hacen click en links o tags
+            if (e.target.closest("a")) return;
+
+            const url = this.dataset.url;
+            if (url) {
+                window.location.href = url;
+            }
+        });
+    });
+</script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
 <footer class="site-footer mt-5">
   <div class="container">
@@ -96,11 +112,12 @@
       <div class="col">
         <h4 class="footer-title">Enlaces de interes</h4>
         <ul class="footer-links">
-          <li><a href="/views/nosotros.php"><i class="bi bi-building-fill"></i> Nosotros</a></li>
-          <li><a href="/views/terminos.php"><i class="bi bi-file-earmark-text-fill"></i> Terminos y Condiciones</a></li>
-          <li><a href="/views/unete.php"><i class="bi bi-briefcase-fill"></i> Unete a nuestro equipo</a></li>
-          <li><a href="/views/suscripcion.php" aria-label="Suscribete"><i class="bi bi-bookmark-star-fill"></i> Suscribete</a></li>
-          <li><a href="/views/contactanos.php"><i class="bi bi-envelope-fill"></i> Contactanos</a></li>
+          <li><a href="<?= basePath() . '/sobre-nosotros' ?>"><i class="bi bi-building-fill"></i> Nosotros</a></li>
+          <li><a href="<?= basePath() . '/terminos-condiciones' ?>"><i class="bi bi-file-earmark-text-fill"></i> Terminos y Condiciones</a></li>
+          <li><a href="<?= basePath() . '/privacidad' ?>"><i class="bi bi-file-lock-fill"></i> Aviso de privacidad</a></li>
+          <li><a href="<?= basePath() . '/solicitud' ?>"><i class="bi bi-briefcase-fill"></i> Unete a nuestro equipo</a></li>
+          <li><a href="<?= basePath() . '/suscripcion' ?>" aria-label="Suscribete"><i class="bi bi-bookmark-star-fill"></i> Suscribete</a></li>
+          <li><a href="<?= basePath() . '/contactanos' ?>"><i class="bi bi-envelope-fill"></i> Contactanos</a></li>
         </ul>
       </div>
       <!-- Redes sociales -->

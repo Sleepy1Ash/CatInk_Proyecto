@@ -1,7 +1,8 @@
 <?php
 include(__DIR__ . "/layout/header.php");
-include(__DIR__ . "/data/conexion.php");
+require_once(__DIR__ . "/data/conexion.php");
 include(__DIR__ . "/views/helpers/videoEmbed.php");
+require_once(__DIR__ . "/views/helpers/urlhelper.php");
 // =====================
 // Obtener todas las noticias con sus categorías
 // =====================
@@ -39,7 +40,9 @@ $slider = array_slice($noticias, 0, 5);
 $ultimasNoticias = $noticias;
 usort($ultimasNoticias, fn($a,$b)=>$b['likes']-$a['likes']);
 $ultimasNoticias = array_slice($ultimasNoticias, 0, 7);
-$noticiasMasRecientes = array_slice($noticias, 5, 11);
+$noticiasMasRecientes = array_slice($noticias, 0, 6);
+$noticiasMasRecientes2 = array_slice($noticias, 7, 11);
+$noticiasMasRecientes3 = array_slice($noticias, 12, 17);
 //Obtener banner publicidad
 $stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 ORDER BY RAND() LIMIT 1");
 $stmt->execute();
@@ -53,7 +56,7 @@ $stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 OR
 $stmt->execute();
 $publicidadInferior = $stmt->get_result()->fetch_assoc();
 // obtener videos
-$stmt = $con->prepare("SELECT * FROM videos WHERE activo = 1 ORDER BY id_v DESC LIMIT 4");
+$stmt = $con->prepare("SELECT * FROM videos WHERE activo = 1 ORDER BY id_v DESC LIMIT 6");
 $stmt->execute();
 $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -73,7 +76,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </div>
     <div class="carousel-inner">
         <?php foreach($slider as $i => $row): ?>
-            <div class="carousel-item <?= $i==0?'active':'' ?>">
+            <div class="carousel-item <?= $i==0?'active':'' ?>" data-url="<?= newsUrl($row['id']) ?>">
                 <picture>
                     <!-- MÓVIL usa crop2 -->
                     <source 
@@ -87,7 +90,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </picture>
                 <div class="carousel-caption caption-md">
                     <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
-                        <span class="carousel-tag"><?= htmlspecialchars($cat) ?></span>
+                        <a href="<?= categoryUrl($cat) ?>" class="carousel-tag"><?= htmlspecialchars($cat) ?></a>
                     <?php endforeach; ?>
                     <h5><a href="./<?= newsUrl($row['id']) ?>" class="carousel-link"><?= htmlspecialchars($row['titulo']) ?></a></h5>
                     <p><?= htmlspecialchars($row['descripcion']) ?></p>
@@ -97,20 +100,20 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     </div>
 </div>
 <!-- ===================== -->
-<!-- ÚLTIMAS NOTICIAS -->
+<!-- TOP NOTICIAS -->
 <!-- ===================== -->
 <div class="container mt-5">
     <div class="container-fluid">
-        <h2><i class="bi bi-chat-left-dots"></i>  Últimas Publicaciones de la Semana</h2><br>
+        <h2><i class="bi bi-chat-left-dots"></i>  Top Publicaciones de la Semana</h2><br>
         <div class="row">
             <!-- Primeras 2 noticias principales -->
             <div class="col-md-8">
-                <div class="news-card">
+                <div class="news-card" data-url="./<?= newsUrl($ultimasNoticias[0]['id']) ?>">
                     <img src="<?= htmlspecialchars($ultimasNoticias[0]['crop2'] ?? $ultimasNoticias[0]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <div class="news-tags">
                             <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[0]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
@@ -124,12 +127,12 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="news-card">
+                <div class="news-card" data-url="./<?= newsUrl($ultimasNoticias[1]['id']) ?>">
                     <img src="<?= htmlspecialchars($ultimasNoticias[1]['crop3'] ?? $ultimasNoticias[1]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <div class="news-tags">
                             <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[1]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
@@ -144,12 +147,12 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
         <div class="row">
             <div class="col">
-                <div class="news-card">
+                <div class="news-card" data-url="./<?= newsUrl($ultimasNoticias[2]['id']) ?>">
                     <img src="<?= htmlspecialchars($ultimasNoticias[2]['crop3'] ?? $ultimasNoticias[2]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <div class="news-tags">
                             <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[2]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                               <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
@@ -162,12 +165,12 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
             <div class="col">
-                <div class="news-card">
+                <div class="news-card" data-url="./<?= newsUrl($ultimasNoticias[3]['id']) ?>">
                     <img src="<?= htmlspecialchars($ultimasNoticias[3]['crop3'] ?? $ultimasNoticias[3]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <div class="news-tags">
                             <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[3]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
@@ -180,12 +183,12 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
             <div class="col">
-                <div class="news-card">
+                <div class="news-card" data-url="./<?= newsUrl($ultimasNoticias[4]['id']) ?>">
                     <img src="<?= htmlspecialchars($ultimasNoticias[4]['crop3'] ?? $ultimasNoticias[4]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <div class="news-tags">
                             <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[4]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
@@ -200,12 +203,12 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         </div>
         <div class="row">
             <div class="col-md-4">
-                <div class="news-card">
+                <div class="news-card" data-url="./<?= newsUrl($ultimasNoticias[5]['id']) ?>">
                     <img src="<?= htmlspecialchars($ultimasNoticias[5]['crop3'] ?? $ultimasNoticias[5]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <div class="news-tags">
                             <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[5]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
@@ -218,12 +221,12 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="news-card">
+                <div class="news-card" data-url="./<?= newsUrl($ultimasNoticias[6]['id']) ?>">
                     <img src="<?= htmlspecialchars($ultimasNoticias[6]['crop2'] ?? $ultimasNoticias[6]['crop1'] ?? 'img/placeholder.jpg') ?>" alt="">
                     <div class="news-overlay">
                         <div class="news-tags">
                             <?php foreach(array_filter(array_map('trim', explode(',', $ultimasNoticias[6]['categorias'] ?? ''))) as $cat): ?>
-                                <span class="news-tag"><?= htmlspecialchars($cat) ?></span>
+                                <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="news-content">
@@ -242,13 +245,16 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <div class="row mt-5">
             <div class="col-md-9">
                 <?php if($secciones['publicidad']['estado'] == 1) : ?>
-                    <a href="<?php echo htmlspecialchars($publicidad['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidad['id_pub']); ?>">
-                        <img src="<?php echo htmlspecialchars($publicidad['imagen']); ?>" alt="" class="banner">
-                    </a>
+                    <div class="ad-container">
+                        <a href="<?php echo htmlspecialchars($publicidad['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidad['id_pub']); ?>">
+                            <img src="<?php echo htmlspecialchars($publicidad['imagen']); ?>" alt="" class="banner">
+                        </a>
+                        <span class="ads-label">ADS</span>
+                    </div>
                 <?php endif; ?>
                 <h2><i class="bi bi-newspaper"></i>  Lo más recientes</h2>
                 <?php foreach($noticiasMasRecientes as $row): ?>
-                    <div class="card mb-3">
+                    <div class="card mb-3" data-url="./<?= newsUrl($row['id']) ?>">
                         <div class="row row-no-gap">
                             <div class="col-md-4">
                                 <img src="<?= htmlspecialchars($row['crop3']  ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left">
@@ -256,7 +262,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                             <div class="col-md-8">
                                 <div class="card-body">
                                     <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
-                                        <span class="tag-news"><?= htmlspecialchars($cat) ?></span>
+                                        <a href="<?= categoryUrl($cat) ?>" class="tag-news"><?= htmlspecialchars($cat) ?></a>
                                     <?php endforeach; ?>
                                     <h4 class="card-title">
                                         <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
@@ -287,7 +293,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 <?php endforeach; ?>
                 <?php if($secciones['videos']['estado'] == 1) : ?>
                     <h3><i class="bi bi-camera-video"></i> Videos Destacados</h3>
-                    <div class="video-carousel">
+                    <div class="video-carousel <?php echo count($vid) == 1? 'single-video':''; ?>">
                         <?php foreach($vid as $video): ?>
                             <div class="video-slide">
                                 <?php echo bloquearEmbeds(renderizarVideo($video['url_v'])); ?>
@@ -296,10 +302,90 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     </div>
                 <?php endif; ?>
                 <br>
+                <?php foreach($noticiasMasRecientes2 as $row): ?>
+                    <div class="card mb-3" data-url="./<?= newsUrl($row['id']) ?>">
+                        <div class="row row-no-gap">
+                            <div class="col-md-4">
+                                <img src="<?= htmlspecialchars($row['crop3']  ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
+                                        <a href="<?= categoryUrl($cat) ?>" class="tag-news"><?= htmlspecialchars($cat) ?></a>
+                                    <?php endforeach; ?>
+                                    <h4 class="card-title">
+                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
+                                    </h4>
+                                    <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
+                                    <span class="text-muted">Publicado: 
+                                        <?php
+                                            $fecha_pub = strtotime($row['fecha']); // convierte la fecha de la BD a timestamp
+                                            $ahora = time();                        // timestamp actual
+                                            $diff = $ahora - $fecha_pub;            // diferencia en segundos
+                                            if ($diff < 3600) { // menos de 1 hora
+                                                $minutos = floor($diff / 60);
+                                                echo "Publicado hace " . $minutos . " min";
+                                            } elseif ($diff < 86400) { // menos de 24 horas
+                                                $horas = floor($diff / 3600);
+                                                echo "Publicado hace " . $horas . " hrs";
+                                            } elseif ($diff < 172800) { // entre 24 y 48 horas
+                                                echo "Publicado ayer";
+                                            } else { // más de 48 horas
+                                                echo "Publicado: " . date("M d", $fecha_pub);
+                                            }
+                                        ?>, 
+                                        Por: <?= $row['nombre_u'] ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <div class="news-carousel">
+                    <?php foreach($noticiasMasRecientes3 as $row): ?>
+                        <div class="news-slide">
+                            <div class="news-card" data-url="./<?= newsUrl($row['id']) ?>">
+                                <img src="<?= htmlspecialchars($row['crop3']  ?? 'img/placeholder.jpg') ?>" alt="">
+                                <div class="news-overlay">
+                                    <div class="news-tags">
+                                        <?php foreach(array_filter(array_map('trim', explode(',', $row['categorias'] ?? ''))) as $cat): ?>
+                                            <a href="<?= categoryUrl($cat) ?>" class="tag-news"><?= htmlspecialchars($cat) ?></a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <div class="news-content">
+                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link-card"><?= htmlspecialchars($row['titulo']) ?></a>
+                                        <span class="text-muted">Publicado: 
+                                            <?php
+                                                $fecha_pub = strtotime($row['fecha']); // convierte la fecha de la BD a timestamp
+                                                $ahora = time();                        // timestamp actual
+                                                $diff = $ahora - $fecha_pub;            // diferencia en segundos
+                                                if ($diff < 3600) { // menos de 1 hora
+                                                    $minutos = floor($diff / 60);
+                                                    echo "Publicado hace " . $minutos . " min";
+                                                } elseif ($diff < 86400) { // menos de 24 horas
+                                                    $horas = floor($diff / 3600);
+                                                    echo "Publicado hace " . $horas . " hrs";
+                                                } elseif ($diff < 172800) { // entre 24 y 48 horas
+                                                    echo "Publicado ayer";
+                                                } else { // más de 48 horas
+                                                    echo "Publicado: " . date("M d", $fecha_pub);
+                                                }
+                                            ?>, 
+                                            Por: <?= $row['nombre_u'] ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <br>
                 <?php if($secciones['publicidad']['estado'] == 1) : ?>
-                    <a href="<?php echo htmlspecialchars($publicidadInferior['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadInferior['id_pub']); ?>">
-                        <img src="<?php echo htmlspecialchars($publicidadInferior['imagen']); ?>" alt="" class="banner">
-                    </a>
+                    <div class="ad-container">
+                        <a href="<?php echo htmlspecialchars($publicidadInferior['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadInferior['id_pub']); ?>">
+                            <img src="<?php echo htmlspecialchars($publicidadInferior['imagen']); ?>" alt="" class="banner">
+                        </a>
+                        <span class="ads-label">ADS</span>
+                    </div>
                 <?php endif; ?>
             </div>
             <div class="col-md-3">
@@ -307,9 +393,12 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                     <div class="card sidebar-card">
                         <div class="card-h">
                             <?php if($secciones['publicidad']['estado'] == 1) : ?>
-                                <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
-                                    <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
-                                </a>
+                                <div class="ad-container">
+                                    <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
+                                        <img src="<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
+                                    </a>
+                                    <span class="ads-label">ADS</span>
+                                </div>
                             <?php endif; ?>
                         </div>
                         <div class="card-body">

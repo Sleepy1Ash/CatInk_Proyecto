@@ -101,7 +101,7 @@ function formatNumberShort($num){
     <?php endif; ?> 
     <!-- Botón para abrir el modal -->
      <?php if($superadmin): ?>
-        <a href="paginas.php" class="btn btn-success"><i class="bi bi-card-text"></i> Editar "Nosotros" y "Terminos y condiciciones"</a>
+        <a href="paginas.php" class="btn btn-success"><i class="bi bi-card-text"></i> Editar Páginas Informativas</a>
         <button id="btnAbrirModal" class="btn btn-success">
             <i class="bi bi-gear"></i> Gestionar Estado de Secciones
         </button>

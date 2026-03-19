@@ -1,7 +1,7 @@
 <?php
 function obtenerEmbedSocial($url){
     // X (Twitter)
-    if(preg_match('/twitter\.com|x\.com/i',$url)){
+    if(preg_match('/(twitter\.com|x\.com)\/.*\/status\/(\d+)/i',$url)){
         return [
             "type" => "twitter",
             "url" => $url
@@ -61,7 +61,6 @@ function renderizarEmbedSocial($url){
             <blockquote class="twitter-tweet">
                 <a href="'.$embed['url'].'"></a>
             </blockquote>
-            <script async src="https://platform.twitter.com/widgets.js"></script>
             ';
         case "instagram":
             return '

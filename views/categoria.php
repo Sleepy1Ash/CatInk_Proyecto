@@ -1,13 +1,16 @@
 <?php
 include("./../layout/header.php");
-include("./../data/conexion.php");
+require_once("./../data/conexion.php");
+require_once("./helpers/urlhelper.php");
 //Detectar pagina
-$porPagina = 3;
+$porPagina = 10;
 $pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($pagina < 1) $pagina = 1;
 $offset = ($pagina - 1) * $porPagina;
-$q         = trim($_GET['q'] ?? '');
-$categoria = trim($_GET['cat'] ?? '');
+// Soportar múltiples formas de parámetros para búsqueda y categoría
+// Decodificar explícitamente los parámetros para manejar espacios codificados (%20)
+$q         = trim(urldecode($_GET['q'] ?? $_GET['query'] ?? $_GET['search'] ?? ''));
+$categoria = trim(urldecode($_GET['cat'] ?? $_GET['category'] ?? $_GET['categoria'] ?? ''));
 // ==============================
 // CONSULTA PRINCIPAL DINÁMICA
 // ==============================
@@ -145,7 +148,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             }
             $img = !empty($row['crop3']) ? "./../".$row['crop3'] : "./../img/placeholder.jpg";
           ?>
-          <div class="card mb-3">
+          <div class="card mb-3" data-url="<?= newsUrl($row['id']) ?>">
             <div class="row row-no-gap">
               <div class="col-md-4">
                 <img src="<?= htmlspecialchars($img) ?>" class="card-img-left">
@@ -154,7 +157,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <div class="card-body">
                   <!-- CATEGORÍAS -->
                   <?php foreach ($cats as $cat): ?>
-                    <span class="news-tag"><?= htmlspecialchars(trim($cat)) ?></span>
+                    <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars(trim($cat)) ?></a>
                   <?php endforeach; ?>
                   <h5 class="card-title">
                     <a href="<?= newsUrl($row['id']) ?>" class="news-link">
@@ -201,9 +204,12 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">
             <?php if($secciones['publicidad']['estado'] == 1) : ?>
-                <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
-                    <img src="./../<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
-                </a>
+                <div class="ad-container">
+                    <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
+                        <img src="./../<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
+                    </a>
+                    <span class="ads-label">ADS</span>
+                </div>
             <?php endif; ?>
             <div class="card-body">
               <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
