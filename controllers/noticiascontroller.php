@@ -35,6 +35,14 @@ $descripcion = $_POST['descripcion'];
 $categorias = $_POST['categoria'] ?? []; // ahora IDs
 $autor = $_POST['autor'];
 $contenido = $_POST['contenido'];
+// limpiar posibles scripts y conservar solo el placeholder
+$contenido = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/i', '', $contenido);
+// convertir posibles embed html a div.social-embed (blockquote generados por Quill/JS)
+$contenido = preg_replace_callback(
+    '/<blockquote[^>]*>.*?<a[^>]+href="([^"]+)"[^>]*><\/a>.*?<\/blockquote>/is',
+    function($m){ return '<div class="social-embed" data-url="'.htmlspecialchars($m[1]).'"></div>'; },
+    $contenido
+);
 $fecha_publicacion = $_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s');
 $fecha_publicacion = str_replace('T', ' ', $fecha_publicacion);
 // ============================

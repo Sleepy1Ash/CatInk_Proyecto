@@ -1,6 +1,9 @@
 <?php
-include(__DIR__ . "/../data/conexion.php");
-include(__DIR__ . "/../views/helpers/urlHelper.php");
+if(session_status() === PHP_SESSION_NONE){
+    session_start();
+}
+require_once(__DIR__ . "/../data/conexion.php");
+require_once(__DIR__ . "/../views/helpers/urlhelper.php");
 // Obtenemos todas las categorías únicas
 $stmtCats = $con->prepare("SELECT nombre FROM categorias");
 $stmtCats->execute();
@@ -24,13 +27,16 @@ while($row = $result->fetch_assoc()) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CatInk News</title>
   <!-- Local CSS-->
-  <link rel="stylesheet" href="/CatInk_Proyecto/CSS/styles.css">
+  <link rel="stylesheet" href="https://www.catink.com.mx/CSS/styles.css">
+  <link rel="icon" type="image/png" href="https://www.catink.com.mx/img/catink-icon.png">
   <!-- Iconos: Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
   <script async src="https://www.instagram.com/embed.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8588111729852920"
+     crossorigin="anonymous"></script>
   <style>
     @media (max-width: 768px) {
       #logo{
@@ -43,7 +49,7 @@ while($row = $result->fetch_assoc()) {
 <body>
 <nav class="navbar">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/CatInk_Proyecto/index.php">
+    <a class="navbar-brand" href="<?= basePath() . '/' ?>">
       <img id="logo" src="" alt="CatInk Logo">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -52,10 +58,10 @@ while($row = $result->fetch_assoc()) {
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav nav-left">
-        <li class="nav-item"><a class="nav-link" href="/CatInk_Proyecto/index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="<?= basePath() . '/' ?>">Home</a></li>
         <?php foreach ($categorias as $cat): ?>
           <li class="nav-item">
-            <a class="nav-link" href="/CatInk_Proyecto/views/categoria.php?cat=<?= urlencode($cat['nombre']) ?>">
+            <a class="nav-link" href="<?= categoryUrl($cat['nombre']) ?>">
               <?= htmlspecialchars($cat['nombre']) ?>
             </a>
           </li>
@@ -63,7 +69,16 @@ while($row = $result->fetch_assoc()) {
         <li class="nav-item d-flex gap-2 align-items-center">
             <!-- BOTÓN MODO OSCURO -->
             <button id="themeToggle" class="btn btn-outline-secondary">🌙</button>
-            <a href="/CatInk_Proyecto/views/login.php" class="btn btn-outline-secondary"><span class="bi bi-person-fill"></span></a>
+            <a href="<?= basePath() . '/login' ?>" class="btn btn-outline-secondary">
+              <?php
+                if(isset($_SESSION['usuario'])){
+                  echo "<i class='bi bi-person-fill-check'></i>";
+                  echo $_SESSION['usuario'];
+                }else{
+                  echo "<span class='bi bi-person-fill'></span>";
+                }
+              ?>
+            </a>
         </li>
       </ul>
       <form class="nav-search" onsubmit="return false;">

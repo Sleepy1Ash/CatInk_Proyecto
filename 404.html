@@ -110,13 +110,13 @@ body::before{
     stroke-width:6;
 }
 .eye{
-    fill:white;
+    fill:black;
     stroke:#111;
     stroke-width:4;
 }
 
 .pupil{
-    fill:#01b6d0;
+    fill: white;
     transition:transform 0.08s linear;
     stroke: #000;
     stroke-width:2;
@@ -238,8 +238,8 @@ body::before{
                 <ellipse cx="200" cy="220" rx="50" ry="65" class="eye"/>
                 <ellipse cx="300" cy="220" rx="50" ry="65" class="eye"/>
                 <!-- Pupilas que se mueven -->
-                <circle cx="200" cy="220" r="18" class="pupil" id="pupilLeft"/>
-                <circle cx="300" cy="220" r="18" class="pupil" id="pupilRight"/>
+                <circle cx="200" cy="220" r="40" class="pupil" id="pupilLeft"/>
+                <circle cx="300" cy="220" r="40" class="pupil" id="pupilRight"/>
                 <!-- Boca estilo :3 -->
                 <path d="
                 M150 280           
@@ -247,7 +247,7 @@ body::before{
                 Q300 340 350 280 
                 Q250 465 150 280
                 Z" class="mouth"/>
-                <ellipse cx="250" cy="305" rx="20" ry="10" fill="#ffdce0"/>
+                <ellipse cx="250" cy="290" rx="20" ry="10" fill="#ffdce0"/>
                 <ellipse cx="250" cy="358" rx="20" ry="10" fill="#dc2a74"/>
                 <!-- Patas delanteras (delante del cuerpo) -->
                 <ellipse cx="190" cy="560" rx="60" ry="40" class="cat-fill"/>

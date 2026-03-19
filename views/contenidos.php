@@ -82,15 +82,13 @@ while ($row = $result->fetch_assoc()) {
                                     <small class="text-muted">
                                         👁 <?= number_format($row['vistas']) ?> | ❤️ <?= number_format($row['likes']) ?>
                                     </small>
-                                    <?php if (!empty($ACL['editar']) || !empty($ACL['eliminar'])): ?>
+                                    <?php if (!empty($ACL['editar']) || !empty($ACL['eliminar']) || !empty($ACL['leer'])): ?>
                                     <div class="noticias-actions">
                                         <?php if (!empty($ACL['editar'])): ?>
                                             <a href="editar.php?id=<?= $row['id'] ?>" class="btn btn-edit" title="Editar"><i class="bi bi-pencil-square"></i></a>
                                         <?php endif; ?>
-                                        <?php if ($superadmin): ?>
+                                        <?php if (!empty($ACL['leer'])): ?>
                                             <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Estadísticas"><i class="bi bi-bar-chart"></i></a>
-                                        <?php else: ?>
-                                            <a href="newsAdmin.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Noticia"><i class="bi bi-eye"></i></a>
                                         <?php endif; ?>
                                         <?php if (!empty($ACL['eliminar'])): ?>
                                             <button class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>

@@ -64,9 +64,12 @@ $cats = array_map('trim', $cats);
             <div class="ql-editor">
                 <?= $noticia['contenido'] ?>
             </div>
-            <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
-                <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
-            </a>
+            <div class="ad-container">
+                <a href="<?= $publicidad['url'] ?>" class="banner-button" data-pub="<?= $publicidad['id_pub'] ?>">
+                    <img src="./../<?= $publicidad['imagen'] ?>" alt="" class="banner">
+                </a>
+                <span class="ads-label">ADS</span>
+            </div>
             </div>
         </div>
     </div>

@@ -1,11 +1,12 @@
 <?php
     date_default_timezone_set("America/Mexico_City");
+    echo "Cron ejecutado: " . date("Y-m-d H:i:s") . "\n";
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
-    require("./../../PHPMailer/src/PHPMailer.php");
-    require("./../../PHPMailer/src/Exception.php");
-    require("./../../PHPMailer/src/SMTP.php");
-    include("./../../data/conexion.php");
+    require(__DIR__."/../../PHPMailer/src/PHPMailer.php");
+    require(__DIR__."/../../PHPMailer/src/Exception.php");
+    require(__DIR__."/../../PHPMailer/src/SMTP.php");
+    include(__DIR__."/../../data/conexion.php");
     $hora = "SELECT hora FROM programacion_correos LIMIT 1";
     $stmtHora = $con->prepare($hora);
     $stmtHora->execute();

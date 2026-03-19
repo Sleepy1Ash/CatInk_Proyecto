@@ -55,6 +55,7 @@
                 <select name="nombre" id="nombre">
                     <option value="nosotros" selected>Nosotros</option>
                     <option value="terminos">Términos y condiciones</option>
+                    <option value="privacidad">Aviso de privacidad</option>
                 </select>
             </div>
             <div class="form-group">

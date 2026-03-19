@@ -94,7 +94,6 @@ hr {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
   /* Form components responsiveness */
   .checkbox-group {
     flex-direction: column;
@@ -108,7 +107,6 @@ hr {
     border-radius: 6px;
     display: block; /* Ensure full width click area */
   }
-  
   /* Cropper adjustments */
   .cropper-wrapper {
     height: 300px;
@@ -123,7 +121,6 @@ hr {
     width: 100%;
     margin-bottom: 5px;
   }
-  
   /* Preview grid */
   .preview {
     justify-content: center;
@@ -131,108 +128,135 @@ hr {
   .preview-item {
     width: 45%;
   }
-  
   /* Quill Editor Toolbar */
   .ql-toolbar.ql-snow .ql-formats {
     margin-right: 5px;
   }
 }
 
+/* estilo provisional dentro del editor para bloques sociales */
+.ql-editor .social-embed {
+  border: 1px dashed var(--border);
+  padding: 8px;
+  background: var(--card-bg);
+  text-align: center;
+}
+.ql-editor .social-embed a {
+  color: var(--accent);
+  text-decoration: underline;
+}
 /* ============================
    Estilos para Calendario (Contenidos)
    ============================ */
 .calendar-days {
+  background: var(--bg);
   display: flex;
-  gap: 16px;
+  gap: 24px;
   overflow-x: auto;
   padding-bottom: 16px; /* espacio para scrollbar */
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; /* smooth scroll iOS */
 }
-
 .day-column {
   min-width: 300px;
-  flex: 0 0 auto;
+  flex: 0 0 200px;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   scroll-snap-align: start;
+  padding: 16px;
 }
-
 .day-header {
-  padding: 12px;
-  background: rgba(0,0,0,0.03);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 10px;
+  background: var(--bg);
   font-weight: 700;
   text-align: center;
   border-bottom: 1px solid var(--border);
   color: var(--text);
+  margin-bottom: 16px;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0,0,0,.3);
 }
-
 .day-news {
   padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   flex: 1;
 }
-
 .noticias-card {
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 10px;
-  background: var(--bg);
+  background: var(--card-bg);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0,0,0,.3);
+  transition: transform .2s ease;
+  width: 100%;
 }
-
+.noticias-card:hover {
+    transform: translateY(-4px);
+}
 .noticias-card img {
   width: 100%;
   height: 140px;
   object-fit: cover;
   border-radius: 4px;
 }
-
 .noticias-card h6 {
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0;
   color: var(--text);
   line-height: 1.4;
+  padding: 10px 12px 0;
 }
-
+.noticias-card small {
+    padding: 0 12px;
+    display: block;
+    margin-bottom: 8px;
+}
 .noticias-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-top: auto;
+  padding: 10px 12px;
 }
-
 .noticias-actions .btn {
   padding: 4px 8px;
   font-size: 0.85rem;
 }
-
+.botonesSemana {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+h4 {
+  padding: 12px 12px;
+}
 /* Ajustes Mobile específicos para Calendario */
 @media (max-width: 768px) {
   .day-column {
     min-width: 85vw; /* Casi pantalla completa en móvil */
   }
-  
   /* Ajuste de filtros en admin.php si no usan grid estándar */
   .card-filter .row {
     flex-direction: column;
   }
-  
   /* Ajuste de contenedor de imagen en crear.php */
   .cropper-container img {
     max-width: 100%;
     height: auto;
   }
 }
-
-
 .sidebar-menu {
   list-style: none;
   padding: 8px;
@@ -241,11 +265,9 @@ hr {
   overflow-y: auto;
   min-height: 0;
 }
-
 .sidebar-menu-item {
   margin-bottom: 4px;
 }
-
 .sidebar-menu-link {
   display: flex;
   align-items: center;
@@ -256,11 +278,9 @@ hr {
   border-radius: 6px;
   font-size: 0.95rem;
 }
-
 .sidebar-menu-link:hover {
   background: rgba(0,0,0,0.04);
 }
-
 .sidebar-menu hr {
   border: none;
   border-top: 1px solid var(--border);
@@ -270,13 +290,11 @@ hr {
   padding: 12px;
   border-top: 1px solid var(--border);
 }
-
 .sidebar .logotipo {
   padding: 16px;
   text-align: center;
   border-bottom: 1px solid var(--border);
 }
-
 .sidebar .logotipo img {
   max-width: 75%;
   height: auto;
@@ -286,7 +304,6 @@ hr {
   padding: 6px 8px;
   border-bottom: 1px solid var(--border);
 }
-
 #user h4 {
   font-size: 0.95rem;
   font-weight: 600;
@@ -298,7 +315,6 @@ hr {
   padding: 12px;
   border-top: 1px solid var(--border);
 }
-
 .btn-icon {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -307,7 +323,6 @@ hr {
   border-radius: 8px;
   cursor: pointer;
 }
-
 .btn-icon:hover {
   background: rgba(0,0,0,0.05);
 }
@@ -316,7 +331,6 @@ hr {
     margin-bottom: 20px;
     font-weight: bold;
 }
-
 /* Estilos para el contenedor principal de formularios admin */
 .admin-container {
   max-width: 1000px;
@@ -324,14 +338,12 @@ hr {
   padding: 0 16px;
   width: 100%;
 }
-
 .form-card {
     background: transparent;
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,.08);
 }
-
 @media (max-width: 768px) {
   .form-card {
     padding: 16px;
@@ -340,19 +352,16 @@ hr {
     padding: 0 12px;
   }
 }
-
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 25px;
 }
-
 @media (min-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
-
 .form-column {
     display: flex;
     flex-direction: column;
@@ -367,14 +376,11 @@ hr {
     min-width: 220px;
     font-size: 16px;
 }
-
-
 label {
     margin-top: 10px;
     margin-bottom: 5px;
     font-weight: bold;
 }
-
 input, textarea {
     padding: 10px;
     border-radius: 5px;
@@ -382,17 +388,14 @@ input, textarea {
     color: var(--text);
     border: 1px solid var(--border);
 }
-
 input:focus, textarea:focus {
     outline: none;
     border-color: #007bff;
 }
-
 span {
     font-size: 10px;
     color: var(--muted);
 }
-
 .btn-success {
     margin-top: 20px;
     padding: 12px;
@@ -402,7 +405,6 @@ span {
     border-radius: 5px;
     cursor: pointer;
 }
-
 .btn-success:hover {
     background: #218838;
 }
@@ -460,13 +462,11 @@ span {
     gap: 12px;
     margin-top: 15px;
 }
-
 .preview-item {
     width: 130px;
     text-align: center;
     font-size: 12px;
 }
-
 .preview-item img {
     width: 100%;
     height: 90px;
@@ -479,12 +479,10 @@ span {
     margin-top: 15px;
     max-width: 100%;
 }
-
 .featured-preview img {
     border-radius: 8px;
     border: 1px solid #ccc;
 }
-
 .btn-secondary {
     margin-top: 10px;
     padding: 8px 14px;
@@ -506,7 +504,6 @@ span {
 .btn-secondary:hover {
     background: #5a6268;
 }
-
 .modal-actions {
     display: flex;
     gap: 10px;
@@ -514,7 +511,6 @@ span {
     justify-content: flex-end;
     flex-wrap: wrap;
 }
-
 .btn-danger {
     margin-top: 10px;
     padding: 8px 14px;
@@ -532,7 +528,6 @@ span {
     display: flex;
     gap: 10px;
 }
-
 .crop-controls button {
     padding: 6px 12px;
     border-radius: 5px;
@@ -541,17 +536,13 @@ span {
     color: white;
     cursor: pointer;
 }
-
 .crop-controls button:hover {
     background: #0056b3;
 }
-
-
 /* estilos para vista previa de video */
 .video-preview {
     margin-top: 15px;
 }
-
 .video-preview iframe,
 .video-preview video {
     width: 100%;
@@ -559,7 +550,6 @@ span {
     border-radius: 8px;
     border: 1px solid #ccc;
 }
-
 .error {
     color: red;
     font-size: 14px;
@@ -568,7 +558,6 @@ span {
 .parrafo-item {
     margin-top: 15px;
 }
-
 .parrafo-item textarea {
     width: 100%;
     resize: vertical;
@@ -579,7 +568,6 @@ span {
     flex-direction: column;
     margin-top: 10px;
 }
-
 .select-admin {
     padding: 10px;
     border-radius: 5px;
@@ -587,11 +575,9 @@ span {
     background: #fff;
     font-size: 14px;
     cursor: pointer;
-
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='%23666' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
@@ -601,7 +587,6 @@ span {
     outline: none;
     border-color: #007bff;
 }
-
 /* ===============================
    AISLAMIENTO TOTAL DE CROPPER
    =============================== */
@@ -613,12 +598,10 @@ span {
     background: #111;
     border-radius: 8px;
 }
-
 #featuredImagePreview {
     display: block;
     max-width: 100%;
 }
-
 /* opcional: solo visual */
 .cropper-crop-box {
     border: 2px dashed #00c3ff;
@@ -627,27 +610,22 @@ span {
 /* ===============================
    FORMULARIO ADMIN — UNA COLUMNA
    =============================== */
-
 .form-card {
     max-width: 900px;
     margin: 0 auto;
 }
-
 .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
 }
-
 .form-group label {
     font-weight: 600;
     margin-bottom: 6px;
 }
-
 .form-group textarea {
     resize: vertical;
 }
-
 /* Placeholders visuales (temporales) */
 .image-editor-placeholder,
 .editor-placeholder,
@@ -659,14 +637,12 @@ span {
     text-align: center;
     color: var(--muted);
 }
-
 .image-editor-placeholder p,
 .editor-placeholder p,
 .schedule-placeholder p {
     font-weight: 600;
     margin-bottom: 6px;
 }
-
 /* Ajuste del botón */
 .form-actions {
     margin-top: 30px;
@@ -679,7 +655,6 @@ span {
 body.has-sidebar .cropper-container {
   height: 360px !important;
 }
-
 .form-group .cropper-container {
   width: 100% !important;
   height: 100% !important;
@@ -699,7 +674,6 @@ body.has-sidebar .cropper-container {
     margin: 10px 0;
     flex-wrap: wrap;
 }
-
 .aspect-ratio-controls button {
     padding: 6px 12px;
     border-radius: 6px;
@@ -707,23 +681,19 @@ body.has-sidebar .cropper-container {
     background: var(--card-bg);
     cursor: pointer;
 }
-
 .crop-actions {
     margin-top: 10px;
     display: flex;
     gap: 10px;
 }
-
 .cropped-preview {
     margin-top: 20px;
 }
-
 .preview-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 15px;
 }
-
 .preview-grid img {
     width: 100%;
     border-radius: 8px;
@@ -788,7 +758,6 @@ select .ql-font {
   font-size: 14px;
   color: #111111;
 }
-
 /* EDITOR */
 .editor-content {
   min-height: 300px;
@@ -796,7 +765,6 @@ select .ql-font {
   color: var(--text, #fff);
   font-size: 14px;
 }
-
 /* TOOLBAR */
 .editor-toolbar {
   border-radius: 6px 6px 0 0;
@@ -820,7 +788,6 @@ select .ql-font {
   max-width: 100%;
   height: auto;
 }
-
 /* VIDEO */
 .ql-editor iframe {
   width: 100%;
@@ -831,23 +798,18 @@ select .ql-font {
   background: var(--accent-soft);
   transform: translateY(-1px);
 }
-
 /* Activo */
 .editor-toolbar button.ql-active {
   background: var(--accent);
   color: #fff;
 }
-
 /* Selectores (font, size, color) */
 .editor-toolbar .ql-picker {
   border-radius: 6px;
 }
-
-
 /* ===============================
    QUILL SELECTS — FONDO UNICO
    =============================== */
-
 /* Label (lo que se ve cerrado) */
 .editor-toolbar .ql-picker-label {
   background: #ffffff !important;
@@ -856,12 +818,10 @@ select .ql-font {
   border-radius: 6px;
   padding: 4px 8px;
 }
-
 /* Flecha */
 .editor-toolbar .ql-picker-label::before {
   color: #111111 !important;
 }
-
 /* Dropdown */
 .editor-toolbar .ql-picker-options {
   background: #ffffff !important;
@@ -871,18 +831,126 @@ select .ql-font {
   box-shadow: 0 8px 20px rgba(0,0,0,.15);
   z-index: 9999;
 }
-
 /* Opciones */
 .editor-toolbar .ql-picker-item {
   color: #111111 !important;
   padding: 6px 10px;
 }
-
+/* ==================================================
+   SISTEMA RESPONSIVE ADMIN
+   telefono(<=578) | telefono grande(<=768) | tableta(<=980)
+   laptop(<=1200) | monitor(<=1400) | monitor grande(>1400)
+   ================================================== */
+/* monitor grande (>1400px) */
+@media (min-width: 1401px) {
+  :root {
+    --sidebar-width: 260px;
+  }
+  body.has-sidebar .container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+  .admin-container,
+  .form-card {
+    max-width: 1100px;
+  }
+}
+/* monitor (<=1400px) */
+@media (max-width: 1400px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+  .admin-container,
+  .form-card {
+    max-width: 1000px;
+  }
+}
+/* laptop (<=1200px) */
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 220px;
+  }
+  body.has-sidebar .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .admin-container,
+  .form-card {
+    max-width: 920px;
+  }
+  .preview-item {
+    width: 120px;
+  }
+}
+/* tableta (<=980px) */
+@media (max-width: 980px) {
+  :root {
+    --sidebar-width: 200px;
+  }
+  body.has-sidebar .site-main {
+    padding: 12px;
+  }
+  body.has-sidebar .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .admin-container,
+  .form-card {
+    max-width: 100%;
+  }
+  .form-grid {
+    gap: 16px;
+  }
+  .preview-item {
+    width: 45%;
+  }
+}
+/* telefono grande (<=768px) */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 220px;
+  }
+  body.has-sidebar .site-main {
+    padding: 10px;
+  }
+  h1,
+  .titulos {
+    font-size: 1.45rem;
+    margin-bottom: 16px;
+  }
+  .sidebar-menu-link {
+    font-size: 0.92rem;
+  }
+}
+/* telefono (<=578px) */
+@media (max-width: 578px) {
+  body.has-sidebar .site-main {
+    padding: 8px;
+  }
+  body.has-sidebar .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .admin-container {
+    padding: 0 8px;
+  }
+  .form-card {
+    padding: 14px;
+  }
+  .preview-item {
+    width: 100%;
+  }
+  .cropper-wrapper {
+    height: 260px;
+  }
+  .day-column {
+    min-width: 92vw;
+  }
+}
 /* Hover */
 .editor-toolbar .ql-picker-item:hover {
   background: #f0f0f0 !important;
 }
-
 /* Seleccionado */
 .editor-toolbar .ql-picker-item.ql-selected {
   background: #007bff !important;
@@ -891,14 +959,12 @@ select .ql-font {
 /* ===============================
    QUILL TOOLBAR — SIEMPRE BLANCO
    =============================== */
-
 /* Toolbar completa */
 .editor-toolbar {
   background: #ffffff !important;
   border: 1px solid #dcdcdc !important;
   color: #111111 !important;
 }
-
 /* Botones */
 .editor-toolbar button {
    background: #ffffff !important;
@@ -912,13 +978,11 @@ select .ql-font {
   justify-content: center;
   transition: background .15s ease, box-shadow .15s ease;
 }
-
 /* Hover botones */
 .editor-toolbar button:hover {
   background: #f2f2f2 !important;
   box-shadow: 0 1px 3px rgba(0,0,0,.15);
 }
-
 /* Botón activo */
 .editor-toolbar button.ql-active {
   background: #007bff !important;
@@ -926,19 +990,16 @@ select .ql-font {
   border-color: #007bff !important;
   box-shadow: 0 2px 6px rgba(0,123,255,.35);
 }
-
 /* Selects (pickers) */
 .editor-toolbar .ql-picker-label {
   background: #ffffff !important;
   color: #111111 !important;
   border: 1px solid #dcdcdc !important;
 }
-
 /* Flecha del select */
 .editor-toolbar .ql-picker-label::before {
   color: #111111 !important;
 }
-
 /* Dropdown */
 .editor-toolbar .ql-picker-options {
   background: #ffffff !important;
@@ -946,17 +1007,14 @@ select .ql-font {
   border: 1px solid #dcdcdc !important;
   box-shadow: 0 8px 20px rgba(0,0,0,.15);
 }
-
 /* Opciones */
 .editor-toolbar .ql-picker-item {
   color: #111111 !important;
 }
-
 /* Hover opciones */
 .editor-toolbar .ql-picker-item:hover {
   background: #f0f0f0 !important;
 }
-
 /* Seleccionado */
 .editor-toolbar .ql-picker-item.ql-selected {
   background: #007bff !important;
@@ -967,16 +1025,12 @@ select .ql-font {
   padding-right: 6px;
   border-right: 1px solid #e5e5e5;
 }
-
-
 /* ===============================
    PROGRAMACIÓN DE PUBLICACIÓN
    =============================== */
-
 #programacionBox {
     margin-top: 10px;
 }
-
 select, input[type="datetime-local"] {
     width: 100%;
     padding: 10px;
@@ -988,7 +1042,6 @@ select, input[type="datetime-local"] {
 /* ===============================
    MODAL RECORTE EDITOR
    =============================== */
-
 .crop-modal {
     position: fixed;
     inset: 0;
@@ -1005,7 +1058,6 @@ select, input[type="datetime-local"] {
   opacity: 1;
   pointer-events: auto;
 }
-
 .crop-modal-content {
     background: var(--card);
     padding: 20px;
@@ -1013,12 +1065,10 @@ select, input[type="datetime-local"] {
     max-width: 700px;
     border-radius: 12px;
 }
-
 .cropper-container-editor {
     max-height: 400px;
     overflow: hidden;
 }
-
 .crop-actions {
     display: flex;
     gap: 10px;
@@ -1063,7 +1113,6 @@ select, input[type="datetime-local"] {
   align-items: space-between;
   gap: 6px;
 }
-
 .news-card {
   display: flex;
   flex-direction: column;
@@ -1078,86 +1127,9 @@ select, input[type="datetime-local"] {
   flex-wrap: wrap; /* permite salto de línea */
   gap: 6px;        /* separación entre tags */
 }
-.calendar-days {
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  padding-bottom: 16px;
-  scroll-snap-type: x mandatory;
-}
-.day-column {
-  flex: 0 0 200px;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(180deg, #0b1220, #05080f);
-  border-radius: 14px;
-  padding: 16px;
-  scroll-snap-align: start;
-}
-.day-header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  font-weight: 700;
-  text-align: center;
-  padding: 10px;
-  margin-bottom: 16px;
-  background: rgba(255,255,255,.08);
-  border-radius: 10px;
-  color: #fff;
-}
-.day-news {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.noticias-card {
-    background: #0d1628;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 6px 15px rgba(0,0,0,.3);
-    transition: transform .2s ease;
-    width: 100%;
-}
-.noticias-card:hover {
-    transform: translateY(-4px);
-}
-.noticias-card img {
-    width: 100%;
-    height: 100px;
-    object-fit: cover;
-}
-
-.noticias-card h6 {
-    padding: 10px 12px 0;
-    font-weight: 600;
-}
-
-.noticias-card small {
-    padding: 0 12px;
-    display: block;
-    margin-bottom: 8px;
-}
-
-.noticias-actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 12px;
-}
-
-.botonesSemana {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-h4 {
-  padding: 12px 12px;
-}
-
 /* ===============================
    ESTILOS TABLA DE NOTICIAS
 ================================ */
-
 /* Tabla general */
 .table {
     border-collapse: separate;
@@ -1166,7 +1138,6 @@ h4 {
     width: 100%;
     align-items: center;
 }
-
 /* Encabezado */
 .table thead th {
     background-color: #343a40;
@@ -1176,32 +1147,27 @@ h4 {
     font-weight: 600;
     border-bottom: 2px solid #495057;
 }
-
 /* Filas */
 .table tbody tr:hover {
     transition: 0.3s;
     align-items: center;
 }
-
 /* Celdas */
 .table td {
     vertical-align: middle;
     padding: 0.75rem 0.5rem;
     align-items: center;
 }
-
 /* Imagen miniatura */
 .table img {
     border-radius: 5px;
     border: 1px solid #dee2e6;
 }
-
 /* Botones de acciones */
 .btn-group .btn {
     margin-left: 2px;
     transition: 0.2s;
 }
-
 /* ===============================
    RESPONSIVIDAD (MOBILE)
    =============================== */
@@ -1217,7 +1183,6 @@ h4 {
         padding-left: 1rem;
         padding-right: 1rem;
     }
-
     /* Sidebar off-canvas */
     .sidebar {
         transform: translateX(-100%);
@@ -1228,7 +1193,6 @@ h4 {
     .sidebar.active {
         transform: translateX(0);
     }
-
     /* Tablas responsivas */
     .table-responsive {
         display: block;
@@ -1236,26 +1200,21 @@ h4 {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
-
     /* Formularios y Grid */
     .form-grid {
         grid-template-columns: 1fr;
     }
-    
     .form-actions {
         flex-direction: column;
         gap: 10px;
     }
-    
     .form-actions .btn {
         width: 100%;
     }
-
     /* Preview Grid */
     .preview-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
     /* Botones de tabla en vertical o compactos */
     .btn-group {
         display: flex;

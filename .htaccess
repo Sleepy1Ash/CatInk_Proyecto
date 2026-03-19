@@ -1,3 +1,62 @@
 RewriteEngine On
-RewriteBase /CatInk_Proyecto/
-RewriteRule ^n/([a-zA-Z0-9_-]+)$ views/news.php?hash=$1 [L,QSA]
+# =========================
+# EXCEPCIONES - NO REESCRIBIR ARCHIVOS/CARPETAS REALES
+# =========================
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+# =========================
+# HOME
+# =========================
+RewriteRule ^$ index.php [L]
+RewriteRule ^home/?$ index.php [L]
+# =========================
+# NOTICIAS
+# =========================
+# URLs cortas y legibles para noticias
+RewriteRule ^n/([a-zA-Z0-9_-]+)/?$ views/news.php?hash=$1 [L,QSA]
+RewriteRule ^noticia/([a-zA-Z0-9_-]+)/?$ views/news.php?hash=$1 [L,QSA]
+RewriteRule ^news/([a-zA-Z0-9_-]+)/?$ views/news.php?hash=$1 [L,QSA]
+# Listado general de noticias
+RewriteRule ^noticias/?$ views/categoria.php [L,QSA]
+# =========================
+# LOGIN
+# =========================
+RewriteRule ^login/?$ views/login.php [L,QSA]
+RewriteRule ^acceso/?$ views/login.php [L,QSA]
+# =========================
+# CATEGORIAS
+# =========================
+# Soportar categorías con espacios (%20), guiones y caracteres especiales
+RewriteRule ^categoria/(.+)/?$ views/categoria.php?cat=$1 [L,QSA]
+RewriteRule ^noticias/categoria/(.+)/?$ views/categoria.php?cat=$1 [L,QSA]
+RewriteRule ^categorias/(.+)/?$ views/categoria.php?cat=$1 [L,QSA]
+# =========================
+# BUSQUEDA
+# =========================
+# Soportar búsquedas con espacios (%20) y caracteres especiales
+RewriteRule ^buscar/(.+)/?$ views/categoria.php?q=$1 [L,QSA]
+RewriteRule ^noticias/buscar/(.+)/?$ views/categoria.php?q=$1 [L,QSA]
+RewriteRule ^search/(.+)/?$ views/categoria.php?q=$1 [L,QSA]
+# =========================
+# PAGINAS ESTATICAS
+# =========================
+RewriteRule ^sobre-nosotros/?$ views/nosotros.php [L]
+RewriteRule ^acerca-de/?$ views/nosotros.php [L]
+RewriteRule ^terminos-condiciones/?$ views/terminos.php [L]
+RewriteRule ^terminos/?$ views/terminos.php [L]
+RewriteRule ^aviso-privacidad/?$ views/privacidad.php [L]
+RewriteRule ^privacidad/?$ views/privacidad.php [L]
+RewriteRule ^aviso-cookies/?$ views/politica-cookies.php [L]
+RewriteRule ^cookies/?$ views/politica-cookies.php [L]
+RewriteRule ^solicitud/?$ views/unete.php [L]
+RewriteRule ^únete/?$ views/unete.php [L]
+RewriteRule ^unete/?$ views/unete.php [L]
+RewriteRule ^suscripcion/?$ views/suscripcion.php [L]
+RewriteRule ^suscribirse/?$ views/suscripcion.php [L]
+RewriteRule ^contactanos/?$ views/contactanos.php [L]
+RewriteRule ^contacto/?$ views/contactanos.php [L]
+# =========================
+# 404
+# =========================
+ErrorDocument 404 /404.html

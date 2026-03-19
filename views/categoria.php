@@ -1,8 +1,16 @@
 <?php
 include("./../layout/header.php");
-include("./../data/conexion.php");
-$q         = trim($_GET['q'] ?? '');
-$categoria = trim($_GET['cat'] ?? '');
+require_once("./../data/conexion.php");
+require_once("./helpers/urlhelper.php");
+//Detectar pagina
+$porPagina = 10;
+$pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($pagina < 1) $pagina = 1;
+$offset = ($pagina - 1) * $porPagina;
+// Soportar múltiples formas de parámetros para búsqueda y categoría
+// Decodificar explícitamente los parámetros para manejar espacios codificados (%20)
+$q         = trim(urldecode($_GET['q'] ?? $_GET['query'] ?? $_GET['search'] ?? ''));
+$categoria = trim(urldecode($_GET['cat'] ?? $_GET['category'] ?? $_GET['categoria'] ?? ''));
 // ==============================
 // CONSULTA PRINCIPAL DINÁMICA
 // ==============================
@@ -17,9 +25,10 @@ if ($q !== '') {
           AND (n.titulo LIKE ? OR n.descripcion LIKE ? OR n.contenido LIKE ?)
         GROUP BY n.id
         ORDER BY n.fecha_publicacion DESC
+        LIMIT ? OFFSET ?
     ");
     $like = "%$q%";
-    $stmt->bind_param("sss", $like, $like, $like);
+    $stmt->bind_param("sssii", $like, $like, $like, $porPagina, $offset);
 } elseif ($categoria !== '') {
     $stmt = $con->prepare("
         SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
@@ -32,8 +41,9 @@ if ($q !== '') {
         WHERE n.fecha_publicacion <= NOW()
         GROUP BY n.id
         ORDER BY n.fecha_publicacion DESC
+        LIMIT ? OFFSET ?
     ");
-    $stmt->bind_param("s", $categoria);
+    $stmt->bind_param("sii", $categoria, $porPagina, $offset);
 } else {
     $stmt = $con->prepare("
         SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
@@ -44,11 +54,43 @@ if ($q !== '') {
         WHERE n.fecha_publicacion <= NOW()
         GROUP BY n.id
         ORDER BY n.fecha_publicacion DESC
-        LIMIT 20
+        LIMIT ? OFFSET ?
     ");
+    $stmt->bind_param("ii", $porPagina, $offset);
 }
 $stmt->execute();
 $result = $stmt->get_result();
+// CONTAR TOTAL DE NOTICIAS
+if ($q !== '') {
+    $stmtTotal = $con->prepare("
+        SELECT COUNT(DISTINCT n.id) as total
+        FROM noticias n
+        LEFT JOIN noticia_categoria nc ON n.id = nc.noticia_id
+        LEFT JOIN categorias c ON nc.categoria_id = c.id_c
+        WHERE n.fecha_publicacion <= NOW()
+        AND (n.titulo LIKE ? OR n.descripcion LIKE ? OR n.contenido LIKE ?)
+    ");
+    $stmtTotal->bind_param("sss", $like, $like, $like);
+} elseif ($categoria !== '') {
+    $stmtTotal = $con->prepare("
+        SELECT COUNT(DISTINCT n.id) as total
+        FROM noticias n
+        INNER JOIN noticia_categoria nc_filter ON n.id = nc_filter.noticia_id
+        INNER JOIN categorias c_filter ON nc_filter.categoria_id = c_filter.id_c
+        WHERE n.fecha_publicacion <= NOW()
+        AND c_filter.nombre = ?
+    ");
+    $stmtTotal->bind_param("s", $categoria);
+} else {
+    $stmtTotal = $con->prepare("
+        SELECT COUNT(*) as total
+        FROM noticias
+        WHERE fecha_publicacion <= NOW()
+    ");
+}
+$stmtTotal->execute();
+$totalNoticias = $stmtTotal->get_result()->fetch_assoc()['total'];
+$totalpaginas = ceil($totalNoticias / $porPagina);
 // ==============================
 // SIDEBAR
 // ==============================
@@ -88,7 +130,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
     <?php endif; ?>
     <div class="row">
       <!-- ================== COLUMNA PRINCIPAL ================== -->
-      <div class="col-md-8">
+      <div class="col-md-9">
         <?php if ($result->num_rows === 0): ?>
           <p>No se encontraron resultados.</p>
         <?php endif; ?>
@@ -106,7 +148,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             }
             $img = !empty($row['crop3']) ? "./../".$row['crop3'] : "./../img/placeholder.jpg";
           ?>
-          <div class="card mb-3">
+          <div class="card mb-3" data-url="<?= newsUrl($row['id']) ?>">
             <div class="row row-no-gap">
               <div class="col-md-4">
                 <img src="<?= htmlspecialchars($img) ?>" class="card-img-left">
@@ -115,7 +157,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <div class="card-body">
                   <!-- CATEGORÍAS -->
                   <?php foreach ($cats as $cat): ?>
-                    <span class="news-tag"><?= htmlspecialchars(trim($cat)) ?></span>
+                    <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars(trim($cat)) ?></a>
                   <?php endforeach; ?>
                   <h5 class="card-title">
                     <a href="<?= newsUrl($row['id']) ?>" class="news-link">
@@ -131,15 +173,43 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             </div>
           </div>
         <?php endwhile; ?>
+        <div class="pagination-wrapper">
+            <ul class="pagination">
+                <?php if ($pagina > 1): ?>
+                    <li>
+                        <a href="?page=<?= $pagina-1 ?>&q=<?= urlencode($q) ?>&cat=<?= urlencode($categoria) ?>">
+                            « Anterior
+                        </a>
+                    </li>
+                <?php endif; ?>
+                <?php for ($i = 1; $i <= $totalpaginas; $i++): ?>
+                    <li class="<?= $i == $pagina ? 'active' : '' ?>">
+                        <a href="?page=<?= $i ?>&q=<?= urlencode($q) ?>&cat=<?= urlencode($categoria) ?>">
+                            <?= $i ?>
+                        </a>
+                    </li>
+                <?php endfor; ?>
+                <?php if ($pagina < $totalpaginas): ?>
+                    <li>
+                        <a href="?page=<?= $pagina+1 ?>&q=<?= urlencode($q) ?>&cat=<?= urlencode($categoria) ?>">
+                            Siguiente »
+                        </a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
       </div>
       <!-- ================== SIDEBAR ================== -->
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">
             <?php if($secciones['publicidad']['estado'] == 1) : ?>
-                <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
-                    <img src="./../<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
-                </a>
+                <div class="ad-container">
+                    <a href="<?php echo htmlspecialchars($publicidadCuadro['url']); ?>" class="banner-button" data-pub="<?php echo htmlspecialchars($publicidadCuadro['id_pub']); ?>">
+                        <img src="./../<?php echo htmlspecialchars($publicidadCuadro['imagen']); ?>" class="banner-card-img-top">
+                    </a>
+                    <span class="ads-label">ADS</span>
+                </div>
             <?php endif; ?>
             <div class="card-body">
               <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
@@ -147,7 +217,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <?php while ($row = $ultimas->fetch_assoc()): ?>
                   <li class="list-group-item">
                     <a href="<?= newsUrl($row['id']) ?>" class="news-link">
-                      <?= htmlspecialchars($row['titulo']) ?>
+                      <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>
                 <?php endwhile; ?>
@@ -157,7 +227,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <?php while ($row = $populares->fetch_assoc()): ?>
                   <li class="list-group-item">
                     <a href="<?= newsUrl($row['id']) ?>" class="news-link">
-                      <?= htmlspecialchars($row['titulo']) ?>
+                      <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </li>
                 <?php endwhile; ?>

@@ -81,6 +81,14 @@ $config = [];
 while($row = $configResult->fetch_assoc()){
     $config[] = $row;
 }
+function formatNumberShort($num){
+    if ($num >= 1000000) {
+        return round($num / 1000000, 1) . 'M';
+    } elseif ($num >= 1000) {
+        return round($num / 1000, 1) . 'K';
+    }
+    return $num;
+}
 ?>
 <div class="container-fluid">
     <!-- SALUDO -->
@@ -93,7 +101,7 @@ while($row = $configResult->fetch_assoc()){
     <?php endif; ?> 
     <!-- Botón para abrir el modal -->
      <?php if($superadmin): ?>
-        <a href="paginas.php" class="btn btn-success"><i class="bi bi-card-text"></i> Editar "Nosotros" y "Terminos y condiciciones"</a>
+        <a href="paginas.php" class="btn btn-success"><i class="bi bi-card-text"></i> Editar Páginas Informativas</a>
         <button id="btnAbrirModal" class="btn btn-success">
             <i class="bi bi-gear"></i> Gestionar Estado de Secciones
         </button>
@@ -170,7 +178,6 @@ while($row = $configResult->fetch_assoc()){
             </div>
         </div>
     </div>
-    
     <!-- ÚLTIMAS NOTICIAS -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-light"><h5>Últimas Noticias</h5></div>
@@ -193,10 +200,10 @@ while($row = $configResult->fetch_assoc()){
                                 <h5 class="card-title text-truncate"><?= htmlspecialchars($n['titulo']) ?></h5>
                                 <p class="small text-muted"><?= htmlspecialchars($desc) ?></p>
                             </div>
-                            <div class="card-footer d-flex justify-content-between small text-muted">
-                                <span><i class="bi bi-eye"></i> <?= $n['vistas'] ?> </span>
+                            <div class="card-footer d-flex card-especial">
+                                <span><i class="bi bi-eye"></i> <?= formatNumberShort($n['vistas']) ?> </span>
                                 <span><i class="bi bi-clock"></i> <?= number_format($n['tiempo_total_stats']/60,0) ?>m </span>
-                                <span><i class="bi bi-heart"></i> <?= $n['likes'] ?> </span>
+                                <span><i class="bi bi-heart"></i> <?= formatNumberShort($n['likes']) ?> </span>
                             </div>
                         </div>
                     </div>

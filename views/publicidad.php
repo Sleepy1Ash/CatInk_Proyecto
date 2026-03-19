@@ -44,7 +44,7 @@
                             <?php if($ACL['editar']): ?>
                                 <a href="editarp.php?id=<?= $pub['id_pub'] ?>" class="btn btn-secondary" title="Editar"><i class="bi bi-pencil"></i></a>
                             <?php endif; ?>
-                            <?php if($superadmin): ?>
+                            <?php if($ACL['leer']): ?>
                                 <a href="verp.php?id=<?= $pub['id_pub'] ?>" class="btn btn-secondary" title="Ver Estadísticas"><i class="bi bi-bar-chart"></i></a> 
                             <?php endif; ?>
                             <?php if($ACL['eliminar']): ?>

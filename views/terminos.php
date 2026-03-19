@@ -10,8 +10,11 @@ if ($result->num_rows > 0) {
 }
 ?>
 <div class="container-fluid">
-    <h2>Terminos y condiciones</h2>
-    <?php echo $row['contenido_pag']; ?>
+    <div class="post-content">
+        <div class="ql-editor">
+            <?php echo $row['contenido_pag']; ?>
+        </div>
+    </div>
 </div>
 <?php
 include("./../layout/footer.php");

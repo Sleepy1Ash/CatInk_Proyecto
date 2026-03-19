@@ -53,7 +53,7 @@ while($row = $resCat->fetch_assoc()){
     <div class="mt-3">
         <a href="./../views/contenidos.php" class="btn btn-secondary"><i class="bi bi-arrow-return-left"></i> Volver</a>
     </div>
-    <form id="formEdicion" action="./../../controllers/actualizar_noticia.php" method="POST" enctype="multipart/form-data">
+    <form id="formEdicion" action="./../controllers/actualizar_noticia.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?= $noticia['id'] ?>">
         <div class="form-card card">
             <!-- TÍTULO -->
@@ -172,6 +172,8 @@ while($row = $resCat->fetch_assoc()){
                     <button class="ql-video" title="Insertar video"></button>
                     <!-- Limpiar formato -->
                     <button class="ql-clean" title="Limpiar formato"></button>
+                    <!-- Embebido -->
+                    <button class="ql-embed" title="Embebido"><i class="bi bi-boxes"></i></button>
                 </div>
                 <!-- EDITOR -->
                 <div id="editor" class="editor-content"></div>

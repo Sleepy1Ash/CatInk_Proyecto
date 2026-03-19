@@ -1,13 +1,14 @@
 <?php
 include("../data/conexion.php");
 include("../views/helpers/helper.php");
+include("../views/helpers/urlhelper.php");
 // ============================
 // OBTENER DATOS DEL FORMULARIO
 // ============================
 $usuario = $_POST['usuario'] ?? '';
 $pass = $_POST['pass'] ?? '';
 if (empty($usuario) || empty($pass)) {
-    header('Location: ../index.php?error=1');
+    header('Location: ' . basePath() . '/index.php?error=1');
     exit();
 }
 // ============================
@@ -38,23 +39,23 @@ if ($result && $result->num_rows > 0) {
         // redirigir a admin si es superadmin
         if(esSuperAdmin($fila)){
             $_SESSION['superadmin'] = true;
-            header('Location: ../views/admin.php');
+            header('Location: ' . basePath() . '/views/admin.php');
             exit();
         }
         // redirigir al primer modulo de lectura
         $modulo = primerModuloLectura($_SESSION['ACL']);
         if($modulo){
             $_SESSION['superadmin'] = false;
-            header('Location: '.$modulo);
+            header('Location: ' . basePath() . '/' . $modulo);
             exit();
         }
     } else {
-        header('Location: ../index.php?error=1');
+        header('Location: ' . basePath() . '/index.php?error=1');
         exit();
     }
 } else {
     // Usuario no encontrado
-    header('Location: ../index.php?error=1');
+    header('Location: ' . basePath() . '/index.php?error=1');
     exit();
 }
 ?>
