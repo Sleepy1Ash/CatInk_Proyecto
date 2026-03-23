@@ -9,20 +9,18 @@ try {
     $fechaFin    = $_GET['fecha_fin'] ?? date('Y-m-d');
     $fechaInicioSql = $fechaInicio . ' 00:00:00';
     $fechaFinSql    = $fechaFin . ' 23:59:59';
-    // Calcular rango en días
-    $dias = (strtotime($fechaFin) - strtotime($fechaInicio)) / 86400;
-    if ($dias <= 15) {
-        $modo = 'diario';
-        $groupBy = "DATE(ns.fecha)";
-        $labelFormat = "DATE(ns.fecha)";
-    } elseif ($dias <= 60) {
-        $modo = 'semanal';
-        $groupBy = "YEARWEEK(ns.fecha, 1)";
-        $labelFormat = "MIN(DATE(ns.fecha))";
-    } else {
-        $modo = 'quincenal';
-        $groupBy = "CONCAT(YEAR(ns.fecha), '-', CEIL(DAY(ns.fecha)/15))";
-        $labelFormat = "MIN(DATE(ns.fecha))";
+    // Siempre mostrar en modo diario - generar todos los días del rango
+    $modo = 'diario';
+    $groupBy = "DATE(ns.fecha)";
+    $labelFormat = "DATE(ns.fecha)";
+    
+    // Generar array con todos los días del rango
+    $allDias = [];
+    $current = new DateTime($fechaInicio);
+    $end = new DateTime($fechaFin);
+    while ($current <= $end) {
+        $allDias[] = $current->format('Y-m-d');
+        $current->modify('+1 day');
     }
     // ============================
     // Consulta de estadísticas
@@ -46,27 +44,27 @@ try {
     $stmt->bind_param("ss", $fechaInicioSql, $fechaFinSql);
     $stmt->execute();
     $result = $stmt->get_result();
-    $labels = [];
-    $dataCategorias = [];
+    $labels = $allDias; // Usar todos los días generados
+    $dataMap = [];
+    
+    // Mapear datos por categoría y fecha
     while ($row = $result->fetch_assoc()) {
         $label = $row['label_fecha'];
-        if (!in_array($label, $labels)) {
-            $labels[] = $label;
-        }
         $cat = $row['categoria'];
-        if (!isset($dataCategorias[$cat])) {
-            $dataCategorias[$cat] = [
+        if (!isset($dataMap[$cat])) {
+            $dataMap[$cat] = [
                 'vistas' => [],
                 'tiempo' => []
             ];
         }
-        $dataCategorias[$cat]['vistas'][$label] = (int)$row['vistas'];
-        $dataCategorias[$cat]['tiempo'][$label] = (float)$row['tiempo']/60;
+        $dataMap[$cat]['vistas'][$label] = (int)$row['vistas'];
+        $dataMap[$cat]['tiempo'][$label] = (float)$row['tiempo']/60;
     }
     // ============================
-    // Normalizar arrays (rellenar ceros)
+    // Normalizar arrays (rellenar ceros para TODOS los días)
     // ============================
-    foreach ($dataCategorias as $cat => $metrics) {
+    $dataCategorias = [];
+    foreach ($dataMap as $cat => $metrics) {
         $finalVistas = [];
         $finalTiempo = [];
         foreach ($labels as $l) {

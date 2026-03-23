@@ -241,7 +241,15 @@ function formatNumberShort($num){
     </div>
 <script>
     const charts = {};
-    document.addEventListener("DOMContentLoaded", ()=>{ loadGlobalStats(); loadLikesStats(); });
+    document.addEventListener("DOMContentLoaded", ()=>{ 
+        loadGlobalStats(); 
+        loadLikesStats();
+        // Event listeners para filtros
+        const filterInicio = document.getElementById('filterFechaInicio');
+        const filterFin = document.getElementById('filterFechaFin');
+        if (filterInicio) filterInicio.addEventListener('change', () => { loadGlobalStats(); loadLikesStats(); });
+        if (filterFin) filterFin.addEventListener('change', () => { loadGlobalStats(); loadLikesStats(); });
+    });
     // ================================
     // GLOBAL STATS
     // ================================
@@ -249,10 +257,16 @@ function formatNumberShort($num){
         const f1=document.getElementById('filterFechaInicio').value;
         const f2=document.getElementById('filterFechaFin').value;
         fetch(`./../controllers/obtener_estadisticas_globales.php?fecha_inicio=${f1}&fecha_fin=${f2}`)
-            .then(r=>r.json()).then(d=>{
+            .then(r=>r.json())
+            .then(d=>{
+                if (d.error) {
+                    console.error('Error del servidor:', d.error);
+                    return;
+                }
                 renderAreaChart('globalChartVistas', d, 'vistas', 'Vistas por categoría');
                 renderAreaChart('globalChartTiempo', d, 'tiempo', 'Tiempo de lectura por categoría (Min)');
-            });
+            })
+            .catch(err => console.error('Error fetching global stats:', err));
     }
     // ================================
     // LIKES STATS
@@ -261,10 +275,18 @@ function formatNumberShort($num){
         const f1=document.getElementById('filterFechaInicio').value;
         const f2=document.getElementById('filterFechaFin').value;
         fetch(`./../controllers/obtener_estadisticas_likes.php?fecha_inicio=${f1}&fecha_fin=${f2}`)
-            .then(r=>r.json()).then(d=>{
+            .then(r=>r.json())
+            .then(d=>{
+                if (d.error) {
+                    console.error('Error del servidor:', d.error);
+                    return;
+                }
                 renderAreaChart('globalChartLikes', d, 'likes', 'Likes por categoría');
-                renderBarChart('globalChartLikesRegion', d.geo.estados, 'Likes por Estado');
-            });
+                if (d.geo && d.geo.estados) {
+                    renderBarChart('globalChartLikesRegion', d.geo.estados, 'Likes por Estado');
+                }
+            })
+            .catch(err => console.error('Error fetching likes stats:', err));
     }
     // ================================
     // CHART AREA
@@ -273,34 +295,42 @@ function formatNumberShort($num){
         const mobile = window.matchMedia('(max-width: 768px)').matches;
         return {
             responsive: true,
-            maintainAspectRatio: !mobile,
+            maintainAspectRatio: true,
             interaction: { mode: 'index', intersect: false },
             plugins: {
                 title: { display: true, text: title },
                 legend: { position: mobile ? 'bottom' : 'top' }
             },
             scales: {
-                x: { ticks: { maxRotation: mobile ? 45 : 0, minRotation: mobile ? 45 : 0 } },
+                x: { ticks: { maxRotation: 45, minRotation: 45 } },
                 y: { beginAtZero: true }
             }
         };
     }
     function renderAreaChart(id,data,metric,title){
-        if(!data || !data.categorias) return;
+        if(!data || !data.labels || data.labels.length === 0) {
+            console.warn(`No data available for ${id}`);
+            return;
+        }
+        
         const ctx=document.getElementById(id);
+        if(!ctx) return;
+        
         if(charts[id]) charts[id].destroy();
 
         const colors=['rgba(75,192,192,0.35)','rgba(255,99,132,0.35)','rgba(54,162,235,0.35)','rgba(255,159,64,0.35)','rgba(153,102,255,0.35)'];
 
-        const datasets = Object.entries(data.categorias).map(([cat,val],i)=>({
-            label:cat,
-            data:val[metric] || [],
-            fill:true,
-            tension:.4,
-            borderWidth:2,
-            backgroundColor:colors[i%colors.length],
-            borderColor:colors[i%colors.length].replace('0.35','1')
-        }));
+        const datasets = data.categorias && Object.keys(data.categorias).length > 0 
+            ? Object.entries(data.categorias).map(([cat,val],i)=>({
+                label:cat,
+                data:val[metric] || [],
+                fill:true,
+                tension:.4,
+                borderWidth:2,
+                backgroundColor:colors[i%colors.length],
+                borderColor:colors[i%colors.length].replace('0.35','1')
+            }))
+            : [{label: 'Sin datos', data: Array(data.labels.length).fill(0)}];
 
         charts[id]=new Chart(ctx,{
             type:'line',
@@ -312,12 +342,32 @@ function formatNumberShort($num){
     // CHART BAR GEO
     // ================================
     function renderBarChart(id,geo,title){
-        if(!geo) return;
+        if(!geo || !geo.labels || geo.labels.length === 0) {
+            console.warn(`No geo data available for ${id}`);
+            return;
+        }
         const ctx=document.getElementById(id);
+        if(!ctx) return;
         if(charts[id]) charts[id].destroy();
+        
+        // Limitar a 10 estados pero mostrar todos los datos disponibles
+        const limitedLabels = geo.labels.slice(0,10);
+        const limitedValues = geo.values.slice(0,10);
+        
+        const dataset = {
+            label:title,
+            data:limitedValues,
+            backgroundColor:'rgba(75,192,192,0.8)',
+            borderColor:'rgba(75,192,192,1)',
+            borderWidth:1
+        };
+        
         charts[id]=new Chart(ctx,{
             type:'bar',
-            data:{labels:geo.labels.slice(0,10),datasets:[{label:title,data:geo.values.slice(0,10)}]},
+            data:{
+                labels:limitedLabels,
+                datasets:[dataset]
+            },
             options:getChartOptions(title)
         });
     }

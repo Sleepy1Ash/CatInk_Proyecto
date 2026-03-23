@@ -25,7 +25,14 @@ while($row = $result->fetch_assoc()) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CatInk News</title>
+  <title>Cat Ink | Noticias de Anime, Manga, Series y Más</title>
+  <meta name="description" content="Cat Ink: sitio especializado en anime, manga y series. Noticias, avances, reseñas y contenido actualizado para fans del entretenimiento.">
+  <meta property="og:title" content="Cat Ink | Noticias de Anime, Manga y Series">
+  <meta property="og:description" content="Noticias, avances y reseñas del mundo del anime y manga.">
+  <meta property="og:url" content="https://www.catink.com.mx/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.catink.com.mx/img/catink-icon.png">
+  <link rel="canonical" href="https://www.catink.com.mx/">
   <!-- Local CSS-->
   <link rel="stylesheet" href="https://www.catink.com.mx/CSS/styles.css">
   <link rel="icon" type="image/png" href="https://www.catink.com.mx/img/catink-icon.png">

@@ -20,12 +20,12 @@ try {
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'faustoperezortega15@gmail.com';
-    $mail->Password   = '';
+    $mail->Username   = 'catink.oficial@gmail.com';
+    $mail->Password   = 'lamcszfwuoftmlpv';
     $mail->SMTPSecure = 'tls';
     $mail->Port       = 587;
 
-    $mail->setFrom('faustoperezortega15@gmail.com', 'CatInk News');
+    $mail->setFrom('catink.oficial@gmail.com', 'CatInk News');
 
     // Destinatarios (puedes poner dinámicos desde base de datos)
     $mail->addAddress('al222211174@gmail.com', 'Fausto Pérez Ortega');

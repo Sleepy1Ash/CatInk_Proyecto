@@ -215,7 +215,7 @@ h2 {
   - .row y .col para maquetar bloques sencillos
   - las variantes .col-md-* se aplican en media queries
 */
-.row { display:flex; flex-wrap:wrap; gap:16px; }
+.row { display:flex; flex-wrap:wrap; }
 .col { flex:1; }
 .col-md-3 { flex: calc(30%); max-width: calc(30%);}
 .col-md-9 { flex: calc(70%); max-width: calc(70%);}

@@ -1,132 +1,127 @@
 <?php
-    date_default_timezone_set("America/Mexico_City");
-    echo "Cron ejecutado: " . date("Y-m-d H:i:s") . "\n";
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
-    require(__DIR__."/../../PHPMailer/src/PHPMailer.php");
-    require(__DIR__."/../../PHPMailer/src/Exception.php");
-    require(__DIR__."/../../PHPMailer/src/SMTP.php");
-    include(__DIR__."/../../data/conexion.php");
-    $hora = "SELECT hora FROM programacion_correos LIMIT 1";
-    $stmtHora = $con->prepare($hora);
-    $stmtHora->execute();
-    $resultHora = $stmtHora->get_result();
-    $rowHora = $resultHora->fetch_assoc();
-    $horaProgramada = $rowHora['hora'];
-    if (abs(strtotime(date("H:i:s")) - strtotime($horaProgramada)) <= 60) {
+date_default_timezone_set("America/Mexico_City");
+echo "Cron ejecutado: " . date("Y-m-d H:i:s") . "\n";
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require(__DIR__."/../../PHPMailer/src/PHPMailer.php");
+require(__DIR__."/../../PHPMailer/src/Exception.php");
+require(__DIR__."/../../PHPMailer/src/SMTP.php");
+include(__DIR__."/../../data/conexion.php");
+
+// Obtenemos la hora programada
+$hora = "SELECT hora FROM programacion_correos LIMIT 1";
+$stmtHora = $con->prepare($hora);
+$stmtHora->execute();
+$resultHora = $stmtHora->get_result();
+$rowHora = $resultHora->fetch_assoc();
+$horaProgramada = $rowHora['hora'];
+
+// Solo ejecutar si estamos dentro del rango de +-60s de la hora programada
+if (abs(strtotime(date("H:i:s")) - strtotime($horaProgramada)) <= 60) {
+
     $hoy = date("Y-m-d H:i:s");
-    $sql = "SELECT * FROM noticias WHERE DATE(fecha_publicacion) <= ?";
+    $ayerMismoHorario = date("Y-m-d H:i:s", strtotime("-24 hours"));
+
+    // Seleccionamos solo noticias del último día
+    $sql = "SELECT * FROM noticias WHERE fecha_publicacion BETWEEN ? AND ?";
     $stmt = $con->prepare($sql);
-    $stmt->bind_param("s", $hoy);
+    $stmt->bind_param("ss", $ayerMismoHorario, $hoy);
     $stmt->execute();
     $resultado = $stmt->get_result();
+
     $noticias = [];
     while ($row = $resultado->fetch_assoc()) {
         $noticias[] = $row;
     }
+
     if (empty($noticias)) {
         die("No se encontraron noticias para el día $hoy");
     } else {
-        echo "Noticias encontradas: " . count($noticias);
+        echo "Noticias encontradas: " . count($noticias) . "\n";
     }
+
+    // Preparar PHPMailer
     $mail = new PHPMailer(true);
     $contenidoNoticias = '';
-    $mail->addEmbeddedImage(
-        __DIR__ . '/logo_alt.png',
-        'banner',
-        'logo_alt.png'
-    );
+    $mail->addEmbeddedImage(__DIR__ . '/logo_alt.png', 'banner', 'logo_alt.png');
+
     foreach ($noticias as $index => $noticia) {
-        $descripcion = strip_tags($noticia['descripcion']); // quitar HTML
+        $descripcion = strip_tags($noticia['descripcion']);
         $descripcion = mb_strimwidth($descripcion, 0, 100, '...');
+
         $webp = 'https://catink.com.mx/' . $noticia['crop3'];
-        $png = __DIR__ . "/logo_temp_{$index}.png"; // archivos temporales únicos
+        $png = __DIR__ . "/logo_temp_{$index}.png";
+
         // Convertir WebP a PNG
         $image = imagecreatefromwebp($webp);
         imagepng($image, $png);
         imagedestroy($image);
 
-        // Adjuntar imagen convertida al objeto PHPMailer
-        $mail->addEmbeddedImage($png, "logo{$index}", "logo.png"); // cid único
-        // Concatenar HTML, referenciando la cid única
-        $contenidoNoticias .= "
-                                <table width='100%' cellpadding='0' cellspacing='0' border='0' 
-                                    style='background:#ffffff;margin-bottom:15px;border-radius:10px;overflow:hidden;'>
-                                <tr class='stack-column'>
-                                <!-- IMAGEN -->
-                                <td width='240' valign='top' class='card-padding'>
-                                <img 
-                                src='cid:logo{$index}' 
-                                width='220'
-                                class='stack-img'
-                                style='
-                                width:100%;
-                                max-width:220px;
-                                height:auto;
-                                display:block;
-                                border-radius:10px;
-                                border:0;
-                                '>
-                                </td>
-                                <!-- TEXTO -->
-                                <td valign='top' class='card-padding' style='font-family:Arial,sans-serif;color:#000;'>
-                                <a href='https://catink.com.mx/views/news.php?id={$noticia['id']}'
-                                style='
-                                background:#EF3363;
-                                color:#EF3363;
-                                text-decoration:none;
-                                '>
-                                <h3 style='margin:0;'>{$noticia['titulo']}</h3>
-                                </a>
-                                <p style='margin:10px; '>
-                                {$descripcion}
-                                </p>
-                                </td>
-                                </tr>
-                                </table>
-                                ";
+        $mail->addEmbeddedImage($png, "logo{$index}", "logo.png");
 
+        $contenidoNoticias .= "
+        <table width='100%' cellpadding='0' cellspacing='0' border='0' 
+            style='background:#ffffff;margin-bottom:15px;border-radius:10px;overflow:hidden;'>
+        <tr class='stack-column'>
+        <td width='240' valign='top' class='card-padding'>
+            <img src='cid:logo{$index}' width='220' class='stack-img' 
+                style='width:100%;max-width:220px;height:auto;display:block;border-radius:10px;border:0;'>
+        </td>
+        <td valign='top' class='card-padding' style='font-family:Arial,sans-serif;color:#000;'>
+            <a href='https://catink.com.mx/views/news.php?id={$noticia['id']}' 
+               style='background:#EF3363;color:#EF3363;text-decoration:none;'>
+                <h3 style='margin:0;'>{$noticia['titulo']}</h3>
+            </a>
+            <p style='margin:10px;'>{$descripcion}</p>
+        </td>
+        </tr>
+        </table>";
     }
+
+    // Plantilla de correo
     $plantillaPath = __DIR__ . "/diarias.html";
     if (!file_exists($plantillaPath)) {
         die("Error: plantilla no encontrada en $plantillaPath");
     }
     $plantilla = file_get_contents($plantillaPath);
     $plantilla = str_replace("{{noticias}}", $contenidoNoticias, $plantilla);
+
     try {
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';   // Cambia por tu SMTP
+        $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'faustoperezortega15@gmail.com'; // Tu email
-        $mail->Password = 'aiunnaqifeqwjrrx';               // Tu contraseña
-        $mail->SMTPSecure = 'tls';                    // o 'ssl'
-        $mail->Port = 587;                            // o 465 si SSL
+        $mail->Username = 'catink.oficial@gmail.com';
+        $mail->Password = 'lamcszfwuoftmlpv';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
 
-        $mail->setFrom('faustoperezortega15@gmail.com', 'CatInk News');
+        $mail->setFrom('catink.oficial@gmail.com', 'Noticias del día');
 
-        // Lista de destinatarios (puede ser dinámica)
+        // Destinatarios
         $sqlUsuarios = "SELECT correo, nombre_completo FROM suscripciones";
         $resUsuarios = $con->query($sqlUsuarios);
 
         $mail->isHTML(true);
         $mail->Subject = 'Resumen diario de noticias';
         $mail->Body = $plantilla;
+
         while($user = $resUsuarios->fetch_assoc()){
             $mail->clearAddresses();
             $mail->addAddress($user['correo'], $user['nombre_completo']);
             $mail->send();
         }
-        // Eliminar archivos temporales
+
+        // Limpiar archivos temporales
         foreach ($noticias as $index => $noticia) {
             $png = __DIR__ . "/logo_temp_{$index}.png";
-            if (file_exists($png)) {
-                unlink($png);
-            }
+            if (file_exists($png)) unlink($png);
         }
-        echo "Correo enviado correctamente a todos los usuarios suscritos.";
-        header("Location: ./../../index.php?msg=enviado");
+
+        echo "Correo enviado correctamente a todos los usuarios suscritos.\n";
 
     } catch (Exception $e) {
         echo "Error al enviar: {$mail->ErrorInfo}";
     }
-    }
+}

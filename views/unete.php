@@ -14,7 +14,7 @@ include("./../layout/header.php");
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">¿Quieres ser parte de CatInk?</h5>
-                    <form action="./email/solicitud.php" method="post" enctype="multipart/form-data">
+                    <form action="./../views/email/solicitud.php" method="post" enctype="multipart/form-data">
                         <div class="form-card">
                             <div class="form-group">
                                 <label for="nombre">Nombre completo</label>

@@ -7,7 +7,7 @@ include("./../layout/header.php");
     <hr>
     <br>
     <div class="card">
-        <form action="./email/contacto.php" method="post">
+        <form action="./../views/email/contacto.php" method="post">
             <div class="form-card">
                 <div class="form-group">
                     <label for="name">Nombre:</label>

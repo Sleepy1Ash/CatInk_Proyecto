@@ -141,96 +141,140 @@
    CROP IMAGEN PRINCIPAL (GALERÍA)
 ================================ */
 (() => {
-  let galleryCropper = null;
-  let crops = [];
-  let currentStep = 0;
-  const cropSteps = [
-    { name: 'Original', ratio: NaN },
-    { name: 'Banner', ratio: 21 / 6 },
-    { name: 'Miniatura', ratio: 16 / 9 }
+  // Configuración de los 3 croppers independientes
+  const cropConfigs = [
+    {
+      num: 1,
+      name: 'Original',
+      ratio: NaN, // Sin ratio fijo
+      inputId: 'imageInputCrop1',
+      imgId: 'cropperImage1',
+      previewId: 'preview1',
+      confirmBtnSelector: '[data-crop="1"].crop-btn-confirm',
+      resetBtnSelector: '[data-crop="1"].crop-btn-reset'
+    },
+    {
+      num: 2,
+      name: 'Banner',
+      ratio: 21 / 6,
+      inputId: 'imageInputCrop2',
+      imgId: 'cropperImage2',
+      previewId: 'preview2',
+      confirmBtnSelector: '[data-crop="2"].crop-btn-confirm',
+      resetBtnSelector: '[data-crop="2"].crop-btn-reset'
+    },
+    {
+      num: 3,
+      name: 'Miniatura',
+      ratio: 16 / 9,
+      inputId: 'imageInputCrop3',
+      imgId: 'cropperImage3',
+      previewId: 'preview3',
+      confirmBtnSelector: '[data-crop="3"].crop-btn-confirm',
+      resetBtnSelector: '[data-crop="3"].crop-btn-reset'
+    }
   ];
-  const imageInputMain = document.getElementById("imageInputMain");
-  const image = document.getElementById("cropperImage");
-  const previewGrid = document.getElementById("previewGrid");
-  const btnAdd = document.getElementById("cropAdd");
-  const btnReset = document.getElementById("cropReset");
-  const btnDelete = document.getElementById("cropDelete");
-  if (!imageInputMain || !image || !previewGrid) return;
-  /* ===== CARGA IMAGEN ===== */
-  imageInputMain.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    resetAll();
-    const reader = new FileReader();
-    reader.onload = () => {
-      image.src = reader.result;
-      galleryCropper?.destroy();
-      galleryCropper = new Cropper(image, {
-        viewMode: 1,
-        autoCropArea: 1,
-        aspectRatio: cropSteps[0].ratio,
-        cropBoxResizable: false,
-        dragMode: 'move',
-        responsive: true,
-        guides: true,
-        background: false
-      });
-    };
-    reader.readAsDataURL(file);
-  });
-  /* ===== AÑADIR RECORTE ===== */
-  btnAdd?.addEventListener("click", () => {
-    if (!galleryCropper || currentStep >= cropSteps.length) return;
-    const canvas = galleryCropper.getCroppedCanvas({
-      imageSmoothingQuality: "high"
-    });
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
-    crops.push(dataUrl);
-    updatePreviews();
-    currentStep++;
-    if (currentStep < cropSteps.length) {
-      galleryCropper.setAspectRatio(cropSteps[currentStep].ratio);
-    }
-  });
-  /* ===== RESET TOTAL ===== */
-  btnReset?.addEventListener("click", resetAll);
-  /* ===== DESHACER ÚLTIMO ===== */
-  btnDelete?.addEventListener("click", () => {
-    if (crops.length === 0) return;
-    crops.pop();
-    currentStep = Math.max(0, currentStep - 1);
-    galleryCropper.setAspectRatio(cropSteps[currentStep].ratio);
-    updatePreviews();
-  });
-  /* ===== HELPERS ===== */
-  function updatePreviews() {
-    previewGrid.innerHTML = "";
-    for (let i = 0; i < 3; i++) {
-      const input = document.getElementById(`crop${i + 1}`);
-      if (input) input.value = "";
-    }
-    crops.forEach((crop, i) => {
-      const img = document.createElement("img");
-      img.src = crop;
-      previewGrid.appendChild(img);
 
-      const input = document.getElementById(`crop${i + 1}`);
-      if (input) input.value = crop;
+  // Objeto para almacenar los croppers
+  const croppers = {};
+  
+  // Detectar si estamos en editar o crear
+  const isEditForm = !!document.getElementById('formEdicion');
+  const isCreateForm = !!document.getElementById('formPublicacion');
+
+  // Inicializar cada cropper
+  cropConfigs.forEach(config => {
+    const input = document.getElementById(config.inputId);
+    const img = document.getElementById(config.imgId);
+    const preview = document.getElementById(config.previewId);
+    const confirmBtn = document.querySelector(config.confirmBtnSelector);
+    const resetBtn = document.querySelector(config.resetBtnSelector);
+    const hiddenInput = document.getElementById(`crop${config.num}`);
+    const cropperContainer = img?.closest('.cropper-container');
+    const cropActions = confirmBtn?.closest('.crop-actions');
+    const imageSection = input?.closest('.crop-image-section');
+
+    if (!input || !img || !preview) return;
+
+    // En editar, ocultar cropper-container por defecto
+    if (isEditForm && cropperContainer) {
+      cropperContainer.style.display = 'none';
+    }
+
+    // Cargar imagen
+    input.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.src = reader.result;
+        
+        // Mostrar cropper-container
+        if (cropperContainer) cropperContainer.style.display = 'block';
+        
+        // Destruir cropper anterior si existe
+        if (croppers[config.num]) {
+          croppers[config.num].destroy();
+        }
+
+        // Crear nuevo cropper
+        croppers[config.num] = new Cropper(img, {
+          viewMode: 1,
+          autoCropArea: 1,
+          aspectRatio: config.ratio,
+          cropBoxResizable: false,
+          dragMode: 'move',
+          responsive: true,
+          guides: true,
+          background: false
+        });
+      };
+      reader.readAsDataURL(file);
     });
-  }
-  function resetAll() {
-    crops = [];
-    currentStep = 0;
-    previewGrid.innerHTML = "";
-    for (let i = 1; i <= 3; i++) {
-      const input = document.getElementById(`crop${i}`);
-      if (input) input.value = "";
-    }
-    if (galleryCropper) {
-      galleryCropper.setAspectRatio(cropSteps[0].ratio);
-      galleryCropper.reset();
-    }
-  }
+
+    // Confirmar recorte
+    confirmBtn?.addEventListener('click', () => {
+      const cropper = croppers[config.num];
+      if (!cropper) {
+        alert(`Por favor, carga una imagen primero para ${config.name}`);
+        return;
+      }
+
+      const canvas = cropper.getCroppedCanvas({
+        imageSmoothingQuality: 'high'
+      });
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+      // Guardar en input hidden
+      if (hiddenInput) {
+        hiddenInput.value = dataUrl;
+      }
+
+      // Mostrar preview
+      preview.innerHTML = `<img src="${dataUrl}" style="width: auto; max-height:150px; object-fit:contain;">`;
+      
+      // Ocultar solo el cropper-container (pero mantener visible los botones)
+      if (cropperContainer) cropperContainer.style.display = 'none';
+    });
+
+    // Reset
+    resetBtn?.addEventListener('click', () => {
+      input.value = '';
+      preview.innerHTML = '';
+      if (hiddenInput) {
+        hiddenInput.value = '';
+      }
+      if (croppers[config.num]) {
+        croppers[config.num].destroy();
+        croppers[config.num] = null;
+        img.src = '';
+      }
+      
+      // Mostrar cropper-container y crop-actions nuevamente
+      if (cropperContainer) cropperContainer.style.display = 'block';
+    });
+  });
 })();
 /* ===============================
    EDITOR QUILL

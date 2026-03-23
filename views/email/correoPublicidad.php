@@ -4,17 +4,21 @@ date_default_timezone_set("America/Mexico_City");
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require("./../../PHPMailer/src/PHPMailer.php");
-require("./../../PHPMailer/src/Exception.php");
-require("./../../PHPMailer/src/SMTP.php");
-include("./../../data/conexion.php");
+require(__DIR__."/../../PHPMailer/src/PHPMailer.php");
+require(__DIR__."/../../PHPMailer/src/Exception.php");
+require(__DIR__."/../../PHPMailer/src/SMTP.php");
+include(__DIR__."/../../data/conexion.php");
+$hoy = date("Y-m-d H:i:s");
 // Consulta para obtener informacion de correos a enviar
-$sql="SELECT * FROM correos_publicitarios WHERE id_correo = 5";
+$sql="SELECT * FROM correos_publicitarios WHERE envio >= ?";
 $stmt = $con->prepare($sql);
+$stmt->bind_param('s', $hoy);
 $stmt->execute();
 $resultado = $stmt->get_result();
 $correo = $resultado->fetch_assoc();
-
+if(!$correo){
+    die("No hay infromacion");
+}
 // Datos de ejemplo que se enviarían dinámicamente
 $titulo   = $correo['titulo']; // Título de la noticia
 $contenido = $correo['contenido']; // Contenido de la noticia
@@ -25,7 +29,7 @@ $urlBoton  = $correo['url_c'];
 $tmpPng = __DIR__ . "/temp_" . uniqid() . ".png";
 
 // Convertir WebP a PNG
-$image = imagecreatefromwebp("http://192.168.100.17/CatInk_Proyecto/img/correo/".$webpPath);
+$image = imagecreatefromwebp("https://www.catink.com.mx/img/correo/".$webpPath);
 if(!$image) {
     die("Error al cargar la imagen WebP");
 }
@@ -39,12 +43,12 @@ try {
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'faustoperezortega15@gmail.com';
-    $mail->Password   = '';
+    $mail->Username   = 'catink.oficial@gmail.com';
+    $mail->Password   = 'lamcszfwuoftmlpv';
     $mail->SMTPSecure = 'tls';
     $mail->Port       = 587;
 
-    $mail->setFrom('faustoperezortega15@gmail.com', 'CatInk News');
+    $mail->setFrom('catink.oficial@gmail.com', 'CatInk News');
 
     // Destinatarios (puedes poner dinámicos desde base de datos)
     $mail->addAddress('al222211174@gmail.com', 'Fausto Pérez Ortega');

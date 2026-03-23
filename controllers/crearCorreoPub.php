@@ -40,7 +40,7 @@ $stmt->bind_param(
     $envio
 );
 if($stmt->execute()){
-    header("Location: ../views/correos.php");
+    header("Location: ../views/correos.php?success=1");
     exit();
 }else{
     header("Location: ../views/correos.php?error=1");

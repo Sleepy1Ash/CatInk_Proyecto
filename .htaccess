@@ -1,6 +1,26 @@
 RewriteEngine On
+
 # =========================
-# EXCEPCIONES - NO REESCRIBIR ARCHIVOS/CARPETAS REALES
+# NORMALIZAR URL (MUY IMPORTANTE)
+# =========================
+
+# Forzar HTTPS + WWW
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} !^www\.catink\.com\.mx$ [NC]
+RewriteRule ^(.*)$ https://www.catink.com.mx/$1 [R=301,L]
+
+# Eliminar doble slash
+RewriteCond %{REQUEST_URI} ^(.*)//+(.*)$
+RewriteRule .* %1/%2 [R=301,L]
+
+# =========================
+# PERMITIR ARCHIVOS IMPORTANTES
+# =========================
+RewriteRule ^robots\.txt$ - [L]
+RewriteRule ^sitemap\.xml$ - [L]
+
+# =========================
+# NO REESCRIBIR ARCHIVOS REALES
 # =========================
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
@@ -10,34 +30,36 @@ RewriteRule ^ - [L]
 # =========================
 RewriteRule ^$ index.php [L]
 RewriteRule ^home/?$ index.php [L]
+
 # =========================
 # NOTICIAS
 # =========================
-# URLs cortas y legibles para noticias
 RewriteRule ^n/([a-zA-Z0-9_-]+)/?$ views/news.php?hash=$1 [L,QSA]
 RewriteRule ^noticia/([a-zA-Z0-9_-]+)/?$ views/news.php?hash=$1 [L,QSA]
 RewriteRule ^news/([a-zA-Z0-9_-]+)/?$ views/news.php?hash=$1 [L,QSA]
-# Listado general de noticias
+
 RewriteRule ^noticias/?$ views/categoria.php [L,QSA]
+
 # =========================
 # LOGIN
 # =========================
 RewriteRule ^login/?$ views/login.php [L,QSA]
 RewriteRule ^acceso/?$ views/login.php [L,QSA]
+
 # =========================
 # CATEGORIAS
 # =========================
-# Soportar categorías con espacios (%20), guiones y caracteres especiales
 RewriteRule ^categoria/(.+)/?$ views/categoria.php?cat=$1 [L,QSA]
 RewriteRule ^noticias/categoria/(.+)/?$ views/categoria.php?cat=$1 [L,QSA]
 RewriteRule ^categorias/(.+)/?$ views/categoria.php?cat=$1 [L,QSA]
+
 # =========================
 # BUSQUEDA
 # =========================
-# Soportar búsquedas con espacios (%20) y caracteres especiales
 RewriteRule ^buscar/(.+)/?$ views/categoria.php?q=$1 [L,QSA]
 RewriteRule ^noticias/buscar/(.+)/?$ views/categoria.php?q=$1 [L,QSA]
 RewriteRule ^search/(.+)/?$ views/categoria.php?q=$1 [L,QSA]
+
 # =========================
 # PAGINAS ESTATICAS
 # =========================

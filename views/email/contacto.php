@@ -9,49 +9,68 @@ require("./../../PHPMailer/src/Exception.php");
 require("./../../PHPMailer/src/SMTP.php");
 include("./../../data/conexion.php");
 
-$nombre = $_POST['nombre'];
-$email = $_POST['email'];
-$mensaje = $_POST['message'];
-// Crear objeto PHPMailer
-$mail = new PHPMailer(true);
+$nombre = $_POST['name'] ?? '';
+$email = $_POST['email'] ?? '';
+$mensaje = $_POST['message'] ?? '';
 
 try {
-    $mail->isSMTP();
-    $mail->Host       = 'smtp.gmail.com';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'faustoperezortega15@gmail.com';
-    $mail->Password   = '';
-    $mail->SMTPSecure = 'tls';
-    $mail->Port       = 587;
+    // === 1. Correo al administrador ===
+    $mailAdmin = new PHPMailer(true);
+    $mailAdmin->isSMTP();
+    $mailAdmin->Host       = 'smtp.gmail.com';
+    $mailAdmin->SMTPAuth   = true;
+    $mailAdmin->Username   = 'catink.oficial@gmail.com';
+    $mailAdmin->Password   = 'lamcszfwuoftmlpv'; // Considera usar variables de entorno
+    $mailAdmin->SMTPSecure = 'tls';
+    $mailAdmin->Port       = 587;
 
-    $mail->setFrom('faustoperezortega15@gmail.com', 'CatInk News');
+    $mailAdmin->setFrom('catink.oficial@gmail.com', 'Contacto CatInk');
+    $mailAdmin->addAddress('al222211174@gmail.com', 'Fausto Pérez Ortega');
 
-    // Destinatarios (puedes poner dinámicos desde base de datos)
-    $mail->addAddress('al222211174@gmail.com', 'Fausto Pérez Ortega');
+    $mailAdmin->isHTML(true);
+    $mailAdmin->Subject = "Solicitud de asesoramiento por parte de CatInk";
 
-    $mail->isHTML(true);
-    $mail->Subject = "Solicitud de ascesoramiento por parte de CatInk";
-
-    // Construir el contenido HTML
-    $html = "
+    $htmlAdmin = "
     <div style='font-family: Arial, sans-serif; max-width:600px; margin:auto; background:#f9f9f9; padding:20px; border-radius:10px;'>
-        <h2 style='color:#EF3363;'>Solicitud de ascesoramiento por parte de CatInk</h2>
+        <h2 style='color:#EF3363;'>Solicitud de asesoramiento por parte de CatInk</h2>
         <p style='color:#333;'><strong>Nombre:</strong> $nombre</p>
         <p style='color:#333;'><strong>Correo:</strong> $email</p>
         <p style='color:#333;'><strong>Mensaje:</strong> $mensaje</p>
     </div>
     ";
 
-    $mail->Body = $html;
+    $mailAdmin->Body = $htmlAdmin;
+    $mailAdmin->send();
 
-    $mail->send();
+    // === 2. Correo de confirmación al usuario ===
+    $mailUser = new PHPMailer(true);
+    $mailUser->isSMTP();
+    $mailUser->Host       = 'smtp.gmail.com';
+    $mailUser->SMTPAuth   = true;
+    $mailUser->Username   = 'catink.oficial@gmail.com';
+    $mailUser->Password   = 'lamcszfwuoftmlpv';
+    $mailUser->SMTPSecure = 'tls';
+    $mailUser->Port       = 587;
 
-    echo "Correo enviado correctamente.";
+    $mailUser->setFrom('catink.oficial@gmail.com', 'CatInk');
+    $mailUser->addAddress($email, $nombre);
+
+    $mailUser->isHTML(true);
+    $mailUser->Subject = "Confirmación de recepción";
+
+    $htmlUser = "
+    <div style='font-family: Arial, sans-serif; max-width:600px; margin:auto; background:#f9f9f9; padding:20px; border-radius:10px;'>
+        <h2 style='color:#EF3363;'>Hemos recibido tu información</h2>
+        <p style='color:#333;'>Gracias <strong>$nombre</strong> por contactarnos. Pronto nos pondremos en contacto contigo.</p>
+    </div>
+    ";
+
+    $mailUser->Body = $htmlUser;
+    $mailUser->send();
+
     header("Location: ./../contactanos.php?success=1");
     exit();
 
 } catch (Exception $e) {
-    // Eliminar temporal incluso si falla
-    if(file_exists($tmpPng)) unlink($tmpPng);
-    echo "Error al enviar: {$mail->ErrorInfo}";
+    echo "Error al enviar: {$e->getMessage()}";
 }

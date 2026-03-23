@@ -10,21 +10,19 @@ try {
     $fechaInicioSql = $fechaInicio . ' 00:00:00';
     $fechaFinSql    = $fechaFin . ' 23:59:59';
     // ============================
-    // Rango de fechas y agrupación
+    // Siempre modo diario - generar todos los días
     // ============================
-    $dias = (strtotime($fechaFin) - strtotime($fechaInicio)) / 86400;
-    if ($dias <= 15) {
-        $modo = 'diario';
-        $groupBy = "DATE(nl.fecha)";
-        $labelFormat = "DATE(nl.fecha)";
-    } elseif ($dias <= 60) {
-        $modo = 'semanal';
-        $groupBy = "YEARWEEK(nl.fecha, 1)";
-        $labelFormat = "MIN(DATE(nl.fecha))";
-    } else {
-        $modo = 'quincenal';
-        $groupBy = "CONCAT(YEAR(nl.fecha), '-', CEIL(DAY(nl.fecha)/15))";
-        $labelFormat = "MIN(DATE(nl.fecha))";
+    $modo = 'diario';
+    $groupBy = "DATE(nl.fecha)";
+    $labelFormat = "DATE(nl.fecha)";
+    
+    // Generar array con todos los días del rango
+    $allDias = [];
+    $current = new DateTime($fechaInicio);
+    $end = new DateTime($fechaFin);
+    while ($current <= $end) {
+        $allDias[] = $current->format('Y-m-d');
+        $current->modify('+1 day');
     }
     // ============================
     // Likes por categoría
@@ -67,8 +65,8 @@ try {
     // ============================
     // Procesar datos
     // ============================
-    $labels = [];
-    $dataCategorias = [];
+    $labels = $allDias; // Usar todos los días generados
+    $dataMap = [];
     $paises = [];
     $estados = [];
     // Geolocalización
@@ -78,24 +76,21 @@ try {
         $paises[$pais] = ($paises[$pais] ?? 0) + (int)$row['total'];
         $estados[$estado] = ($estados[$estado] ?? 0) + (int)$row['total'];
     }
-    // Likes por categoría
+    // Likes por categoría - mapear datos
     while ($row = $result->fetch_assoc()) {
         $label = $row['label_fecha'];
-        if (!in_array($label, $labels)) {
-            $labels[] = $label;
-        }
         $cat = $row['categoria'];
-        if (!isset($dataCategorias[$cat])) {
-            $dataCategorias[$cat] = ['likes' => []];
+        if (!isset($dataMap[$cat])) {
+            $dataMap[$cat] = ['likes' => []];
         }
-        $dataCategorias[$cat]['likes'][$label] = (int)$row['likes'];
+        $dataMap[$cat]['likes'][$label] = (int)$row['likes'];
     }
     // ============================
-    // Normalizar (rellenar ceros)
+    // Normalizar (rellenar ceros para TODOS los días)
     // ============================
-    foreach ($dataCategorias as $cat => $metrics) {
+    $dataCategorias = [];
+    foreach ($dataMap as $cat => $metrics) {
         $finalLikes = [];
-
         foreach ($labels as $l) {
             $finalLikes[] = $metrics['likes'][$l] ?? 0;
         }

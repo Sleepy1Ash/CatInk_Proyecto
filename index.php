@@ -419,6 +419,17 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                                 <?php endforeach; ?>
                             </ul>
                         </div>
+                        <div class="card-footer">
+                            <h3>Siguenos</h3>
+                            <div class="social-links">
+                                <a href="https://www.facebook.com/TheCatink?locale=es_LA" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                                <a href="https://x.com/The_Catink/" aria-label="Twitter / X"><i class="bi bi-twitter-x"></i></a>
+                                <a href="https://www.instagram.com/the.catink/" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                                <a href="https://www.youtube.com/@thecatink" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                                <a href="https://www.tiktok.com/@thecatink" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                                <!--<a href="#" aria-label="Twitch"><i class="bi bi-twitch"></i></a>-->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

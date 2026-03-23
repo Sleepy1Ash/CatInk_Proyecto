@@ -66,25 +66,51 @@ while($row = $categoriasResult->fetch_assoc()){
             <!-- IMAGEN PRINCIPAL -->
             <div class="form-group">
                 <label>Imagen principal</label>
-                <span>El orden de los botones muestra las capturas necesarias y cómo deben guardarse</span>
-                <!-- Subida -->
-                <input type="file" id="imageInputMain" accept="image/*">
-                <!-- Zona cropper -->
-                <div class="cropper-container">
-                    <img id="cropperImage">
+                <span>Sube 3 imágenes: Original, Banner (21:6) y Miniatura (16:9)</span>
+                
+                <!-- IMAGEN 1: Original -->
+                <div class="crop-image-section">
+                    <h5>1. Imagen Original</h5>
+                    <input type="file" id="imageInputCrop1" class="crop-input" accept="image/*" data-crop="1">
+                    <div class="cropper-container">
+                        <img id="cropperImage1" class="cropper-img">
+                    </div>
+                    <div class="crop-actions">
+                        <button type="button" class="btn btn-outline-secondary crop-btn-confirm" data-crop="1"><i class="bi bi-check"></i> Confirmar</button>
+                        <button type="button" class="btn btn-outline-secondary crop-btn-reset" data-crop="1"><i class="bi bi-recycle"></i> Reset</button>
+                    </div>
+                    <div class="crop-preview" id="preview1"></div>
                 </div>
-                <!-- Acciones -->
-                <div class="crop-actions">
-                    <button type="button" class="btn btn-outline-secondary" id="cropAdd"><i class="bi bi-plus"></i> Añadir recorte</button>
-                    <button type="button" class="btn btn-outline-secondary" id="cropDelete"><i class="bi bi-arrow-counterclockwise"></i> Deshacer último recorte</button>
-                    <button type="button" class="btn btn-outline-secondary" id="cropReset"><i class="bi bi-recycle"></i> Reset</button>
+                
+                <!-- IMAGEN 2: Banner -->
+                <div class="crop-image-section">
+                    <h5>2. Imagen Banner (21:6)</h5>
+                    <input type="file" id="imageInputCrop2" class="crop-input" accept="image/*" data-crop="2">
+                    <div class="cropper-container">
+                        <img id="cropperImage2" class="cropper-img">
+                    </div>
+                    <div class="crop-actions">
+                        <button type="button" class="btn btn-outline-secondary crop-btn-confirm" data-crop="2"><i class="bi bi-check"></i> Confirmar</button>
+                        <button type="button" class="btn btn-outline-secondary crop-btn-reset" data-crop="2"><i class="bi bi-recycle"></i> Reset</button>
+                    </div>
+                    <div class="crop-preview" id="preview2"></div>
                 </div>
-                <!-- Recortes finales -->
-                <div class="cropped-preview">
-                    <h4>Vista previa</h4>
-                    <div class="preview-grid" id="previewGrid"></div>
+                
+                <!-- IMAGEN 3: Miniatura -->
+                <div class="crop-image-section">
+                    <h5>3. Imagen Miniatura (16:9)</h5>
+                    <input type="file" id="imageInputCrop3" class="crop-input" accept="image/*" data-crop="3">
+                    <div class="cropper-container">
+                        <img id="cropperImage3" class="cropper-img">
+                    </div>
+                    <div class="crop-actions">
+                        <button type="button" class="btn btn-outline-secondary crop-btn-confirm" data-crop="3"><i class="bi bi-check"></i> Confirmar</button>
+                        <button type="button" class="btn btn-outline-secondary crop-btn-reset" data-crop="3"><i class="bi bi-recycle"></i> Reset</button>
+                    </div>
+                    <div class="crop-preview" id="preview3"></div>
                 </div>
-                <!-- Inputs ocultos -->
+                
+                <!-- Inputs ocultos para los datos de las imágenes -->
                 <input type="hidden" name="crop1" id="crop1">
                 <input type="hidden" name="crop2" id="crop2">
                 <input type="hidden" name="crop3" id="crop3">
