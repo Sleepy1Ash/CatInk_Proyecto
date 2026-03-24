@@ -95,7 +95,7 @@ $totalpaginas = ceil($totalNoticias / $porPagina);
 // SIDEBAR
 // ==============================
 $stmtUltimas = $con->prepare("
-    SELECT id, titulo
+    SELECT id, titulo, crop3
     FROM noticias
     WHERE fecha_publicacion <= NOW()
     ORDER BY fecha_publicacion DESC
@@ -104,7 +104,7 @@ $stmtUltimas = $con->prepare("
 $stmtUltimas->execute();
 $ultimas = $stmtUltimas->get_result();
 $stmtPopulares = $con->prepare("
-    SELECT id, titulo
+    SELECT id, titulo, crop3
     FROM noticias
     ORDER BY likes DESC
     LIMIT 3
@@ -213,37 +213,48 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             <?php endif; ?>
             <div class="card-body">
               <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
+              <br>
               <ul class="list-group list-group-flush mb-3">
                 <?php while ($row = $ultimas->fetch_assoc()): ?>
-                  <li class="list-group-item">
-                    <a href="<?= newsUrl($row['id']) ?>" class="news-link">
-                      <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
-                    </a>
-                  </li>
+                  <div class="row">
+                        <div class="col-md-4">
+                            <img src="./../<?=$row['crop3']?>" class="card-img-left-rounded">
+                        </div>
+                        <div class="col-md-8">
+                            <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                        </div>
+                    </div>
+                    <br>
                 <?php endwhile; ?>
               </ul>
               <h3><i class="bi bi-fire"></i> Lo más popular</h3>
+              <br>
               <ul class="list-group list-group-flush">
                 <?php while ($row = $populares->fetch_assoc()): ?>
-                  <li class="list-group-item">
-                    <a href="<?= newsUrl($row['id']) ?>" class="news-link">
-                      <i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?>
-                    </a>
-                  </li>
+                  <div class="row">
+                        <div class="col-md-4">
+                            <img src="./../<?=$row['crop3']?>" class="card-img-left-rounded">
+                        </div>
+                        <div class="col-md-8">
+                            <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                        </div>
+                    </div>
+                    <br>
                 <?php endwhile; ?>
               </ul>
             </div>
             <div class="card-footer">
-                            <h3>Siguenos</h3>
-                            <div class="social-links">
-                                <a href="https://www.facebook.com/TheCatink?locale=es_LA" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                                <a href="https://x.com/The_Catink/" aria-label="Twitter / X"><i class="bi bi-twitter-x"></i></a>
-                                <a href="https://www.instagram.com/the.catink/" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                                <a href="https://www.youtube.com/@thecatink" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
-                                <a href="https://www.tiktok.com/@thecatink" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
-                                <!--<a href="#" aria-label="Twitch"><i class="bi bi-twitch"></i></a>-->
-                            </div>
-                        </div>
+                <h3>Siguenos</h3>
+                <br>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/TheCatink?locale=es_LA" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://x.com/The_Catink/" aria-label="Twitter / X"><i class="bi bi-twitter-x"></i></a>
+                    <a href="https://www.instagram.com/the.catink/" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="https://www.youtube.com/@thecatink" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                    <a href="https://www.tiktok.com/@thecatink" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                    <!--<a href="#" aria-label="Twitch"><i class="bi bi-twitch"></i></a>-->
+                </div>
+            </div>
           </div>
         </div>
       </div>

@@ -105,11 +105,15 @@ if (abs(strtotime(date("H:i:s")) - strtotime($horaProgramada)) <= 60) {
 
         $mail->isHTML(true);
         $mail->Subject = 'Resumen diario de noticias';
-        $mail->Body = $plantilla;
 
         while($user = $resUsuarios->fetch_assoc()){
             $mail->clearAddresses();
             $mail->addAddress($user['correo'], $user['nombre_completo']);
+
+            $unsubscribeUrl = 'https://www.catink.com.mx/views/email/unsubscribe.php?email=' . urlencode($user['correo']);
+            $body = str_replace('{{unsubscribe_url}}', $unsubscribeUrl, $plantilla);
+
+            $mail->Body = $body;
             $mail->send();
         }
 

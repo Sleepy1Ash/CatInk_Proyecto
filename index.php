@@ -59,6 +59,32 @@ $publicidadInferior = $stmt->get_result()->fetch_assoc();
 $stmt = $con->prepare("SELECT * FROM videos WHERE activo = 1 ORDER BY id_v DESC LIMIT 6");
 $stmt->execute();
 $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+// ==============================
+// NOTICIAS RECOMENDADAS
+// ==============================
+$recomendadas = [];
+$sqlRec = "
+    SELECT id, titulo, descripcion, crop3, fecha_publicacion, nombre
+    FROM noticias, usuarios
+    WHERE noticias.autor = usuarios.id_u and fecha_publicacion <= NOW()
+    ORDER BY likes DESC, vistas DESC, fecha_publicacion DESC
+    LIMIT 3
+";
+$stmtRec = $con->prepare($sqlRec);
+$stmtRec->execute();
+$recomendadas = $stmtRec->get_result();
+// ==============================
+// NOTICIAS RECIENTES
+// ==============================
+$stmtRecientes = $con->prepare("
+    SELECT id, titulo, descripcion, crop3, fecha_publicacion, nombre
+    FROM noticias, usuarios
+    WHERE noticias.autor = usuarios.id_u and fecha_publicacion <= NOW()
+    ORDER BY fecha_publicacion DESC
+    LIMIT 4
+");
+$stmtRecientes->execute();
+$recientes = $stmtRecientes->get_result();
 ?>
 <!-- ===================== -->
 <!-- SLIDER PRINCIPAL -->
@@ -242,6 +268,7 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <!-- ===================== -->
         <!-- SIDEBAR -->
         <!-- ===================== -->
+        <h2><i class="bi bi-newspaper"></i>  Lo más recientes</h2>
         <div class="row mt-5">
             <div class="col-md-9">
                 <?php if($secciones['publicidad']['estado'] == 1) : ?>
@@ -252,7 +279,6 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <span class="ads-label">ADS</span>
                     </div>
                 <?php endif; ?>
-                <h2><i class="bi bi-newspaper"></i>  Lo más recientes</h2>
                 <?php foreach($noticiasMasRecientes as $row): ?>
                     <div class="card mb-3" data-url="./<?= newsUrl($row['id']) ?>">
                         <div class="row row-no-gap">
@@ -403,24 +429,43 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         </div>
                         <div class="card-body">
                             <h3><i class="bi bi-alarm"></i> Lo más nuevo</h3>
-                            <ul class="list-group list-group-flush mb-3">
+                            <br>
+                            <div class="sidebar-news-list">
                                 <?php foreach($ultimasNoticiasSidebar as $row): ?>
-                                    <li class="list-group-item">
-                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?></a>
-                                    </li>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left-rounded">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <a href="./<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <br>
                                 <?php endforeach; ?>
-                            </ul>
+                            </div>
                             <h3><i class="bi bi-fire"></i> Lo más popular</h3>
-                            <ul class="list-group list-group-flush">
+                            <br>
+                            <div class="sidebar-news-list">
                                 <?php foreach($popularesNoticiasSidebar as $row): ?>
-                                    <li class="list-group-item">
-                                        <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><i class="bi bi-file-earmark-richtext"></i> <?= htmlspecialchars($row['titulo']) ?></a>
-                                    </li>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left-rounded">
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <a href="./<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <br>
                                 <?php endforeach; ?>
-                            </ul>
+                            </div>
                         </div>
                         <div class="card-footer">
                             <h3>Siguenos</h3>
+                            <br>
                             <div class="social-links">
                                 <a href="https://www.facebook.com/TheCatink?locale=es_LA" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
                                 <a href="https://x.com/The_Catink/" aria-label="Twitter / X"><i class="bi bi-twitter-x"></i></a>
@@ -434,6 +479,66 @@ $vid = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
         </div>
+        <br>
+        <div class="row">
+            <div class="container">
+              <h3><i class="bi bi-stars"></i> Recomendados para ti</h3>
+              <br>
+              <div class="row">
+                <?php while($r = $recomendadas->fetch_assoc()): 
+                    $img = !empty($r['crop3']) ? "./../".$r['crop3'] : "./../img/placeholder.jpg";
+                ?>
+                  <div class="col">
+                      <div class="card h-100" data-url="./<?= newsUrl($r['id']) ?>">
+                          <img src="<?= htmlspecialchars($img) ?>" class="card-img-top">
+                          <div class="card-body">
+                              <a href="<?= newsUrl($r['id']) ?>" class="news-link title-limit-1">
+                                  <?= htmlspecialchars($r['titulo']) ?>
+                              </a>
+                              <small class="desc-limit-3">
+                                <?= htmlspecialchars($r['descripcion']) ?>
+                              </small>
+                              <br>
+                              <small class="text-muted">
+                                  <?= date('d M Y', strtotime($r['fecha_publicacion'])) ?> - Por: <?= $r['nombre'] ?>
+                              </small>
+                          </div>
+                      </div>
+                  </div>
+                <?php endwhile; ?>
+              </div>
+            </div>
+          </div>
+        <br>
+        <div class="row">
+            <div class="container">
+              <h3><i class="bi bi-lightning-fill"></i> Noticias recientes</h3>
+              <br>
+              <div class="row">
+                <?php while($r = $recientes->fetch_assoc()): 
+                    $img = !empty($r['crop3']) ? "./../".$r['crop3'] : "./../img/placeholder.jpg";
+                ?>
+                  <div class="col">
+                      <div class="card h-100"  data-url="./<?= newsUrl($r['id']) ?>">
+                          <img src="<?= htmlspecialchars($img) ?>" class="card-img-top">
+                          <div class="card-body">
+                              <a href="<?= newsUrl($r['id']) ?>" class="news-link title-limit-1">
+                                  <?= htmlspecialchars($r['titulo']) ?>
+                              </a>
+                              <small class="desc-limit-3">
+                                <?= htmlspecialchars($r['descripcion']) ?>
+                              </small>
+                              <br>
+                              <small class="text-muted">
+                                  <?= date('d M Y', strtotime($r['fecha_publicacion'])) ?> - Por: <?= $r['nombre'] ?>
+                              </small>
+                          </div>
+                      </div>
+                  </div>
+                <?php endwhile; ?>
+              </div>
+            </div>
+          </div>
     </div>
 </div>
 

@@ -24,7 +24,6 @@ $titulo   = $correo['titulo']; // Título de la noticia
 $contenido = $correo['contenido']; // Contenido de la noticia
 $webpPath  = $correo['imagen']; // URL WebP
 $urlBoton  = $correo['url_c'];
-
 // Nombre de archivo temporal único para PNG
 $tmpPng = __DIR__ . "/temp_" . uniqid() . ".png";
 
@@ -60,6 +59,8 @@ try {
     $mail->addEmbeddedImage($tmpPng, 'imagenNoticia', 'imagen.png');
 
     // Construir el contenido HTML
+    $unsubscribeUrl = 'https://www.catink.com.mx/views/email/unsubscribe.php?email=' . urlencode('al222211174@gmail.com');
+
     $html = "
     <div style='font-family: Arial, sans-serif; max-width:600px; margin:auto; background:#f9f9f9; padding:20px; border-radius:10px;'>
         <h2 style='color:#EF3363;'>$titulo</h2>
@@ -69,6 +70,21 @@ try {
            style='display:inline-block; padding:10px 20px; background:#EF3363; color:#fff; text-decoration:none; border-radius:5px; margin-top:10px;'>
            Ver promocion
         </a>
+        <div style='margin-top:20px; padding:15px; background:#333333; color:#ffffff; border-radius:10px;'>
+            <h3 style='margin:0 0 10px;'>Síguenos</h3>
+            <p style='margin:0 0 10px;'>
+                <a href='https://www.facebook.com/TheCatink?locale=es_LA' style='color:#ffffff; text-decoration:none; margin-right:8px;'>Facebook</a>
+                <a href='https://x.com/The_Catink/' style='color:#ffffff; text-decoration:none; margin-right:8px;'>Twitter / X</a>
+                <a href='https://www.instagram.com/the.catink/' style='color:#ffffff; text-decoration:none; margin-right:8px;'>Instagram</a>
+                <a href='https://www.youtube.com/@thecatink' style='color:#ffffff; text-decoration:none; margin-right:8px;'>YouTube</a>
+                <a href='https://www.tiktok.com/@thecatink' style='color:#ffffff; text-decoration:none;'>TikTok</a>
+            </p>
+            <p style='margin:10px 0;'>
+                <a href='https://www.catink.com.mx/terminos-condiciones' style='display:inline-block; margin:0 6px 6px; padding:8px 12px; background:#EF3363; color:#ffffff; border-radius:6px; text-decoration:none;'>Términos y condiciones</a>
+                <a href='https://www.catink.com.mx/privacidad' style='display:inline-block; margin:0 6px 6px; padding:8px 12px; background:#EF3363; color:#ffffff; border-radius:6px; text-decoration:none;'>Política de privacidad</a>
+                <a href='{$unsubscribeUrl}' style='display:inline-block; margin:0 6px 6px; padding:8px 12px; background:#EF3363; color:#ffffff; border-radius:6px; text-decoration:none;'>Cancelar suscripción</a>
+            </p>
+        </div>
     </div>
     ";
 

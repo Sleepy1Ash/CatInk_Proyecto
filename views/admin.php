@@ -157,23 +157,33 @@ function formatNumberShort($num){
         </div>
      </div>
     <!-- GRÁFICOS -->
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Estadísticas Globales</h5>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartVistas"></canvas></div>
-                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartTiempo"></canvas></div>
-                    </div>
+    <div class="charts-container">
+        <h5 class="mb-3">Estadísticas Globales</h5>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="globalChartVistas"></canvas>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartLikes"></canvas></div>
-                        <div class="col-md-6 col-12 chart-col-mobile-fix"><canvas id="globalChartLikesRegion"></canvas></div>
-                    </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="globalChartTiempo"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="globalChartLikes"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="chart-wrapper">
+                    <canvas id="globalChartLikesRegion"></canvas>
                 </div>
             </div>
         </div>
@@ -295,7 +305,7 @@ function formatNumberShort($num){
         const mobile = window.matchMedia('(max-width: 768px)').matches;
         return {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
                 title: { display: true, text: title },
@@ -377,6 +387,29 @@ function formatNumberShort($num){
     });
 </script>
 <style>
+.charts-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.charts-container .card {
+    width: 100%;
+    max-width: calc(100% - 2rem);
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 400px;
+}
+
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 400px !important;
+}
+
 @media (max-width: 768px){
     .kpi-row-mobile-fix{
         flex-wrap: wrap;
@@ -392,16 +425,11 @@ function formatNumberShort($num){
         font-size: 1.05rem;
         padding: 0;
     }
-    .chart-col-mobile-fix{
-        margin-bottom: 1rem;
-        min-height: 250px;
+    .chart-wrapper {
+        height: 300px;
     }
-    #globalChartVistas,
-    #globalChartTiempo,
-    #globalChartLikes,
-    #globalChartLikesRegion{
-        width: 100% !important;
-        height: 250px !important;
+    .chart-wrapper canvas {
+        height: 300px !important;
     }
     #filterFechaInicio,
     #filterFechaFin{

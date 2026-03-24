@@ -18,19 +18,43 @@
 <script src="https://www.catink.com.mx/CSS/scripts.js"></script>
 <script async src="https://platform.twitter.com/widgets.js"></script>
 <script>
-  let searchTimeout = null;
   const input = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('clearBtn');
+  const searchBtn = document.getElementById('searchBtn');
   const basePath = '<?= basePath() ?>'; // Inyectado desde PHP
+  
+  function performSearch() {
+    const q = input.value.trim();
+    if (q.length >= 2) {
+      // Redirige a la búsqueda con URL amigable
+      window.location.href = basePath + `/buscar/${encodeURIComponent(q)}`;
+    }
+  }
+  
   if (input) {
-    input.addEventListener('keyup', function () {
-      clearTimeout(searchTimeout);
-      const q = this.value.trim();
-      searchTimeout = setTimeout(() => {
-        if (q.length >= 2) {
-          // Redirige a la búsqueda con URL amigable
-          window.location.href = basePath + `/buscar/${encodeURIComponent(q)}`;
-        }
-      }, 400);
+    // Buscar al presionar Enter
+    input.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        performSearch();
+      }
+    });
+  }
+  
+  // Botón limpiar
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      input.value = '';
+      input.focus();
+    });
+  }
+  
+  // Botón buscar
+  if (searchBtn) {
+    searchBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      performSearch();
     });
   }
 </script>

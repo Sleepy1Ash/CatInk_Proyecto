@@ -89,13 +89,19 @@ while($row = $result->fetch_assoc()) {
         </li>
       </ul>
       <form class="nav-search" onsubmit="return false;">
-        <i class="bi bi-search"></i>
         <input
-          type="search"
+          type="text"
           id="searchInput"
           placeholder="Buscar noticias..."
           autocomplete="off"
+          class="search-input"
         >
+        <button type="button" id="clearBtn" class="search-btn clear-btn" title="Limpiar búsqueda">
+          <i class="bi bi-x-lg"></i>
+        </button>
+        <button type="button" id="searchBtn" class="search-btn search-icon-btn" title="Buscar">
+          <i class="bi bi-search"></i>
+        </button>
       </form>
     </div>
   </div>
