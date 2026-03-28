@@ -1,18 +1,62 @@
 <?php
-include("./../layout/header.php");
 require_once("./../data/conexion.php");
 require_once("./helpers/urlhelper.php");
-//Detectar pagina
+
+// ==============================
+// PAGINACIÓN
+// ==============================
 $porPagina = 10;
 $pagina = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($pagina < 1) $pagina = 1;
 $offset = ($pagina - 1) * $porPagina;
-// Soportar múltiples formas de parámetros para búsqueda y categoría
-// Decodificar explícitamente los parámetros para manejar espacios codificados (%20)
+
+// ==============================
+// PARÁMETROS
+// ==============================
 $q         = trim(urldecode($_GET['q'] ?? $_GET['query'] ?? $_GET['search'] ?? ''));
 $categoria = trim(urldecode($_GET['cat'] ?? $_GET['category'] ?? $_GET['categoria'] ?? ''));
+
 // ==============================
-// CONSULTA PRINCIPAL DINÁMICA
+// SEO DINÁMICO
+// ==============================
+if ($q !== '') {
+    $pageTitle = "Resultados para: $q";
+    $pageDescription = "Busca noticias de anime y manga sobre $q en CatInk.";
+} elseif ($categoria !== '') {
+    $pageTitle = "Noticias de $categoria";
+    $pageDescription = "Últimas noticias de $categoria en CatInk.";
+} else {
+    $pageTitle = "Últimas noticias de anime y manga";
+    $pageDescription = "Descubre las últimas noticias del mundo del anime y manga.";
+}
+
+if ($pagina > 1) {
+    $pageTitle .= " - Página $pagina";
+    $pageDescription .= " Página $pagina de resultados.";
+}
+
+// ==============================
+// CANONICAL
+// ==============================
+$canonical = "https://www.catink.com.mx";
+
+if ($categoria !== '') {
+    $canonical .= "/categoria/" . urlencode($categoria);
+} elseif ($q !== '') {
+    $canonical .= "/buscar/" . urlencode($q);
+}
+
+if ($pagina > 1) {
+    $canonical .= "?page=" . $pagina;
+}
+
+// ==============================
+// HEADER (IMPORTANTE ARRIBA)
+// ==============================
+include("./../layout/header.php");
+
+// ==============================
+// CONSULTA PRINCIPAL
 // ==============================
 if ($q !== '') {
     $stmt = $con->prepare("
@@ -29,10 +73,11 @@ if ($q !== '') {
     ");
     $like = "%$q%";
     $stmt->bind_param("sssii", $like, $like, $like, $porPagina, $offset);
+
 } elseif ($categoria !== '') {
     $stmt = $con->prepare("
         SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
-              GROUP_CONCAT(c.nombre SEPARATOR ',') AS categorias
+               GROUP_CONCAT(c.nombre SEPARATOR ',') AS categorias
         FROM noticias n
         INNER JOIN noticia_categoria nc_filter ON n.id = nc_filter.noticia_id
         INNER JOIN categorias c_filter ON nc_filter.categoria_id = c_filter.id_c AND c_filter.nombre = ?
@@ -44,6 +89,7 @@ if ($q !== '') {
         LIMIT ? OFFSET ?
     ");
     $stmt->bind_param("sii", $categoria, $porPagina, $offset);
+
 } else {
     $stmt = $con->prepare("
         SELECT n.id, n.titulo, n.descripcion, n.crop3, n.fecha_publicacion,
@@ -58,9 +104,13 @@ if ($q !== '') {
     ");
     $stmt->bind_param("ii", $porPagina, $offset);
 }
+
 $stmt->execute();
 $result = $stmt->get_result();
-// CONTAR TOTAL DE NOTICIAS
+
+// ==============================
+// TOTAL
+// ==============================
 if ($q !== '') {
     $stmtTotal = $con->prepare("
         SELECT COUNT(DISTINCT n.id) as total
@@ -71,26 +121,29 @@ if ($q !== '') {
         AND (n.titulo LIKE ? OR n.descripcion LIKE ? OR n.contenido LIKE ?)
     ");
     $stmtTotal->bind_param("sss", $like, $like, $like);
+
 } elseif ($categoria !== '') {
     $stmtTotal = $con->prepare("
         SELECT COUNT(DISTINCT n.id) as total
         FROM noticias n
-        INNER JOIN noticia_categoria nc_filter ON n.id = nc_filter.noticia_id
-        INNER JOIN categorias c_filter ON nc_filter.categoria_id = c_filter.id_c
+        INNER JOIN noticia_categoria nc ON n.id = nc.noticia_id
+        INNER JOIN categorias c ON nc.categoria_id = c.id_c
         WHERE n.fecha_publicacion <= NOW()
-        AND c_filter.nombre = ?
+        AND c.nombre = ?
     ");
     $stmtTotal->bind_param("s", $categoria);
+
 } else {
     $stmtTotal = $con->prepare("
-        SELECT COUNT(*) as total
-        FROM noticias
+        SELECT COUNT(*) as total FROM noticias
         WHERE fecha_publicacion <= NOW()
     ");
 }
+
 $stmtTotal->execute();
 $totalNoticias = $stmtTotal->get_result()->fetch_assoc()['total'];
 $totalpaginas = ceil($totalNoticias / $porPagina);
+
 // ==============================
 // SIDEBAR
 // ==============================
@@ -103,6 +156,7 @@ $stmtUltimas = $con->prepare("
 ");
 $stmtUltimas->execute();
 $ultimas = $stmtUltimas->get_result();
+
 $stmtPopulares = $con->prepare("
     SELECT id, titulo, crop3
     FROM noticias
@@ -111,68 +165,122 @@ $stmtPopulares = $con->prepare("
 ");
 $stmtPopulares->execute();
 $populares = $stmtPopulares->get_result();
-//Obtener cuadro publicitario
+
 $stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 2 ORDER BY RAND() LIMIT 1");
 $stmt->execute();
 $publicidadCuadro = $stmt->get_result()->fetch_assoc();
+
+// ==============================
+// BREADCRUMBS JSON-LD
+// ==============================
+$breadcrumbList = [
+    "@context" => "https://schema.org",
+    "@type" => "BreadcrumbList",
+    "itemListElement" => [
+        [
+            "@type" => "ListItem",
+            "position" => 1,
+            "name" => "Inicio",
+            "item" => "https://www.catink.com.mx/"
+        ]
+    ]
+];
+
+$position = 2;
+
+if ($categoria !== '') {
+    $breadcrumbList['itemListElement'][] = [
+        "@type" => "ListItem",
+        "position" => $position++,
+        "name" => $categoria,
+        "item" => categoryUrl($categoria)
+    ];
+}
+
+if ($q !== '') {
+    $breadcrumbList['itemListElement'][] = [
+        "@type" => "ListItem",
+        "position" => $position++,
+        "name" => "Resultados para: $q",
+        "item" => $canonical
+    ];
+}
 ?>
+
+<!-- SEO -->
+<link rel="canonical" href="<?= $canonical ?>">
+<?php if ($q !== ''): ?>
+<meta name="robots" content="noindex, follow">
+<?php endif; ?>
+
+<script type="application/ld+json">
+<?= json_encode($breadcrumbList, JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT) ?>
+</script>
+
 <div class="container mt-5">
   <div class="container-fluid">
+
     <!-- TITULO CONTEXTUAL -->
     <?php if ($q !== ''): ?>
-      <h4 style="margin:15px 0">
-        Resultados para: <strong><?= htmlspecialchars($q) ?></strong>
-      </h4>
+      <h4>Resultados para: <strong><?= htmlspecialchars($q) ?></strong></h4>
     <?php elseif ($categoria !== ''): ?>
-      <h4 style="margin:15px 0">
-        Categoría: <strong><?= htmlspecialchars($categoria) ?></strong>
-      </h4>
+      <h4>Categoría: <strong><?= htmlspecialchars($categoria) ?></strong></h4>
     <?php endif; ?>
+    <br>
     <div class="row">
-      <!-- ================== COLUMNA PRINCIPAL ================== -->
+
+      <!-- MAIN -->
       <div class="col-md-9">
+
         <?php if ($result->num_rows === 0): ?>
           <p>No se encontraron resultados.</p>
         <?php endif; ?>
+
         <?php while ($row = $result->fetch_assoc()): ?>
           <?php
             $cats = !empty($row['categorias']) ? explode(",", $row['categorias']) : [];
-            // LIMPIAR ESPACIOS
             $cats = array_map('trim', $cats);
-            // SI HAY FILTRO POR CATEGORÍA, PONERLA PRIMERO
+
             if ($categoria !== '' && in_array($categoria, $cats)) {
-                // Quitarla del array
                 $cats = array_diff($cats, [$categoria]);
-                // Volver a ponerla al inicio
                 array_unshift($cats, $categoria);
             }
+
             $img = !empty($row['crop3']) ? "./../".$row['crop3'] : "./../img/placeholder.jpg";
           ?>
+
           <div class="card mb-3" data-url="<?= newsUrl($row['id']) ?>">
             <div class="row row-no-gap">
+
               <div class="col-md-4">
                 <img src="<?= htmlspecialchars($img) ?>" class="card-img-left">
               </div>
+
               <div class="col-md-8">
                 <div class="card-body">
-                  <!-- CATEGORÍAS -->
+
                   <?php foreach ($cats as $cat): ?>
-                    <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars(trim($cat)) ?></a>
+                    <a href="<?= categoryUrl($cat) ?>" class="news-tag"><?= htmlspecialchars($cat) ?></a>
                   <?php endforeach; ?>
+
                   <h5 class="card-title">
                     <a href="<?= newsUrl($row['id']) ?>" class="news-link">
                       <?= htmlspecialchars($row['titulo']) ?>
                     </a>
                   </h5>
+
                   <p><?= htmlspecialchars($row['descripcion']) ?></p>
-                  <small class="text-muted">
-                    <?= date('d M Y', strtotime($row['fecha_publicacion'])) ?>
-                  </small>
+
+                  <small><?= date('d M Y', strtotime($row['fecha_publicacion'])) ?></small>
+
                 </div>
               </div>
+
             </div>
           </div>
         <?php endwhile; ?>
+
+        <!-- PAGINACIÓN -->
         <div class="pagination-wrapper">
             <ul class="pagination">
                 <?php if ($pagina > 1): ?>
@@ -199,7 +307,8 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
             </ul>
         </div>
       </div>
-      <!-- ================== SIDEBAR ================== -->
+
+      <!-- SIDEBAR -->
       <div class="col-md-3">
         <div class="sidebar-wrapper">
           <div class="card sidebar-card">

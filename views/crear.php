@@ -84,7 +84,7 @@ while($row = $categoriasResult->fetch_assoc()){
                 
                 <!-- IMAGEN 2: Banner -->
                 <div class="crop-image-section">
-                    <h5>2. Imagen Banner (21:6)</h5>
+                    <h5>2. Imagen Banner</h5>
                     <input type="file" id="imageInputCrop2" class="crop-input" accept="image/*" data-crop="2">
                     <div class="cropper-container">
                         <img id="cropperImage2" class="cropper-img">
@@ -98,7 +98,7 @@ while($row = $categoriasResult->fetch_assoc()){
                 
                 <!-- IMAGEN 3: Miniatura -->
                 <div class="crop-image-section">
-                    <h5>3. Imagen Miniatura (16:9)</h5>
+                    <h5>3. Imagen Miniatura</h5>
                     <input type="file" id="imageInputCrop3" class="crop-input" accept="image/*" data-crop="3">
                     <div class="cropper-container">
                         <img id="cropperImage3" class="cropper-img">

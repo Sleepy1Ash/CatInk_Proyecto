@@ -52,57 +52,58 @@ function obtenerEmbedSocial($url){
     }
     return false;
 }
+function wrapEmbedSocial($html){
+    return '<div class="social-embed-container"><div class="video-responsive">' . $html . '</div></div>';
+}
 function renderizarEmbedSocial($url){
     $embed = obtenerEmbedSocial($url);
     if(!$embed) return "";
     switch($embed['type']){
         case "twitter":
-            return '
-            <blockquote class="twitter-tweet">
-                <a href="'.$embed['url'].'"></a>
-            </blockquote>
-            ';
+            return wrapEmbedSocial(
+                '<blockquote class="twitter-tweet">
+                    <a href="'.$embed['url'].'"></a>
+                </blockquote>'
+            );
         case "instagram":
-            return '
-            <blockquote class="instagram-media"
-                data-instgrm-permalink="'.$embed['url'].'"
-                data-instgrm-version="14">
-            </blockquote>
-            <script async src="https://www.instagram.com/embed.js"></script>
-            ';
+            return wrapEmbedSocial(
+                '<blockquote class="instagram-media"
+                    data-instgrm-permalink="'.$embed['url'].'"
+                    data-instgrm-version="14">
+                </blockquote>
+                <script async src="https://www.instagram.com/embed.js"></script>'
+            );
         case "tiktok":
-            return '
-            <iframe
-                src="https://www.tiktok.com/embed/v2/'.$embed['id'].'"
-                width="100%"
-                height="600"
-                frameborder="0"
-                allowfullscreen>
-            </iframe>';
+            return wrapEmbedSocial(
+                '<iframe
+                    src="https://www.tiktok.com/embed/v2/'.$embed['id'].'"
+                    width="100%"
+                    height="100%"
+                    frameborder="0"
+                    allowfullscreen></iframe>'
+            );
         case "facebook":
-            return '
-            <iframe
-                src="https://www.facebook.com/plugins/post.php?href='.urlencode($embed['url']).'"
-                width="100%"
-                height="500"
-                frameborder="0">
-            </iframe>';
+            return wrapEmbedSocial(
+                '<iframe
+                    src="https://www.facebook.com/plugins/post.php?href='.urlencode($embed['url']).'"
+                    width="100%"
+                    height="100%"
+                    frameborder="0"></iframe>'
+            );
         case "youtube":
-            return '
-            <div class="video-responsive">
-                <iframe
-                src="https://www.youtube.com/embed/'.$embed['id'].'"
-                frameborder="0"
-                allowfullscreen></iframe>
-            </div>';
+            return wrapEmbedSocial(
+                '<iframe
+                        src="https://www.youtube.com/embed/'.$embed['id'].'"
+                        frameborder="0"
+                        allowfullscreen></iframe>'
+            );
         case "vimeo":
-            return '
-            <div class="video-responsive">
-                <iframe
-                src="https://player.vimeo.com/video/'.$embed['id'].'"
-                frameborder="0"
-                allowfullscreen></iframe>
-            </div>';
+            return wrapEmbedSocial(
+                '<iframe
+                        src="https://player.vimeo.com/video/'.$embed['id'].'"
+                        frameborder="0"
+                        allowfullscreen></iframe>'
+            );
     }
 }
 function procesarEmbedsSociales($html){

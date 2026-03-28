@@ -4,14 +4,16 @@ if(session_status() === PHP_SESSION_NONE){
 }
 require_once(__DIR__ . "/../data/conexion.php");
 require_once(__DIR__ . "/../views/helpers/urlhelper.php");
-// Obtenemos todas las categorías únicas
+// =========================
+// Obtener categorías únicas
+// =========================
 $stmtCats = $con->prepare("SELECT nombre FROM categorias");
 $stmtCats->execute();
 $resultCats = $stmtCats->get_result();
 $categorias = $resultCats->fetch_all(MYSQLI_ASSOC);
-// =====================
-// obetener estado de secciones
-// =====================
+// =========================
+// Obtener estado de secciones
+// =========================
 $stmt = $con->prepare("SELECT * FROM secciones");
 $stmt->execute();
 $result = $stmt->get_result();
@@ -19,39 +21,59 @@ $secciones = [];
 while($row = $result->fetch_assoc()) {
     $secciones[$row['nombre']] = $row;
 }
+// =========================
+// Generar JSON-LD del menú
+// =========================
+$menuItems = [];
+foreach($categorias as $cat) {
+    $menuItems[] = [
+        "@type" => "SiteNavigationElement",
+        "name" => $cat['nombre'],
+        "url" => categoryUrl($cat['nombre'])
+    ];
+}
+$menuJson = [
+    "@context" => "https://schema.org",
+    "@graph" => $menuItems
+];
 ?>
 <!doctype html>
 <html lang="es" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cat Ink | Noticias de Anime, Manga, Series y Más</title>
-  <meta name="description" content="Cat Ink: sitio especializado en anime, manga y series. Noticias, avances, reseñas y contenido actualizado para fans del entretenimiento.">
-  <meta property="og:title" content="Cat Ink | Noticias de Anime, Manga y Series">
-  <meta property="og:description" content="Noticias, avances y reseñas del mundo del anime y manga.">
-  <meta property="og:url" content="https://www.catink.com.mx/">
+  <title><?= isset($pageTitle)? htmlspecialchars($pageTitle) . " - CatInk" : "CatInk | Noticias de Anime, Manga y Más" ?></title>
+  <meta name="description" content="<?= isset($pageDescription)? htmlspecialchars($pageDescription) : "Cat Ink: sitio especializado en anime, manga y series. Noticias, avances, reseñas y contenido actualizado para fans del entretenimiento." ?>">
+  <!-- Open Graph -->
+  <meta property="og:title" content="<?= isset($pageTitle) ? htmlspecialchars($pageTitle) : 'CatInk | Noticias de Anime, Manga y Series' ?>">
+  <meta property="og:description" content="<?= isset($pageDescription) ? htmlspecialchars($pageDescription) : 'Noticias, avances y reseñas del mundo del anime y manga.' ?>">
+  <meta property="og:url" content="<?= $canonical ?? 'https://www.catink.com.mx/' ?>">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://www.catink.com.mx/img/catink-icon.png">
-  <link rel="canonical" href="https://www.catink.com.mx/">
-  <!-- Local CSS-->
+  <meta property="og:image" content="<?= $ogImage ?? 'https://www.catink.com.mx/img/catink-og.png' ?>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@The_Catink">
+  <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle ?? 'CatInk') ?>">
+  <meta name="twitter:description" content="<?= htmlspecialchars($pageDescription ?? 'Noticias de anime y manga') ?>">
+  <meta name="twitter:image" content="<?= $ogImage ?? 'https://www.catink.com.mx/img/catink-og.png' ?>">
+  <!-- Canonical -->
+  <link rel="canonical" href="<?= $canonical ?? 'https://www.catink.com.mx/' ?>">
+  <!-- Favicon -->
+  <link rel="icon" href="https://www.catink.com.mx/catink-icon.ico" type="image/x-icon">
+  <!-- JSON-LD: Menú -->
+  <script type="application/ld+json">
+    <?= json_encode($menuJson, JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT) ?>
+  </script>
+  <!-- CSS / JS -->
   <link rel="stylesheet" href="https://www.catink.com.mx/CSS/styles.css">
-  <link rel="icon" type="image/png" href="https://www.catink.com.mx/img/catink-icon.png">
-  <!-- Iconos: Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
   <script async src="https://www.instagram.com/embed.js"></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8588111729852920"
-     crossorigin="anonymous"></script>
-  <style>
-    @media (max-width: 768px) {
-      #logo{
-        max-width: 80px;
-        max-height: auto;
-      }
-    }
-  </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8588111729852920" crossorigin="anonymous"></script>
 </head>
 <body>
 <nav class="navbar">
