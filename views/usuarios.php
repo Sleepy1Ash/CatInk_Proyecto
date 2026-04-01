@@ -57,7 +57,7 @@ $usuarios = $stmt->get_result();
                                     <?php endif; ?>
                                     <a href="./veru.php?id=<?= $u['id_u'] ?>" class="btn btn-secondary" title="Ver Usuario"><i class="bi bi-eye"></i></a>
                                     <?php if($ACL['eliminar']): ?>
-                                        <button class="btn btn-delete-usuario" data-id="<?= $u['id_u'] ?>" data-nombre="<?= $u['nombre'] ?>" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
+                                        <button type="button" class="btn btn-delete-usuario" data-id="<?= $u['id_u'] ?>" data-nombre="<?= $u['nombre'] ?>" title="Eliminar Usuario"><i class="bi bi-trash"></i></button>
                                     <?php endif; ?>
                                 </td>
                             <?php endif; ?>

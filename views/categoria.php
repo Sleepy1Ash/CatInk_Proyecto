@@ -325,12 +325,14 @@ if ($q !== '') {
               <br>
               <ul class="list-group list-group-flush mb-3">
                 <?php while ($row = $ultimas->fetch_assoc()): ?>
-                  <div class="row">
+                  <div class="row row-no-gap">
                         <div class="col-md-4">
                             <img src="./../<?=$row['crop3']?>" class="card-img-left-rounded">
                         </div>
                         <div class="col-md-8">
-                            <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                            <div class="card-body">
+                                <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                            </div>
                         </div>
                     </div>
                     <br>
@@ -340,12 +342,14 @@ if ($q !== '') {
               <br>
               <ul class="list-group list-group-flush">
                 <?php while ($row = $populares->fetch_assoc()): ?>
-                  <div class="row">
+                  <div class="row row-no-gap">
                         <div class="col-md-4">
                             <img src="./../<?=$row['crop3']?>" class="card-img-left-rounded">
                         </div>
                         <div class="col-md-8">
-                            <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                            <div class="card-body">
+                                <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                            </div>
                         </div>
                     </div>
                     <br>

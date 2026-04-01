@@ -432,7 +432,7 @@ $recientes = $stmtRecientes->get_result();
                             <br>
                             <div class="sidebar-news-list">
                                 <?php foreach($ultimasNoticiasSidebar as $row): ?>
-                                        <div class="row">
+                                        <div class="row row-no-gap">
                                             <div class="col-md-4">
                                                 <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left-rounded">
                                             </div>
@@ -449,7 +449,7 @@ $recientes = $stmtRecientes->get_result();
                             <br>
                             <div class="sidebar-news-list">
                                 <?php foreach($popularesNoticiasSidebar as $row): ?>
-                                        <div class="row">
+                                        <div class="row row-no-gap">
                                             <div class="col-md-4">
                                                 <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left-rounded">
                                             </div>

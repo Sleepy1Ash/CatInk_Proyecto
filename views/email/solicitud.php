@@ -28,7 +28,7 @@ try {
     $mail->setFrom('catink.oficial@gmail.com', 'CatInk News');
 
     // Destinatarios (puedes poner dinámicos desde base de datos)
-    $mail->addAddress('al222211174@gmail.com', 'Fausto Pérez Ortega');
+    $mail->addAddress('arturo_mtz_h@hotmail.com', 'ING Arturo Matínez Hernández');
 
     $mail->isHTML(true);
     $mail->Subject = "Solicitud de $nombre para unirse a CatInk";

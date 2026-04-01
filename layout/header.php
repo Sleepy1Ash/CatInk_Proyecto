@@ -58,6 +58,7 @@ $menuJson = [
   <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle ?? 'CatInk') ?>">
   <meta name="twitter:description" content="<?= htmlspecialchars($pageDescription ?? 'Noticias de anime y manga') ?>">
   <meta name="twitter:image" content="<?= $ogImage ?? 'https://www.catink.com.mx/img/catink-og.png' ?>">
+  <meta name="google-adsense-account" content="ca-pub-8588111729852920">
   <!-- Canonical -->
   <link rel="canonical" href="<?= $canonical ?? 'https://www.catink.com.mx/' ?>">
   <!-- Favicon -->
@@ -118,6 +119,7 @@ $menuJson = [
           autocomplete="off"
           class="search-input"
         >
+        <div id="searchResults" class="search-results"></div>
         <button type="button" id="clearBtn" class="search-btn clear-btn" title="Limpiar búsqueda">
           <i class="bi bi-x-lg"></i>
         </button>

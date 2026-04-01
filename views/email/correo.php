@@ -65,16 +65,16 @@ if (abs(strtotime(date("H:i:s")) - strtotime($horaProgramada)) <= 60) {
         <table width='100%' cellpadding='0' cellspacing='0' border='0' 
             style='background:#ffffff;margin-bottom:15px;border-radius:10px;overflow:hidden;'>
         <tr class='stack-column'>
-        <td width='240' valign='top' class='card-padding'>
+        <td width='240' valign='top' class='card-padding' style='padding:14px;'>
             <img src='cid:logo{$index}' width='220' class='stack-img' 
-                style='width:100%;max-width:220px;height:auto;display:block;border-radius:10px;border:0;'>
+                style='width:100%;max-width:220px;height:auto;display:block;border-radius:10px;border:0;margin:0;'>
         </td>
-        <td valign='top' class='card-padding' style='font-family:Arial,sans-serif;color:#000;'>
+        <td valign='top' class='card-padding' style='padding:14px;font-family:Arial,sans-serif;'>
             <a href='https://catink.com.mx/views/news.php?id={$noticia['id']}' 
-               style='background:#EF3363;color:#EF3363;text-decoration:none;'>
-                <h3 style='margin:0;'>{$noticia['titulo']}</h3>
+               style='display:block;margin:14px;text-decoration:none;color:#EF3363;'>
+                <h3 style='margin:0;font-family:Arial,sans-serif;color:#EF3363;'>{$noticia['titulo']}</h3>
             </a>
-            <p style='margin:10px;'>{$descripcion}</p>
+            <p style='margin:14px;'>{$descripcion}</p>
         </td>
         </tr>
         </table>";

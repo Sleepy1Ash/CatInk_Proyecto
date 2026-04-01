@@ -25,7 +25,7 @@ try {
     $mailAdmin->Port       = 587;
 
     $mailAdmin->setFrom('catink.oficial@gmail.com', 'Contacto CatInk');
-    $mailAdmin->addAddress('al222211174@gmail.com', 'Fausto Pérez Ortega');
+    $mailAdmin->addAddress('arturo_mtz_h@hotmail.com', 'ING Arturo Matínez Hernández');
 
     $mailAdmin->isHTML(true);
     $mailAdmin->Subject = "Solicitud de asesoramiento por parte de CatInk";

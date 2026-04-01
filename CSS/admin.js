@@ -279,29 +279,33 @@
 /* ===============================
    EDITOR QUILL
 ================================ */
-// ====== REGISTROS NECESARIOS ======
-// Importaciones de Quill
-const Font = Quill.import('formats/font');
-const Size = Quill.import('formats/size');
-const ImageResize = Quill.import('modules/imageResize');
-const Parchment = Quill.import('parchment');
-// Declaraciones
-Font.whitelist = ['arial', 'times', 'roboto', 'courier'];
-Quill.register(Font, true);
-Size.whitelist = ['small', false, 'large', 'huge'];
-Quill.register(Size, true);
-Quill.register(ImageResize, true);
-const LineHeightStyle = new Parchment.Attributor.Style(
-  'lineheight',
-  'line-height',
-  {
-    scope: Parchment.Scope.BLOCK,
-    whitelist: ['0', '0.85', '1', '1.5', '2', '2.5', '3']
-  }
-);
-Quill.register(LineHeightStyle, true);
+const editorElement = document.getElementById('editor');
+let quill = null;
 
-// ===== Define social embed blot =====
+if (editorElement) {
+  // ====== REGISTROS NECESARIOS ======
+  // Importaciones de Quill
+  const Font = Quill.import('formats/font');
+  const Size = Quill.import('formats/size');
+  const ImageResize = Quill.import('modules/imageResize');
+  const Parchment = Quill.import('parchment');
+  // Declaraciones
+  Font.whitelist = ['arial', 'times', 'roboto', 'courier'];
+  Quill.register(Font, true);
+  Size.whitelist = ['small', false, 'large', 'huge'];
+  Quill.register(Size, true);
+  Quill.register(ImageResize, true);
+  const LineHeightStyle = new Parchment.Attributor.Style(
+    'lineheight',
+    'line-height',
+    {
+      scope: Parchment.Scope.BLOCK,
+      whitelist: ['0', '0.85', '1', '1.5', '2', '2.5', '3']
+    }
+  );
+  Quill.register(LineHeightStyle, true);
+
+  // ===== Define social embed blot =====
 const BlockEmbed = Quill.import('blots/block/embed');
 class SocialEmbedBlot extends BlockEmbed {
   static create(value) {
@@ -320,6 +324,7 @@ SocialEmbedBlot.blotName = 'socialEmbed';
 SocialEmbedBlot.tagName = 'div';
 SocialEmbedBlot.className = 'social-embed';
 Quill.register(SocialEmbedBlot);
+}
 
 // simple JS mirror of PHP helper, used for preview inside editor
 function renderizarEmbedSocialJS(url) {
@@ -333,10 +338,11 @@ function renderizarEmbedSocialJS(url) {
     `;
   }
   if (/instagram\.com/i.test(url)) {
-    const clean = url.split('?')[0];
     return `
-      <blockquote class="instagram-media" data-instgrm-permalink="${clean}" data-instgrm-version="14"></blockquote>
-      <script async src="https://www.instagram.com/embed.js"></script>
+      <div class="social-embed-container"><div class="video-responsive instagram-embed">
+        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="${url}" data-instgrm-version="14"></blockquote>
+        <script async src="https://www.instagram.com/embed.js"></script>
+      </div></div>
     `;
   }
   if (/facebook\.com/i.test(url)) {
@@ -370,37 +376,39 @@ function renderizarEmbedSocialJS(url) {
 // clipboard matcher for existing social-embed divs
 const Delta = Quill.import('delta');
 
-// create editor instance
-const quill = new Quill('#editor', {
-  theme: 'snow',
-  placeholder: 'Escribe aquí...',
-  modules: {
-    toolbar: {
-      container: '.editor-toolbar',
-      handlers: {
-        image: imageHandler,
-        embed: embedHandler
+if (editorElement) {
+  // create editor instance
+  quill = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: 'Escribe aquí...',
+    modules: {
+      toolbar: {
+        container: '.editor-toolbar',
+        handlers: {
+          image: imageHandler,
+          embed: embedHandler
+        }
+      },
+      imageResize: {
+        modules: [ 'Resize', 'DisplaySize']
       }
-    },
-    imageResize: {
-      modules: [ 'Resize', 'DisplaySize']
     }
-  }
-});
+  });
 
-// convert pasted existing wrapper divs into blot
-quill.clipboard.addMatcher('DIV', function(node, delta) {
-  if (node.classList && node.classList.contains('social-embed')) {
-    const url = node.getAttribute('data-url');
-    return new Delta().insert({ socialEmbed: url });
-  }
-  return delta;
-});
+  // convert pasted existing wrapper divs into blot
+  quill.clipboard.addMatcher('DIV', function(node, delta) {
+    if (node.classList && node.classList.contains('social-embed')) {
+      const url = node.getAttribute('data-url');
+      return new Delta().insert({ socialEmbed: url });
+    }
+    return delta;
+  });
 
-// ====== CARGAR CONTENIDO EXISTENTE ======
-const editorContent = document.getElementById('editorContent');
-if (editorContent && editorContent.textContent.trim().length > 0) {
-  quill.clipboard.dangerouslyPasteHTML(editorContent.innerHTML);
+  // ====== CARGAR CONTENIDO EXISTENTE ======
+  const editorContent = document.getElementById('editorContent');
+  if (editorContent && editorContent.textContent.trim().length > 0) {
+    quill.clipboard.dangerouslyPasteHTML(editorContent.innerHTML);
+  }
 }
 // ====== HANDLER DE IMÁGENES (PREPARADO PARA CROP) ======
 function imageHandler() {
@@ -410,10 +418,11 @@ function imageHandler() {
   input.click();
   input.onchange = () => {
     const file = input.files[0];
-    if (!file) return;
+    if (!file || !quill) return;
     const reader = new FileReader();
     reader.onload = () => {
       const range = quill.getSelection(true);
+      if (!range) return;
       quill.insertEmbed(range.index, 'image', reader.result);
       quill.setSelection(range.index + 1);
     };
@@ -424,22 +433,20 @@ function imageHandler() {
 // ====== HANDLER PARA EMBEDS SOCIALES ======
 function embedHandler() {
   const url = prompt("Introduce la URL a embeber (Twitter, Instagram, Facebook, etc.):");
-  if (!url) return;
+  if (!url || !quill) return;
   // escape quotes to avoid breaking attributes
   const safeUrl = url.replace(/"/g, '&quot;');
   const range = quill.getSelection(true);
+  if (!range) return;
   const html = `<div class="social-embed" data-url="${safeUrl}"><a href="${safeUrl}" target="_blank">${safeUrl}</a></div>`;
   quill.clipboard.dangerouslyPasteHTML(range.index, html);
   // move cursor after the inserted block
   quill.setSelection(range.index + 1);
 }
 /* verifica el contenido del editor antes de enviar el formulario */
-const form = 
-            document.getElementById('formPublicacion')
-            ? document.getElementById('formPublicacion')
-            : document.getElementById('formEdicion');
+const form = document.getElementById('formPublicacion') || document.getElementById('formEdicion');
 const contenidoInput = document.getElementById('contenido');
-if (form && contenidoInput) {
+if (form && contenidoInput && quill) {
   form.addEventListener('submit', () => {
     let html = quill.root.innerHTML;
     // ensure social-embed placeholders are minimal (strip inner HTML/scripts)
@@ -448,92 +455,90 @@ if (form && contenidoInput) {
     contenidoInput.value = html;
   });
 }
-// modal-noticia
-document.addEventListener("DOMContentLoaded", () => {
-    // Abrir modal
-    const deleteButtons = document.querySelectorAll(".btn-delete");
-    const modalOverlay = document.getElementById("modalOverlay");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalIdInput = document.getElementById("modalId");
-    deleteButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            const noticiaId = button.dataset.id;
-            const noticiaTitulo = button.dataset.titulo;
-            modalTitle.textContent = `¿Eliminar la noticia "${noticiaTitulo}"?`;
-            modalIdInput.value = noticiaId;
-            modalOverlay.style.display = "flex";
-        });
+// modal-delete
+function initDeleteModals() {
+    const modalConfigs = [
+        {
+            selector: ".btn-delete",
+            overlayId: "modalOverlay",
+            titleId: "modalTitle",
+            inputId: "modalId",
+            formatTitle: title => `¿Eliminar la noticia "${title}"?`,
+            dataKey: "titulo"
+        },
+        {
+            selector: ".btn-delete-publicidad",
+            overlayId: "modalOverlayP",
+            titleId: "modalTitleP",
+            inputId: "modalIdP",
+            formatTitle: title => `¿Eliminar la publicidad "${title}"?`,
+            dataKey: "titulo"
+        },
+        {
+            selector: ".btn-delete-usuario",
+            overlayId: "modalOverlayU",
+            titleId: "modalTitleU",
+            inputId: "modalIdU",
+            formatTitle: title => `¿Eliminar el usuario "${title}"?`,
+            dataKey: "nombre"
+        }
+    ];
+
+    const configByClass = {};
+    modalConfigs.forEach(config => {
+        configByClass[config.selector.replace('.', '')] = config;
     });
-    // Cerrar modal
-    const closeModalButtons = document.querySelectorAll(".btn-cancel, #modalOverlay");
-    closeModalButtons.forEach(btn => {
-        btn.addEventListener("click", (e) => {
-            // Evitar cerrar si hace click dentro del modal
-            if (e.target === modalOverlay || btn.classList.contains("btn-cancel")) {
-                modalOverlay.style.display = "none";
+
+    document.body.addEventListener("click", event => {
+        const button = event.target.closest(
+            ".btn-delete, .btn-delete-publicidad, .btn-delete-usuario"
+        );
+        if (!button) return;
+        event.preventDefault();
+
+        const config = modalConfigs.find(c => button.matches(c.selector));
+        if (!config) return;
+
+        const overlay = document.getElementById(config.overlayId);
+        const title = document.getElementById(config.titleId);
+        const input = document.getElementById(config.inputId);
+        if (!overlay || !title || !input) return;
+
+        const dataValue = button.dataset[config.dataKey] || "";
+        title.textContent = config.formatTitle(dataValue);
+        input.value = button.dataset.id || "";
+        overlay.style.display = "flex";
+    });
+
+    document.querySelectorAll(".btn-cancel").forEach(cancelBtn => {
+        cancelBtn.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation();
+            const overlay = cancelBtn.closest(".crop-modal");
+            if (overlay) {
+                overlay.style.display = "none";
             }
         });
     });
-    // Evitar cerrar modal al hacer click dentro del contenido
-    const modalContent = document.querySelector(".crop-modal-content");
-    if (modalContent) {
+
+    document.body.addEventListener("click", event => {
+        const overlay = event.target.closest(".crop-modal");
+        if (!overlay) return;
+        if (event.target === overlay) {
+            overlay.style.display = "none";
+        }
+    });
+
+    document.querySelectorAll(".crop-modal-content").forEach(modalContent => {
         modalContent.addEventListener("click", e => e.stopPropagation());
-    }
-});
-// modal-publicidad
-document.addEventListener("DOMContentLoaded", ()=>{
-    const deleteButtons = document.querySelectorAll(".btn-delete-publicidad");
-    const modalOverlayP = document.getElementById("modalOverlayP");
-    const modalTitleP = document.getElementById("modalTitleP");
-    const modalIdInputP = document.getElementById("modalIdP");
-    deleteButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            const pubId = button.dataset.id;
-            const pubTitulo = button.dataset.titulo;
-            modalTitleP.textContent = `¿Eliminar la publicidad "${pubTitulo}"?`;
-            modalIdInputP.value = pubId;
-            modalOverlayP.style.display = "flex";
-        });
     });
-    // Cancelar
-    document.querySelector(".btn-cancel").addEventListener("click", ()=>{
-        modalOverlayP.style.display = "none";
-    });
-    // Click fuera del modal
-    modalOverlayP.addEventListener("click", (e)=>{
-        if(e.target === modalOverlayP){
-            modalOverlayP.style.display = "none";
-        }
-    });
+}
 
-});
-// modal-usuario
-document.addEventListener("DOMContentLoaded", ()=>{
-    const deleteButtons = document.querySelectorAll(".btn-delete-usuario");
-    const modalOverlayU = document.getElementById("modalOverlayU");
-    const modalTitleU = document.getElementById("modalTitleU");
-    const modalIdInputU = document.getElementById("modalIdU");
-    deleteButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            const usuarioId = button.dataset.id;
-            const usuarioNombre = button.dataset.nombre;
-            modalTitleU.textContent = `¿Eliminar el usuario "${usuarioNombre}"?`;
-            modalIdInputU.value = usuarioId;
-            modalOverlayU.style.display = "flex";
-        });
-    });
-    // Cancelar
-    document.querySelector(".btn-cancel").addEventListener("click", ()=>{
-        modalOverlayU.style.display = "none";
-    });
-    // Click fuera del modal
-    modalOverlayU.addEventListener("click", (e)=>{
-        if(e.target === modalOverlayU){
-            modalOverlayU.style.display = "none";
-        }
-    });
-
-});
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDeleteModals);
+} else {
+    initDeleteModals();
+}
 // modal validacion
 document.addEventListener("DOMContentLoaded", () => {
     const modalTime = document.getElementById("timeModalOverlay");

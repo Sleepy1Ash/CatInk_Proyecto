@@ -48,7 +48,7 @@
                                 <a href="verp.php?id=<?= $pub['id_pub'] ?>" class="btn btn-secondary" title="Ver Estadísticas"><i class="bi bi-bar-chart"></i></a> 
                             <?php endif; ?>
                             <?php if($ACL['eliminar']): ?>
-                                <button class="btn btn-delete-publicidad" data-id="<?= $pub['id_pub'] ?>" data-titulo="<?= htmlspecialchars($pub['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                <button type="button" class="btn btn-delete-publicidad" data-id="<?= $pub['id_pub'] ?>" data-titulo="<?= htmlspecialchars($pub['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>

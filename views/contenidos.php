@@ -91,7 +91,7 @@ while ($row = $result->fetch_assoc()) {
                                             <a href="see.php?id=<?= $row['id'] ?>" class="btn btn-view" title="Ver Estadísticas"><i class="bi bi-bar-chart"></i></a>
                                         <?php endif; ?>
                                         <?php if (!empty($ACL['eliminar'])): ?>
-                                            <button class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                            <button type="button" class="btn btn-delete" data-id="<?= $row['id'] ?>" data-titulo="<?= htmlspecialchars($row['titulo']) ?>" title="Eliminar"><i class="bi bi-trash"></i></button>
                                         <?php endif; ?>
                                     </div>
                                     <?php endif; ?>

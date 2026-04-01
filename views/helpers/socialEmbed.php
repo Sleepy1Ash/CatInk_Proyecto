@@ -11,7 +11,7 @@ function obtenerEmbedSocial($url){
     if(preg_match('/instagram\.com/i',$url)){
         return [
             "type" => "instagram",
-            "url" => strtok($url,'?')
+            "url" => $url
         ];
     }
     // TIKTOK
@@ -52,8 +52,19 @@ function obtenerEmbedSocial($url){
     }
     return false;
 }
-function wrapEmbedSocial($html){
-    return '<div class="social-embed-container"><div class="video-responsive">' . $html . '</div></div>';
+function wrapEmbedSocial($html, $type = '', $extraClass = ''){
+    // Videos (iframe controlado)
+    if(in_array($type, ['youtube','vimeo'])){
+        return '<div class="social-embed-container">
+                    <div class="video-responsive '.$extraClass.'">
+                        '.$html.'
+                    </div>
+                </div>';
+    }
+    // Redes sociales (dinámicos)
+    return '<div class="social-embed-container social-'.$type.' '.$extraClass.'">
+                '.$html.'
+            </div>';
 }
 function renderizarEmbedSocial($url){
     $embed = obtenerEmbedSocial($url);
@@ -63,15 +74,17 @@ function renderizarEmbedSocial($url){
             return wrapEmbedSocial(
                 '<blockquote class="twitter-tweet">
                     <a href="'.$embed['url'].'"></a>
-                </blockquote>'
+                </blockquote>',
+                'twitter-embed'
             );
         case "instagram":
             return wrapEmbedSocial(
-                '<blockquote class="instagram-media"
+                '<blockquote class="instagram-media" data-instgrm-captioned
                     data-instgrm-permalink="'.$embed['url'].'"
                     data-instgrm-version="14">
                 </blockquote>
-                <script async src="https://www.instagram.com/embed.js"></script>'
+                <script async src="https://www.instagram.com/embed.js"></script>',
+                'instagram-embed' // ✅ sin espacio
             );
         case "tiktok":
             return wrapEmbedSocial(
@@ -80,7 +93,8 @@ function renderizarEmbedSocial($url){
                     width="100%"
                     height="100%"
                     frameborder="0"
-                    allowfullscreen></iframe>'
+                    allowfullscreen></iframe>',
+                'tiktok'
             );
         case "facebook":
             return wrapEmbedSocial(
@@ -89,6 +103,7 @@ function renderizarEmbedSocial($url){
                     width="100%"
                     height="100%"
                     frameborder="0"></iframe>'
+                , 'facebook-embed'
             );
         case "youtube":
             return wrapEmbedSocial(
@@ -96,6 +111,7 @@ function renderizarEmbedSocial($url){
                         src="https://www.youtube.com/embed/'.$embed['id'].'"
                         frameborder="0"
                         allowfullscreen></iframe>'
+                , 'youtube'
             );
         case "vimeo":
             return wrapEmbedSocial(
@@ -103,6 +119,7 @@ function renderizarEmbedSocial($url){
                         src="https://player.vimeo.com/video/'.$embed['id'].'"
                         frameborder="0"
                         allowfullscreen></iframe>'
+                , 'vimeo'
             );
     }
 }

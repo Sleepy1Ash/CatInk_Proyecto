@@ -57,6 +57,59 @@
       performSearch();
     });
   }
+  const resultsBox = document.getElementById('searchResults');
+    let timeout = null;
+    
+    if (input && resultsBox) {
+      input.addEventListener('input', function () {
+        const q = input.value.trim();
+      
+        clearTimeout(timeout);
+      
+        if (q.length < 2) {
+          resultsBox.style.display = 'none';
+          return;
+        }
+      
+        timeout = setTimeout(() => {
+          fetch(basePath + `/api/search.php?q=` + encodeURIComponent(q))
+            .then(res => res.json())
+            .then(data => {
+              resultsBox.innerHTML = '';
+      
+              if (data.length === 0) {
+                resultsBox.style.display = 'none';
+                return;
+              }
+      
+              data.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('search-item');
+      
+                div.innerHTML = `
+                  <img src="${item.imagen}" alt="" class="img-search">
+                  <span>${item.titulo}</span>
+                `;
+      
+                div.addEventListener('click', () => {
+                  window.location.href = item.url;
+                });
+      
+                resultsBox.appendChild(div);
+              });
+      
+              resultsBox.style.display = 'block';
+            });
+        }, 300); // debounce
+      });
+    }
+
+    // Ocultar si haces click fuera
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.nav-search')) {
+        resultsBox.style.display = 'none';
+      }
+    });
 </script>
 <script>
   document.addEventListener("DOMContentLoaded", function(){
