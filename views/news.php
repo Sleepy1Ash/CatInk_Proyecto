@@ -199,9 +199,9 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <br>
                 <ul class="list-group list-group-flush mb-3">
                   <?php while ($row = $ultimas->fetch_assoc()): ?>
-                    <div class="row row-no-gap">
+                    <div class="cardSpecial row row-no-gap">
                         <div class="col-md-4">
-                            <img src="./../<?=$row['crop3']?>" class="card-img-left-rounded">
+                            <img src="./../<?=$row['crop3']?>" class="imgCard card-img-left-rounded">
                         </div>
                         <div class="col-md-8">
                           <div class="card-body">
@@ -216,9 +216,9 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                 <br>
                 <ul class="list-group list-group-flush">
                   <?php while ($row = $populares->fetch_assoc()): ?>
-                    <div class="row row-no-gap">
+                    <div class="cardSpecial row row-no-gap">
                         <div class="col-md-4">
-                            <img src="./../<?=$row['crop3']?>" class="card-img-left-rounded">
+                            <img src="./../<?=$row['crop3']?>" class="imgCard card-img-left-rounded">
                         </div>
                         <div class="col-md-8">
                           <div class="card-body">

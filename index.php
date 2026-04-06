@@ -44,11 +44,11 @@ $noticiasMasRecientes = array_slice($noticias, 0, 6);
 $noticiasMasRecientes2 = array_slice($noticias, 7, 11);
 $noticiasMasRecientes3 = array_slice($noticias, 12, 17);
 //Obtener banner publicidad
-$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 ORDER BY RAND() LIMIT 1");
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 1 and fecha_fin >= NOW() ORDER BY RAND() LIMIT 1");
 $stmt->execute();
 $publicidad = $stmt->get_result()->fetch_assoc();
 //Obtener cuadro publicitario
-$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 2 ORDER BY RAND() LIMIT 1");
+$stmt = $con->prepare("SELECT * FROM publicidad WHERE activo = 1 AND tipo = 2 and fecha_fin >= NOW() ORDER BY RAND() LIMIT 1");
 $stmt->execute();
 $publicidadCuadro = $stmt->get_result()->fetch_assoc();
 //obtener publicidad inferior
@@ -432,9 +432,9 @@ $recientes = $stmtRecientes->get_result();
                             <br>
                             <div class="sidebar-news-list">
                                 <?php foreach($ultimasNoticiasSidebar as $row): ?>
-                                        <div class="row row-no-gap">
+                                        <div class="cardSpecial row row-no-gap">
                                             <div class="col-md-4">
-                                                <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left-rounded">
+                                                <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="imgCard card-img-left-rounded">
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="card-body">
@@ -449,9 +449,9 @@ $recientes = $stmtRecientes->get_result();
                             <br>
                             <div class="sidebar-news-list">
                                 <?php foreach($popularesNoticiasSidebar as $row): ?>
-                                        <div class="row row-no-gap">
+                                        <div class="cardSpecial row row-no-gap">
                                             <div class="col-md-4">
-                                                <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="card-img-left-rounded">
+                                                <img src="./<?= htmlspecialchars($row['crop3'] ?? 'img/placeholder.jpg') ?>" alt="" class="imgCard card-img-left-rounded">
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="card-body">

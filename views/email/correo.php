@@ -90,14 +90,14 @@ if (abs(strtotime(date("H:i:s")) - strtotime($horaProgramada)) <= 60) {
 
     try {
         $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
+        $mail->Host = 'smtp.hostinger.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'catink.oficial@gmail.com';
-        $mail->Password = 'lamcszfwuoftmlpv';
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
+        $mail->Username = 'news@catink.com.mx';
+        $mail->Password = '6n+Z^6Ys*3kS';
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = 465;
 
-        $mail->setFrom('catink.oficial@gmail.com', 'Noticias del día');
+        $mail->setFrom('news@catink.com.mx', 'Noticias del día');
 
         // Destinatarios
         $sqlUsuarios = "SELECT correo, nombre_completo FROM suscripciones";

@@ -21,7 +21,6 @@ body{
     color:white;
     padding:20px;
 }
-
 /* GRID GAMER */
 body::before{
     content:"";
@@ -86,7 +85,11 @@ body::before{
 
 .cat-wrapper{
     width:clamp(200px, 50vw, 320px);
-    margin:auto;
+    margin-top: 30px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-bottom: 10px;
+
 }
 
 .cat-svg{
@@ -205,7 +208,6 @@ body::before{
 <body>
 
 <div class="ink-bg"></div>
-
 <div class="container">
     <div class="error">404</div>
     <div class="message">Oops... Parece que esta página se perdió en la tinta <i class="bi bi-heartbreak-fill"></i></div>
@@ -224,22 +226,21 @@ body::before{
 
                 <line x1="375" y1="510" x2="375" y2="570" stroke="#111" stroke-width="4"/>
                 <line x1="400" y1="520" x2="400" y2="550" stroke="#111" stroke-width="4"/>
-
-                <!-- Cuerpo (delante de patas traseras) -->
-                <ellipse cx="250" cy="420" rx="120" ry="150" class="cat-fill"/>
-                <text x="250" y="450" text-anchor="middle" class="logo-letter">C</text>
-                <circle cx="250" cy="230" r="160" class="cat-fill"/>
                 <!-- Orejas -->
                 <polygon points="95,180 90,20 180,85" class="cat-fill"/>
                 <polygon points="320,85 410,20 405,180" class="cat-fill"/>
                 <polygon points="118,150 110,65 157,105" class="cat-fill-dark"/>
                 <polygon points="343,105 390,65 382,150" class="cat-fill-dark"/>
+                <!-- Cuerpo (delante de patas traseras) -->
+                <ellipse cx="250" cy="420" rx="120" ry="150" class="cat-fill"/>
+                <text x="250" y="450" text-anchor="middle" class="logo-letter">C</text>
+                <circle cx="250" cy="230" r="160" class="cat-fill"/>
                 <!-- Ojos -->
                 <ellipse cx="200" cy="220" rx="50" ry="65" class="eye"/>
                 <ellipse cx="300" cy="220" rx="50" ry="65" class="eye"/>
                 <!-- Pupilas que se mueven -->
-                <circle cx="200" cy="220" r="40" class="pupil" id="pupilLeft"/>
-                <circle cx="300" cy="220" r="40" class="pupil" id="pupilRight"/>
+                <circle cx="200" cy="220" r="35" class="pupil" id="pupilLeft"/>
+                <circle cx="300" cy="220" r="35" class="pupil" id="pupilRight"/>
                 <!-- Boca estilo :3 -->
                 <path d="
                 M150 280           
@@ -263,10 +264,8 @@ body::before{
             </g>
         </svg>
     </div>
-
     <button class="btn" id="backBtn">Volver al inicio</button>
 </div>
-
 <script>
 const btn = document.getElementById("backBtn");
 const pupils = [

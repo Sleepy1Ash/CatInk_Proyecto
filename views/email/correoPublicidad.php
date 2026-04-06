@@ -10,7 +10,7 @@ require(__DIR__."/../../PHPMailer/src/SMTP.php");
 include(__DIR__."/../../data/conexion.php");
 $hoy = date("Y-m-d H:i:s");
 // Consulta para obtener informacion de correos a enviar
-$sql="SELECT * FROM correos_publicitarios WHERE envio >= ?";
+$sql="SELECT * FROM correos_publicitarios WHERE envio = ?";
 $stmt = $con->prepare($sql);
 $stmt->bind_param('s', $hoy);
 $stmt->execute();
@@ -35,6 +35,7 @@ if(!$image) {
 imagepng($image, $tmpPng);
 imagedestroy($image);
 
+
 // Crear objeto PHPMailer
 $mail = new PHPMailer(true);
 
@@ -42,26 +43,30 @@ try {
     $mail->isSMTP();
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'catink.oficial@gmail.com';
-    $mail->Password   = 'lamcszfwuoftmlpv';
-    $mail->SMTPSecure = 'tls';
-    $mail->Port       = 587;
+    $mail->Username   = 'news@catink.com.mx';
+    $mail->Password   = '6n+Z^6Ys*3kS';
+    $mail->SMTPSecure = 'ssl';
+    $mail->Port       = 465;
 
-    $mail->setFrom('catink.oficial@gmail.com', 'CatInk News');
-
-    // Destinatarios (puedes poner dinámicos desde base de datos)
-    $mail->addAddress('al222211174@gmail.com', 'Fausto Pérez Ortega');
-
-    $mail->isHTML(true);
-    $mail->Subject = $titulo;
+    $mail->setFrom('news@catink.com.mx', 'CatInk News');
 
     // Adjuntar la imagen convertida
     $mail->addEmbeddedImage($tmpPng, 'imagenNoticia', 'imagen.png');
 
-    // Construir el contenido HTML
-    $unsubscribeUrl = 'https://www.catink.com.mx/views/email/unsubscribe.php?email=' . urlencode('al222211174@gmail.com');
+    $mail->isHTML(true);
+    $mail->Subject = $titulo;
 
-    $html = "
+    // Destinatarios
+    $sqlUsuarios = "SELECT correo, nombre_completo FROM suscripciones";
+    $resUsuarios = $con->query($sqlUsuarios);
+
+    while($user = $resUsuarios->fetch_assoc()){
+        $mail->clearAddresses();
+        $mail->addAddress($user['correo'], $user['nombre_completo']);
+
+        $unsubscribeUrl = 'https://www.catink.com.mx/views/email/unsubscribe.php?email=' . urlencode($user['correo']);
+
+        $html = "
     <div style='font-family: Arial, sans-serif; max-width:600px; margin:auto; background:#f9f9f9; padding:20px; border-radius:10px;'>
         <h2 style='color:#EF3363;'>$titulo</h2>
         <p style='color:#333;'>$contenido</p>
@@ -84,20 +89,21 @@ try {
                 <a href='https://www.catink.com.mx/privacidad' style='display:inline-block; margin:0 6px 6px; padding:8px 12px; background:#EF3363; color:#ffffff; border-radius:6px; text-decoration:none;'>Política de privacidad</a>
                 <a href='{$unsubscribeUrl}' style='display:inline-block; margin:0 6px 6px; padding:8px 12px; background:#EF3363; color:#ffffff; border-radius:6px; text-decoration:none;'>Cancelar suscripción</a>
             </p>
+            <p style='margin:8px 0 0; font-size:12px; color:#dddddd;'>En caso de requerir acalaraciones, dudas o reclamaciones, favor de contactarte al siguiente correo: help@catink.com.mx</p>
         </div>
     </div>
     ";
 
-    $mail->Body = $html;
-
-    $mail->send();
+        $mail->Body = $html;
+        $mail->send();
+    }
 
     // Eliminar la imagen temporal
     if(file_exists($tmpPng)) {
         unlink($tmpPng);
     }
 
-    echo "Correo enviado correctamente.";
+    echo "Correo enviado correctamente a todos los usuarios suscritos.\n";
 
 } catch (Exception $e) {
     // Eliminar temporal incluso si falla

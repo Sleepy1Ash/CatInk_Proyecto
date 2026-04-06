@@ -174,6 +174,33 @@
         });
     });
 </script>
+<script>
+    function updateClass() {
+        const isMobile = window.innerWidth <= 768;
+        // Cards
+        document.querySelectorAll(".cardSpecial").forEach(card => {
+            if (isMobile) {
+                card.classList.add("card");
+            } else {
+                card.classList.remove("card");
+            }
+        });
+        // Imágenes
+        document.querySelectorAll(".imgCard").forEach(img => {
+            if (isMobile) {
+                img.classList.add("card-img-left");
+                img.classList.remove("card-img-left-rounded");
+            } else {
+                img.classList.remove("card-img-left");
+                img.classList.add("card-img-left-rounded");
+            }
+        });
+    }
+    // Ejecutar al cargar
+    updateClass();
+    // Ejecutar al redimensionar
+    window.addEventListener("resize", updateClass);
+</script>
 <!-- Pie de página: columnas, enlaces y barra inferior -->
 <footer class="site-footer mt-5">
   <div class="container">

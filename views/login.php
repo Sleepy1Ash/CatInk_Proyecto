@@ -10,7 +10,7 @@ if (isset($_SESSION['usuario'])) {
 ?>
 <div class="container-fluid">
     <center>
-        <div class="card" style="width: 60rem;">
+        <div class="card">
             <div class="row">
                 <div class="col-md-4">
                     <!-- Logo dentro de la tarjeta -->
