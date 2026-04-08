@@ -190,11 +190,21 @@
             if (isMobile) {
                 img.classList.add("card-img-left");
                 img.classList.remove("card-img-left-rounded");
+                img.style.setProperty("max-height", "30px", "important");
             } else {
                 img.classList.remove("card-img-left");
                 img.classList.add("card-img-left-rounded");
+                img.style.removeProperty("max-height");
             }
         });
+        // Titulos
+        document.querySelectorAll(".linkCard").forEach(title =>{
+            if (isMobile) {
+                title.classList.remove("title-limit-2");
+            } else {
+                title.classList.add("title-limit-2");
+            }
+        })
     }
     // Ejecutar al cargar
     updateClass();

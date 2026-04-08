@@ -205,7 +205,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                         </div>
                         <div class="col-md-8">
                           <div class="card-body">
-                            <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                            <a href="<?= newsUrl($row['id']) ?>" class="linkCard news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
                           </div>
                         </div>
                     </div>
@@ -222,7 +222,7 @@ $publicidadCuadro = $stmt->get_result()->fetch_assoc();
                         </div>
                         <div class="col-md-8">
                           <div class="card-body">
-                            <a href="<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                            <a href="<?= newsUrl($row['id']) ?>" class="linkCard news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
                           </div>
                         </div>
                     </div>

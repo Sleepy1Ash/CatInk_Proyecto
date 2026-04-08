@@ -294,7 +294,7 @@ $recientes = $stmtRecientes->get_result();
                                         <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </h4>
                                     <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
-                                    <span class="text-muted">Publicado: 
+                                    <span class="text-muted"> 
                                         <?php
                                             $fecha_pub = strtotime($row['fecha']); // convierte la fecha de la BD a timestamp
                                             $ahora = time();                        // timestamp actual
@@ -343,7 +343,7 @@ $recientes = $stmtRecientes->get_result();
                                         <a href="./<?= newsUrl($row['id']) ?>" class="news-link"><?= htmlspecialchars($row['titulo']) ?></a>
                                     </h4>
                                     <p class="card-text"><?= htmlspecialchars($row['descripcion']) ?></p>
-                                    <span class="text-muted">Publicado: 
+                                    <span class="text-muted"> 
                                         <?php
                                             $fecha_pub = strtotime($row['fecha']); // convierte la fecha de la BD a timestamp
                                             $ahora = time();                        // timestamp actual
@@ -379,7 +379,7 @@ $recientes = $stmtRecientes->get_result();
                                     </div>
                                     <div class="news-content">
                                         <a href="./<?= newsUrl($row['id']) ?>" class="news-link-card"><?= htmlspecialchars($row['titulo']) ?></a>
-                                        <span class="text-muted">Publicado: 
+                                        <span class="text-muted">
                                             <?php
                                                 $fecha_pub = strtotime($row['fecha']); // convierte la fecha de la BD a timestamp
                                                 $ahora = time();                        // timestamp actual
@@ -438,7 +438,7 @@ $recientes = $stmtRecientes->get_result();
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="card-body">
-                                                    <a href="./<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                                                    <a href="./<?= newsUrl($row['id']) ?>" class="linkCard news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -455,7 +455,7 @@ $recientes = $stmtRecientes->get_result();
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="card-body">
-                                                    <a href="./<?= newsUrl($row['id']) ?>" class="news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
+                                                    <a href="./<?= newsUrl($row['id']) ?>" class="linkCard news-link title-limit-2"><?= htmlspecialchars($row['titulo']) ?></a>
                                                 </div>
                                             </div>
                                         </div>

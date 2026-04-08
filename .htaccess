@@ -17,7 +17,7 @@ RewriteRule .* %1/%2 [R=301,L]
 # PERMITIR ARCHIVOS IMPORTANTES
 # =========================
 RewriteRule ^robots\.txt$ - [L]
-RewriteRule ^sitemap\.xml$ - [L]
+RewriteRule ^sitemap\.xml$ views/sitemap.php [L,QSA]
 
 # =========================
 # NO REESCRIBIR ARCHIVOS REALES
