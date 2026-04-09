@@ -1,12 +1,13 @@
 <?php
+require_once(__DIR__ . "/../views/helpers/urlhelper.php");
 if(session_status() === PHP_SESSION_NONE){
     session_start();
 }
-include("./../layout/header.php");
 if (isset($_SESSION['usuario'])) {
-    header("Location: ./views/admin.php");
+    header('Location: ' . basePath() . '/views/admin.php');
     exit();
 }
+include("./../layout/header.php");
 ?>
 <div class="container-fluid">
     <center>
