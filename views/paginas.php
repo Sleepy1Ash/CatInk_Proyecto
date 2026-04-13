@@ -56,6 +56,7 @@
                     <option value="nosotros" selected>Nosotros</option>
                     <option value="terminos">Términos y condiciones</option>
                     <option value="privacidad">Aviso de privacidad</option>
+                    <option value="cookies">Política de cookies</option>
                 </select>
             </div>
             <div class="form-group">

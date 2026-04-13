@@ -418,7 +418,7 @@ span {
     cursor: pointer;
 }
 .btn-delete:hover {
-    background: #0f103b;
+    background: #5a6268;
 }
 .btn-edit {
     margin-top: 10px;
@@ -427,9 +427,10 @@ span {
     border: 1px solid #25303d;
     background: var(--bg);
     cursor: pointer;
+    color: var(--text);
 }
 .btn-edit:hover {
-    background: #0f103b;
+    background: #5a6268;
 }
 .btn-view {
     margin-top: 10px;
@@ -438,9 +439,10 @@ span {
     border: 1px solid #25303d;
     background: var(--bg);
     cursor: pointer;
+    color: var(--text)
 }
 .btn-view:hover {
-    background: #0f103b;
+    background: #5a6268;
 }
 .checkbox-group{
     display: flex;
@@ -1036,7 +1038,7 @@ select, input[type="datetime-local"] {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: var(--card);
+    background: var(--card-bg);
     color: var(--text);
 }
 /* ===============================
@@ -1059,7 +1061,7 @@ select, input[type="datetime-local"] {
   pointer-events: auto;
 }
 .crop-modal-content {
-    background: var(--card);
+    background: var(--card-bg);
     padding: 20px;
     width: 90%;
     max-width: 700px;
@@ -1254,7 +1256,7 @@ select, input[type="datetime-local"] {
     cursor: pointer;
 }
 .btn-delete-publicidad:hover {
-    background: #0f103b;
+    background: #5a6268;
 }
 .btn-delete-usuario {
     margin-top: 10px;
@@ -1266,7 +1268,7 @@ select, input[type="datetime-local"] {
     cursor: pointer;
 }
 .btn-delete-usuario:hover {
-    background: #0f103b;
+    background: #5a6268;
 }
 /* Modals */
 .modal {

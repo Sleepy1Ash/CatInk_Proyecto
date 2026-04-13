@@ -112,16 +112,18 @@ while ($row = $result->fetch_assoc()) {
 </div>
 <!-- Modal de Confirmación para Eliminar -->
 <div id="modalOverlay" class="crop-modal" style="display: none;">
-    <div class="crop-modal-content">
-        <h3 id="modalTitle">Confirmar eliminación</h3>
-        <p>¿Estás seguro de que deseas eliminar esta noticia? Esta acción no se puede deshacer.</p>
-        <form id="modalForm" action="../controllers/eliminar_noticia.php" method="POST">
-            <input type="hidden" name="id" id="modalId">
-            <div class="crop-actions">
-                <button type="button" class="btn btn-secondary btn-cancel">Cancelar</button>
-                <button type="submit" class="btn btn-danger">Eliminar</button>
-            </div>
-        </form>
+    <div class="card">
+        <div class="crop-modal-content">
+            <h3 id="modalTitle">Confirmar eliminación</h3>
+            <p>¿Estás seguro de que deseas eliminar esta noticia? Esta acción no se puede deshacer.</p>
+            <form id="modalForm" action="../controllers/eliminar_noticia.php" method="POST">
+                <input type="hidden" name="id" id="modalId">
+                <div class="crop-actions">
+                    <button type="button" class="btn btn-secondary btn-cancel">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 <?php include("./../layout/footerAdmin.php"); ?>
