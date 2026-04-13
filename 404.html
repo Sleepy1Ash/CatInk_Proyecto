@@ -58,7 +58,8 @@ body::before{
 .message{
     font-size:clamp(16px, 3vw, 22px);
     margin-bottom:30px;
-    color:#ff81a6;
+    text-shadow:0 0 15px #00ffff, 0 0 30px #00ffff;
+    animation:flicker 3s infinite;
 }
 
 /* Mancha tinta */
@@ -80,16 +81,13 @@ body::before{
         opacity:0.3;
     }
 }
-
 /* ===== GATO SVG ===== */
-
 .cat-wrapper{
     width:clamp(200px, 50vw, 320px);
     margin-top: 30px;
     margin-left:auto;
     margin-right:auto;
     margin-bottom: 10px;
-
 }
 
 .cat-svg{
@@ -138,7 +136,7 @@ body::before{
 
 /* Cola */
 .tail{
-    transform-origin:360px 470px;
+    transform-origin:360px 450px;
     animation:wag 2s ease-in-out infinite;
 }
 @keyframes wag{
@@ -202,7 +200,20 @@ body::before{
     from{transform:translateY(0);}
     to{transform:translateY(-800px);}
 }
-
+.tail-ink{
+    fill: none;
+    stroke: #5a0071;
+    stroke-width: 22;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform-origin:380px 450px;
+    animation:inkWag 3s ease-in-out infinite;
+}
+@keyframes inkWag{
+    0%{transform:rotate(5deg);}
+    50%{transform:rotate(-8deg);}
+    100%{transform:rotate(5deg);}
+}
 </style>
 </head>
 <body>
@@ -215,8 +226,10 @@ body::before{
         <svg class="cat-svg" viewBox="0 0 500 600">
             <g transform="translate(12.5, 15) scale(0.85)">
                 <!-- Cola -->
-                <path class="tail cat-fill"
-                    d="M380 450 C480 420, 480 550, 380 520 C300 500, 320 430, 380 450 Z"/>
+                <path class="tail-ink"
+                    d="M380 450 
+                        C400 400, 420 320, 380 260
+                        C360 230, 390 200, 420 220"/>
                 <!-- Patas traseras (atrás) -->
                 <ellipse cx="150" cy="530" rx="60" ry="40" class="cat-fill"/>
                 <ellipse cx="350" cy="530" rx="60" ry="40" class="cat-fill"/>
@@ -314,7 +327,9 @@ btn.addEventListener("click",(e)=>{
     }
 
     setTimeout(()=>{
-        if(document.referrer){
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
             window.location.href = "https://www.catink.com.mx/";
         }
     },400);
